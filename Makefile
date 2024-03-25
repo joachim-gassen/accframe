@@ -46,7 +46,7 @@ distclean: clean
 
 $(VENV): requirements.txt 
 	python3 -m venv .venv
-	source .venv/bin/activate && pip install -r requirements.txt
+	. .venv/bin/activate && pip install -r requirements.txt
 	touch $(VENV)
 
 $(TRUST_EXP_DATA): $(VENV) code/extract_trust_exp_data.py \

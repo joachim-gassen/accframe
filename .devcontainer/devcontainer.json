@@ -1,0 +1,21 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/rocker-org/devcontainer-templates/tree/main/src/r-ver
+{
+	"name": "accframe_rver_4.2",
+	"dockerFile": "Dockerfile",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"REditorSupport.r",
+				"RDebugger.r-debugger",
+				"ms-python.python",
+				"ms-python.debugpy",
+				"quarto.quarto",
+				"mathematic.vscode-pdf",
+				"george-alisson.html-preview-vscode",
+				"mechatroner.rainbow-csv",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+}
