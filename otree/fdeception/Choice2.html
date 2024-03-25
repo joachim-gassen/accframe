@@ -1,0 +1,56 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    <p>
+        This is a short experiment on corporate behavior. 
+        In this experiment, you will represent the role of corporate 
+        headquarters that has to decide between to alternative investment
+        options A and B. You are informed about the relative favorability
+        of these two investment options by receiving a report from an
+        accountant. inform corporate headquarters about the 
+        desirability of two alternative investment opportunities. 
+    </p>
+    <p>   
+        This accountant is represented by another experimental participant.
+        As an accountant, he is able to observe the payoffs of the two 
+        investment options. Both options generate a payoff to you (corporate
+        headquarters) and the other participant (the accountant). 
+    </p>
+    <p>
+        Based on his or her private information, the accountant will send 
+        you an accounting report that advises you on which investment to take.
+        The payments to both participants then depend on the investment 
+        chosen by you. 
+    </p>
+    <p>
+        The accounting report could take one of the following two forms:
+    </p>
+    <ul>
+        <li>
+            Accounting Report 1: 
+            “Investment A will be more profitable to you then investment B.”
+        </li>
+        <li>
+            Accounting Report 2: 
+            “Investment B will be more profitable to you then investment A.”
+        </li>
+    </ul>
+    <p>
+        Your accountant decided to send you Report {{message}}.
+    </p>
+    <p>
+        We now ask you to choose either investment A or B. 
+        Your choice will determine the payments in the experiment. 
+        You will never know the payoffs of the other investment 
+        (that is, if the accounting report sent by your 
+        accountant was true or not). Moreover, you will never know 
+        the payoffs your accountant could be paid with the other investment.
+        We will pay the two of you according to the investment you pick.    
+    </p>
+    <p>
+        {{ formfields }}
+    </p>
+        {{ next_button }}
+    </p>
+{{ endblock }}
+
+

@@ -1,0 +1,67 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    <p>
+        This is a short experiment on corporate behavior. 
+        In this experiment, you will represent the role of a corporate 
+        accountant that has to inform corporate headquarters about the 
+        desirability of two alternative investment opportunities. 
+    </p>
+    <p>   
+        Corporate headquarters is  represented by another participant. 
+        There are two alternative investments A and B. Only you (the accountant) 
+        can observe their actual profitability.
+    </p>
+    <p>
+        Both investments create private payoff to you and to corporate
+        headquarters These are the payoffs of the two investment options:
+    <ul>
+        <li>Investment A: ${{ C.AMOUNT_A1 }} to you and 
+            ${{ C.AMOUNT_A2 }} to corporate headquarters.
+        </li>
+    </li>
+        <li>Investment B: ${{ C.AMOUNT_B1 }} to you and 
+            ${{ C.AMOUNT_B2 }} to corporate headquarters.
+        </li>
+    </ul>
+    <p>
+        In the end, corporate headquarters will decide which investment
+        to make and this decision will determine the payoffs.
+        But they will make this decision solely informed the accounting report
+        that you send about the two investment options.   
+    </p>
+    <p>
+        Which accounting report do you want to send to corporate headquarters?
+    </p>
+    <ul>
+        <li>
+            Accounting Report 1: 
+            “Investment A will be more profitable to you then investment B.”
+        </li>
+        <li>
+            Accounting Report 2: 
+            “Investment B will be more profitable to you then investment A.”
+        </li>
+    </ul>
+    <p>
+        Corporate headquarters will receive your accounting report, and based 
+        on this to choose either investment A or B. To repeat, this investment
+        decision will determine the payments in the experiment. However, 
+        corporate headquarters will never learn the actual payoffs of the 
+        investment that they did not pick (that is, they will never know 
+        whether your accounting report was true or not). Moreover, they will 
+        never know the payoffs that you received according to the different 
+        options.
+    </p>
+    <p>
+        In this experiment, we will pay the you and the participant representing
+        corporate headquarters according to the choice made by corporate
+        headquarters. The payment will be made in private.
+    </p>
+    <p>
+        {{ formfields }}
+    </p>
+        {{ next_button }}
+    </p>
+{{ endblock }}
+
+
