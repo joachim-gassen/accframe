@@ -10,7 +10,7 @@ This repository contains the code to run the LLM-based experiments outlined in t
 
 The oTree experiments conducted are in `otree` and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
 
-If you are interested in reproducing these output documents (currently only a short presentation) and have [quarto](https://quarto.org), Python, R, and a make environment installed, you might be able to produce the output by running `make all` in the project's root directory. The output will be generated in the `output` folder.
+If you are interested in reproducing these output documents (currently only a short presentation) and have [quarto](https://quarto.org), Python, R, and a make environment installed, you might be able to produce the output by running `make all` in the project's root directory. The output will be generated in the `output` folder. An alternative (and potentially easier) way to reproduce the output would be to use [GitHub Codespaces](https://github.com/features/codespaces).
 
 ## Todos
 
