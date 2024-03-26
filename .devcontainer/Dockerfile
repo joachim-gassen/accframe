@@ -15,6 +15,7 @@ RUN apt-get -y install ghostscript && apt-get clean
 RUN apt-get -y install python3 && apt-get clean
 RUN apt-get -y install python3-venv && apt-get clean
 RUN apt-get -y install python3-wheel && apt-get clean
+RUN apt-get -y install chromium-chromedriver && apt-get clean
 
 RUN install2.r --error --skipinstalled tidyverse 
 RUN install2.r --error --skipinstalled lubridate 
