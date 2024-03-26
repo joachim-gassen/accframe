@@ -16,6 +16,15 @@
 				"mechatroner.rainbow-csv",
 				"ms-azuretools.vscode-docker"
 			]
+		},
+		"codespaces": {
+			"repositories": {
+			  "joachim-gassen/botex": {
+				"permissions": {
+				  "issues": "read"
+				}
+			  }
+			}
 		}
 	}
 }
