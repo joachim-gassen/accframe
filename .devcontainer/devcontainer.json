@@ -19,11 +19,9 @@
 		},
 		"codespaces": {
 			"repositories": {
-			  "joachim-gassen/botex": {
-				"permissions": {
-				  "issues": "read"
+				"joachim-gassen/botex": {
+					"permissions": "read-all"
 				}
-			  }
 			}
 		}
 	}
