@@ -15,7 +15,6 @@ RUN apt-get -y install ghostscript && apt-get clean
 RUN apt-get -y install python3 && apt-get clean
 RUN apt-get -y install python3-venv && apt-get clean
 RUN apt-get -y install python3-wheel && apt-get clean
-RUN apt-get -y install chromium-chromedriver && apt-get clean
 
 RUN install2.r --error --skipinstalled tidyverse 
 RUN install2.r --error --skipinstalled lubridate 
@@ -46,6 +45,11 @@ RUN QUARTO_VERSION=1.4.550 \
     && wget -O quarto.deb https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-${QUARTO_ARCH}.deb \
     && dpkg -i quarto.deb \
     && rm quarto.deb
+
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN dpkg -i google-chrome-stable_current_amd64.deb
+RUN apt-get -y install -f
+RUN git clone https://github.com/joachim-gassen/botex /workspaces/botex 
 
 CMD /bin/sh
 
