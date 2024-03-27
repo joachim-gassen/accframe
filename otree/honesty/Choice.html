@@ -1,0 +1,36 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    <p>
+        You are in round {{ player.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ if player.round_number > 1 }}
+        <p>
+            You started last round with a balance of {{last_round_wealth}} 
+            points, and received a compensation of {{C.COMPENSATION}} points. 
+            {{ if last_round_true < last_round_reported }}
+                In addition, you received the reporting differential of 
+                {{ last_round_diff }} points.
+            {{ endif }} 
+            Your current point balance is therefore {{ wealth }}.
+        </p>
+    {{ endif }}
+    <p>
+        In this round, the true amount is {{ true_amount }} points.
+    </p>
+    <p>
+        Remember, you are expected to report the true amount but nobody will
+        ever learn whether you miss-reported the true amount. In any case, the
+        reported amount needs to be at least as large as the true amount and at
+        most 6000 points. Also, it has to be a multiple of 50 points. 
+        The differential between the amount that you report and the true amount
+        increases your point balance. In addition, in each round, you will be
+        compensated {{ C.COMPENSATION }} points for your effort in any case.
+    </p>
+    <p>
+        {{ formfields }}
+    </p>
+        {{ next_button }}
+    </p>
+{{ endblock }}
+
+

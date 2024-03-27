@@ -21,11 +21,17 @@ SESSION_CONFIGS = [
         app_sequence=['deception'],
         num_demo_participants=2,
     ),
-        dict(
+    dict(
         name='fdeception',
         display_name="Framed Deception Game",
         app_sequence=['fdeception'],
         num_demo_participants=2,
+    ),
+    dict(
+        name='honesty',
+        display_name="Neutral variant of experiment 1 in Evans III et al. (2001)",
+        app_sequence=['honesty'],
+        num_demo_participants=1
     )
 ]
 

@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 import botex
 
-OTREE_IS_RUNNING = True
+OTREE_IS_RUNNING = False
 OTREE_STARTUP_WAIT = 3
 
 dotenv.load_dotenv("secrets.env")
@@ -21,8 +21,8 @@ if not OTREE_IS_RUNNING:
     )
     time.sleep(OTREE_STARTUP_WAIT)
 
-for i in range(3):
-    sdict = botex.init_otree_session(config_name = "fdeception", npart = 10)
+for i in range(1):
+    sdict = botex.init_otree_session(config_name = "honesty", npart = 1)
     botex.run_bots_on_session(session_id = sdict['session_id'])
     time.sleep(5)
 

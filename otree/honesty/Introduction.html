@@ -1,0 +1,26 @@
+{{ block title }}Introduction{{ endblock }}
+{{ block content }}
+    <p>
+        This is an experiment in decision making that runs over {{ C.NUM_ROUNDS }} 
+        rounds. In each round, you will be presented with an amount that is a 
+        random draw from a uniform distribution between 4000 to 6000 points 
+        in 50 point increments (the true amount). You then have to report this 
+        amount. An external party will pay you the amount you report in each
+        round. From this reported amount, the true amount will be deducted and 
+        you will keep the differential between the amount that you reported and 
+        the true amount. In addition, in each round, you will be compensated 
+        {{ C.COMPENSATION }} points for your effort. 
+    </p>
+    <p>
+        Nobody will ever learn whether you miss-reported the true amount. 
+        In any case, the reported amount needs to be at least as large as the
+        true amount and at most 6000 points. Also, it has to be a multiple of 
+        50 points. You objective is to maximize the points that you receive 
+        over all rounds.
+    </p>
+    <p>
+        {{ next_button }}
+    </p>
+{{ endblock }}
+
+
