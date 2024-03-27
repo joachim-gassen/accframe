@@ -1,22 +1,58 @@
 {{ block title }}Introduction{{ endblock }}
 {{ block content }}
     <p>
-        This is an experiment in decision making that runs over {{ C.NUM_ROUNDS }} 
-        rounds. In each round, you will be presented with an amount that is a 
-        random draw from a uniform distribution between 4000 to 6000 points 
-        in 50 point increments (the true amount). You then have to report this 
-        amount. An external party will pay you the amount you report in each
-        round. From this reported amount, the true amount will be deducted and 
-        you will keep the differential between the amount that you reported and 
-        the true amount. In addition, in each round, you will be compensated 
-        {{ C.COMPENSATION }} points for your effort. 
+        This is an experiment in decision making that runs over 
+        {{ C.NUM_ROUNDS }} rounds. 
+        In involves three parties: An algorithm that acts as 
+        experimenter, you as a participant and 
+        {{ if session.config.fake_participant }} 
+        another matched participant who is taking a passive role.
+        {{ else }}
+        a passive external party.
+        {{ endif }}
+        In each round, you will receive a compensation of {{ C.COMPENSATION }} 
+        points for your efforts independent of your choices. 
+        In addition and also in each round, there is a pool of {{ C.MAX_POOL }}
+        points. This pool belongs to the 
+        {{ if session.config.fake_participant }} 
+        other participant {{ else }} external party {{ endif }}
+        but to obtain it, 
+        {{ if session.config.fake_participant }} 
+        he or she {{ else }} it {{ endif }}
+        has to transfer a certain amount of points from this pool
+        back to the experimenter.
+    </p>
+    <p> 
+        This process will be facilitated by you. Each round you will receive
+        the information on the magnitude of this amount from the experimenter. 
+        The amount will be a random draw from a uniform distribution between 
+        {{ C.MIN_POOL }} to {{ C.MAX_POOL }} points in {{ C.STEP }} point 
+        increments (the true amount). 
+        You then have to report this amount to the 
+        {{ if session.config.fake_participant }} 
+        other participant. He or she {{ else }} external party. It {{ endif }} 
+        will then transfer this amount of reported points 
+        to you and you will transfer the true amount back
+        to the experimenter. The 
+        {{ if session.config.fake_participant }} 
+        other participant {{ else }} external party {{ endif }} 
+        will keep the difference between {{ C.MAX_POOL }} 
+        and the amount of points that you reported. 
+        You will keep your compensation of {{ C.COMPENSATION }} 
+        and any potential differential between the reported and the true amount. 
     </p>
     <p>
-        Nobody will ever learn whether you miss-reported the true amount. 
-        In any case, the reported amount needs to be at least as large as the
-        true amount and at most 6000 points. Also, it has to be a multiple of 
-        50 points. You objective is to maximize the points that you receive 
-        over all rounds.
+        The 
+        {{ if session.config.fake_participant }} 
+        other participant {{ else }} external party {{ endif }} 
+        knows the distribution underlying the true amount but 
+        will never learn whether you miss-reported any specific true 
+        amount. In any case, the reported amount needs to be at least as large 
+        as the true amount and at most {{ C.MAX_POOL}} points. 
+        Also, it has to be a multiple of {{ C.STEP }} points. 
+        Your total payoff is equal to the sum of 
+        your base compensations and any potential differentials between the
+        reported and the true amount over all rounds.
     </p>
     <p>
         {{ next_button }}

@@ -11,6 +11,9 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 10
     COMPENSATION = 250
+    MIN_POOL = 4000
+    MAX_POOL = 6000
+    STEP = 50
 
 class Subsession(BaseSubsession):
     pass
@@ -21,17 +24,15 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     pay = models.IntegerField(initial=0)
     wealth = models.IntegerField(initial = 0)
+    wealth_other = models.IntegerField(initial = 0)
     true_amount = models.IntegerField(initial=4000)
     reported_amount = models.IntegerField(
-        label="What is the amount that you want to report?"
+        label="What is the amount that you want to report?",
+        blank=False
     )
     comprehension_check1 = models.IntegerField(
         label="In each round: Who was informed about the true amount?",
-        blank=False,
-        choices=[
-            [1, 'Only me'],
-            [2, 'Me and the external party']
-        ],
+        blank=False
     )
     comprehension_check2 = models.IntegerField(
         label="Assuming that you only care about your points at the end, what would have been the optimal strategy?",
@@ -55,20 +56,34 @@ class Player(BasePlayer):
     )
 
 def reported_amount_choices(player):
-    return list(range(int(player.true_amount), 6050, 50))
+    return list(range(int(player.true_amount), C.MAX_POOL + C.STEP, C.STEP))
+
+def comprehension_check1_choices(player):
+    if player.session.config['fake_participant']:
+        option_2 = 'Me and the other participant'
+    else:
+        option_2 = 'Me and the external party'
+    return [[1, 'Only me'], [2, option_2]]
+
 # --- Functions ----------------------------------------------------------------
 
 def creating_session(subsession: Subsession):
     for p in subsession.get_players():
-        p.true_amount = random.choice(range(4000, 6050, 50))
+        p.true_amount = random.choice(
+            range(C.MIN_POOL, C.MAX_POOL + C.STEP, C.STEP)
+        )
 
 def set_payoffs(p):
     p.pay = p.reported_amount - p.true_amount + C.COMPENSATION
     if p.round_number > 1: 
         p.wealth = p.in_round(p.round_number - 1).wealth + \
             p.pay
+        p.wealth_other = p.in_round(p.round_number - 1).wealth_other + \
+            C.MAX_POOL - p.reported_amount
+        
     else:
         p.wealth = p.pay
+        p.wealth_other = C.MAX_POOL - p.reported_amount
 
 
 # --- Pages --------------------------------------------------------------------
@@ -99,15 +114,20 @@ class Choice(Page):
             )
         if player.round_number == 2: 
             last_round_wealth = 0
+            last_round_wealth_other = 0
         else: 
             last_round_wealth = player.in_round(player.round_number - 2).wealth
+            last_round_wealth_other = player.in_round(player.round_number - 2).wealth_other
         pp = player.in_round(player.round_number - 1)
         return dict(
             last_round_wealth=last_round_wealth,
+            last_round_wealth_other=last_round_wealth_other,
             last_round_true=pp.true_amount,
             last_round_reported=pp.reported_amount,
             last_round_diff=pp.reported_amount - pp.true_amount,
+            last_round_diff_other=C.MAX_POOL - pp.reported_amount,
             wealth=pp.wealth,
+            wealth_other=pp.wealth_other,
             true_amount=player.true_amount, 
         )
     

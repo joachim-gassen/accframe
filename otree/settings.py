@@ -29,9 +29,19 @@ SESSION_CONFIGS = [
     ),
     dict(
         name='honesty',
-        display_name="Neutral variant of experiment 1 in Evans III et al. (2001)",
+        display_name="Honesty game (neutral version of Evans et al., 2001)",
         app_sequence=['honesty'],
-        num_demo_participants=1
+        num_demo_participants=1,
+        fake_participant=False,
+        report_other_wealth=True
+    ),
+        dict(
+        name='honesty_fake_participant',
+        display_name="Honesty game with fake participant",
+        app_sequence=['honesty'],
+        num_demo_participants=1,
+        fake_participant=True,
+        report_other_wealth=True
     )
 ]
 
