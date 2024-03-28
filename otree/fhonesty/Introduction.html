@@ -1,0 +1,46 @@
+{{ block title }}Introduction{{ endblock }}
+{{ block content }}
+    <p>
+        This is an experiment in corporate decision making that runs over 
+        {{ C.NUM_ROUNDS }} rounds. 
+        In it, you will take the role of a unit manager that produces 
+        products that are sold to customers in an external market. The price
+        of product is fixed at {{ price }} US-$ and each round you will sell 
+        a quantity of {{ quantity }} units. To produce the goods, you need
+        a cost budget from your company's headquarters. 
+        In each round, you will receive a compensation of {{ C.COMPENSATION }} 
+        US-$ regardless of your choices. 
+    </p>
+    <p> 
+        Each period, you will learn the total costs that it will take to produce 
+        the demanded goods. The total costs will be univariately distributed 
+        between {{ C.MIN_POOL }} to {{ C.MAX_POOL }} US-$ in {{ C.STEP }} US-$ 
+        increments. 
+        You are then required to file these costs as a budget request 
+        with your company's headquarters to finance production. 
+        This budget request needs at the minimum be large enough to cover your 
+        production costs. But also if you decide to 
+        file an inflated budget request, your company's headquarters will
+        grant you the requested amount as it is unable to 
+        tell your miss-reporting. The resulting budget slack will increase
+        your private wealth but at the same time reduce your company's profits 
+        that are defined as the differential between product revenues and your 
+        filed budget request.
+    </p>
+    <p>
+        Your company's headquarter is informed about the general distribution of 
+        production costs but will never learn whether you inflated your budget
+        in any specific round. In any case, your budget request needs to be 
+        at least as large as the true costs. Also, it cannot be higher than
+        {{ C.MAX_POOL}} US-$ as in that case the company's headquarters would
+        know for sure that the budget is inflated. 
+        Also, it has to be a multiple of {{ C.STEP }} US-$. 
+        Your total payoff is equal to the sum of 
+        your compensations and any potential budget slacks over all rounds.
+    </p>
+    <p>
+        {{ next_button }}
+    </p>
+{{ endblock }}
+
+

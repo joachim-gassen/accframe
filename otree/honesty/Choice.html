@@ -40,9 +40,6 @@
         other participant {{ else }} external party {{ endif }}, 
         while knowing the underlying distribution of the true amount,
         will never learn whether you miss-reported any specific true amount. 
-        In any case, the reported amount needs to be at least as large as the 
-        true amount and at most {{ C.MAX_POOL }} points. 
-        Also, it has to be a multiple of {{ C.STEP }} points.  
         The differential between the amount that you report and the 
         true amount increases your point balance. In addition, in each round, 
         you will be compensated {{ C.COMPENSATION }} points for your effort 

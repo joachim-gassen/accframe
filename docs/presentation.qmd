@@ -1,8 +1,8 @@
 ---
 title: "botex: Using LLMs as Experimental Participants in oTree"
 subtitle: "" # we use this for the venue
-author: Joachim Gassen
-institute: Humboldt-Universität zu Berlin
+author: Joachim Gassen and Victor Maas
+institute: Humboldt-Universität zu Berlin and University of Amsterdam
 date: today
 date-format: "MMMM D, YYYY"
 format: 
@@ -44,7 +44,8 @@ suppressMessages({
   library(showtext)
 	library(ggwordcloud)
 	library(tidytext)
-	
+	library(gt)
+  
   devtools::source_url(
     "https://raw.githubusercontent.com/trr266/treat/main/code/R/theme_trr.R"
   )
@@ -67,6 +68,7 @@ tparticipants <- read_csv("../data/generated/trust_participants.csv", show_col_t
 			"Inv/Manag", "Neutral"
 		), c("Neutral", "Inv/Manag"))
 	)
+
 drounds <- read_csv("../data/generated/deception_rounds.csv", show_col_types = FALSE) %>%
 	mutate(
 		experiment = factor(ifelse(
@@ -83,6 +85,25 @@ dparticipants <- read_csv("../data/generated/deception_participants.csv", show_c
 			"Accountant/HQ Framing", "Neutral Framing"
 		), c("Neutral Framing", "Accountant/HQ Framing")),
 	)
+
+hrounds <- read_csv("../data/generated/honesty_rounds.csv", show_col_types = FALSE) %>%
+	mutate(
+		experiment = factor(ifelse(
+			experiment == "fhonesty",
+			"Business Framing", "Neutral Framing"
+		), c("Neutral Framing", "Business Framing")),
+		slack = reported_amount - true_amount,
+		pct_slack_claimed = (reported_amount - true_amount)/(6000 - true_amount)
+	)
+hparticipants <- read_csv("../data/generated/honesty_participants.csv", show_col_types = FALSE) %>%
+	mutate(
+		experiment = factor(ifelse(
+			experiment == "fhonesty",
+			"Business Framing", "Neutral Framing"
+		), c("Neutral Framing", "Business Framing")),
+	)
+
+
 
 # Needs \usepackage{adjustbox} in preamble
 fit_gt_table_to_slide <- function(x, scale = 1) {
@@ -104,6 +125,14 @@ fit_gt_table_to_slide_long <- function(x, scale = 1) {
 center_table <- function(x) {
 	x[1] <- paste0("\\begin{center}", x[1], "\\end{center}")
 	x
+}
+
+star_stat <- function(x, neg = FALSE) {
+  if (neg) x$statistic <- -x$statistic 
+  paste0(
+    format(round(x$statistic, 2), nsmall = 2),
+    ifelse(x$p.value < 0.01, "***", ifelse(x$p.value < 0.05, "**", ifelse(x$p.value < 0.1, "*", "")))
+  )
 }
 ```
 
@@ -249,31 +278,48 @@ Engel, Grossmann and Ockenfels (2024, SSRN)
 
 \end{center}
 
-## A First Example
+## Reseach Question
 
-- As a first sniff test, I study whether an investor/manager framing in a classic multi-round investment trust game (Berg, Dickhaut and McCabe, Games and Econ Behav 1995) affects the observed outcome.
-
-- Prior work has shown that the investment trust game is subject to context framing effects (e.g., Al-Ubaydli, Houser,
-Nye, Paganelli, and Pan, PLOS One 2013; Cronk and Wasielewski, J of Evolutionary Psychology 2008)
-
-- Can similar framing effects also be observed for LLMs?
+\begin{center}
+How does business context framing affect the response behavior of LLMs?
+\end{center}
 
 
-## The Neutral Frame
+## Motivation
+
+- Context frames are common in the applied experimental literature
+
+- Prior work has shown that their effect can be significant (e.g.,Liberman, Samuels and Ross Pers Soc Pscaol Bull 2014, and for investment trust games Al-Ubaydli, Houser, Nye, Paganelli, and Pan, PLOS One 2013; Cronk and Wasielewski, J of Evolutionary Psychology 2008)
+
+- Then again, they are rarely hypothesized or even explored in the accounting literature
+
+- LLMs reflect the priors of the average population in terms of, e.g., first order believes and social desirability biases. Thus, they might inform us how a general participant pool might react to contextual frames
+
+
+## Some First Examples
+
+- Multi-round investment trust game (Berg, Dickhaut and McCabe, Games and Econ Behav 1995) 
+
+- Deception (Gneezy, AER 200)
+
+- Honesty in budgeting (Evans et al., TAR 2001)
+
+
+## Trust: The Neutral Frame
 
 \begin{center}
 \includegraphics[height =0.85\textheight]{"materials/trust_otree_inst.jpeg"}
 \end{center}
 
 
-## The Investor/Manager Frame
+## Trust: The Investor/Manager Frame
 
 \begin{center}
 \includegraphics[height =0.85\textheight]{"materials/ftrust_otree_inst.jpeg"}
 \end{center}
 
 
-## Sample Composition
+## Trust: Sample Composition
 
 |                             |   Sender | Receiver |
 |:----------------------------|---------:|---------:|
@@ -282,14 +328,14 @@ Nye, Paganelli, and Pan, PLOS One 2013; Cronk and Wasielewski, J of Evolutionary
 | Total                       |       30 |       30 |
 
 
-## Descriptive Statistics by Framing
+## Trust: Descriptive Statistics by Framing
 
 ```{r DescStatsTab}
 datasummary((`Amount sent`=sent_amount) + (`Amount returned`=sent_back_amount) + (`% returned`=pct_returned) ~ experiment*(N + (`Mean`=mean) + (`S.D.` = sd) + (`Median`=median)), data = trounds )
 
 ```
 
-## Sent Amount by Framing
+## Trust: Sent Amount by Framing
 
 ```{r SentAmountFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")[c(2, 1)]
@@ -309,7 +355,7 @@ ggplot(trounds, aes(x = experiment, y = sent_amount, group = experiment, color =
 
 ```
 
-## Sent Amount by Round
+## Trust: Sent Amount by Round
 
 ```{r SentAmountRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 ggplot(trounds, aes(x = as.factor(round), y = sent_amount, group = experiment, color = experiment)) +
@@ -331,7 +377,7 @@ ggplot(trounds, aes(x = as.factor(round), y = sent_amount, group = experiment, c
 	)
 ```
 
-## Regression Results
+## Trust: Regression Results
 
 ```{r RegressionTab}
 modelsummary(
@@ -346,7 +392,7 @@ modelsummary(
 )
 ```
 
-## Some Verbal Response
+## Trust: Some Verbal Response
 
 ```{r ReasoningFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 vr <- trounds %>%
@@ -367,7 +413,7 @@ ggplot(vr, aes(label = word, size = count, color = experiment)) +
 
 
 
-## Manipulation Checks ;-)
+## Trust: Manipulation Checks ;-)
 
 ```{r ManCheckTab}
 df <- tparticipants %>%
@@ -385,7 +431,7 @@ datasummary(
 ```
 
 
-## A Very Preliminary Second Example (Gneezy, AER 2005)
+## Deception: Descriptives by Framing
 
 ```{r DecDescStatsTab}
 datasummary((`% lied`= lied) + (`% followed`=followed) ~ experiment*(N + (`Mean`=mean)), data = drounds )
@@ -393,20 +439,162 @@ datasummary((`% lied`= lied) + (`% followed`=followed) ~ experiment*(N + (`Mean`
 ct <- chisq.test(drounds$message, drounds$experiment)
 ```
 
-Chi-Square: `r format(round(ct$statistic, 3))`***
+Chi-Square: `r star_stat(ct)`
 
 
-## Summary and Next Steps 
+## Honesty: Descriptives
 
-It works (at least for a very simple albeit repeated game):
+```{r DecDescStatsHon}
+datasummary((`Absolute slack` = slack) + (`% slack claimed`= pct_slack_claimed) ~ experiment*(N + (`Mean`=Mean) + (`S.D.` = SD) + (`Median`=Median)), data = hrounds )
 
-- Context framing as investor/manager setting increases willingness of the sender to send money, and leaves strategy of the receiver unaffected
-- Costs: ~30 US-$ for 60 participants, duration: ~4 hours (fully scriptable)
+as = t.test(hrounds$slack ~ hrounds$experiment)
+rs = t.test(hrounds$pct_slack_claimed ~ hrounds$experiment)
+```
 
-Next steps
+Absolute Slack: `r star_stat(as, neg = T)`
 
-- Make framework portable 
-- Other games?
-- Identify seminal accounting study to compare to its "neutral" alternative 
-- Alternatively: replicate Liberman, Samuels and Ross (2014) study on "Community" vs. "Wallstreet" framing for prisoner's dilmma  (but: likelihood that results are in LLM training material...)
-- Compare findings with results for human participants 
+Relative Slack: `r star_stat(rs, neg = T)`
+
+
+## Honesty: Strategies
+
+```{r EvansStrategies}
+df <- hrounds %>%
+  group_by(experiment, session_code, player_id) %>%
+  summarise(
+    strategy = 
+      ifelse(
+        all(true_amount == reported_amount), "No slack",
+        ifelse(all(reported_amount == 6000), "All slack", "Some slack")
+      )
+  )
+
+datasummary((`Strategy` = strategy)  ~ experiment*N, data = df)
+
+ct <- chisq.test(df$strategy, df$experiment)
+```
+
+Chi-Square: `r star_stat(ct)`
+
+## Honesty: Average Claimed Slack by True Cost
+
+```{r EvansFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+names(color_scale) <- unique(levels(hrounds$experiment))
+color_scale_labs <- c("Neutral", "Business Framing")
+df <- hrounds %>%
+  group_by(true_amount, experiment) %>%
+  summarise(mn_slack = mean(slack))
+
+ggplot(df, aes(x = true_amount, y = mn_slack, color = experiment)) +
+      geom_jitter(size = 2) +
+      labs(
+        x = "True Cost",
+        y = "",
+        color = "Treatment"
+      ) +
+      theme_classic(base_size = 16) +
+      geom_segment(x = 4000, y = 2000, xend = 6000, yend = 0, color = "#E41A1C", lty = 2) + 
+      coord_cartesian(clip = 'off', xlim = c(4000, 6000), ylim = c(0, 2000)) + 
+  	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+
+      theme(plot.title.position =  "plot", legend.position = "bottom")
+```
+
+## Honesty: Absolute Regression Results
+
+```{r RegressionTabHon, asis = TRUE}
+tab_latex <- modelsummary(
+	list(`Slack` = lm(slack ~true_amount*experiment + round*experiment, data = hrounds)),
+	output = "gt",
+	stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  gof_map = list(
+		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
+		list(
+			raw = "nobs", clean = "Number of observations", 
+			fmt = function(x) format(x, big.mark=",")
+		)
+	),
+	coef_rename = c(
+		"round" = "Round",
+		"experimentBusiness Framing" = "Business Framing",
+		"experimentBusiness Framing:round" = "Round \u00d7 Business Framing",
+		"true_amount" = "True Cost",
+		"true_amount:experimentBusiness Framing" = "True Cost \u00d7 Business Framing"
+	)
+) %>% as_latex()
+
+# The below is needed since some tex environment chock on the longtable environment
+# See https://github.com/vincentarelbundock/modelsummary/issues/50
+tab_latex[1] <- sub("\\(Intercept\\)", "Intercept", tab_latex) 
+
+sub("Adjusted R2", "\\\\midrule\\\\addlinespace[2.5pt]\nAdjusted R²", tab_latex) %>%
+  fit_gt_table_to_slide_long(scale = 0.7) %>% center_table()
+```
+
+
+## Honesty: Relative Regression Results
+
+```{r RegressionTabHonPct, asis = TRUE}
+df <- hrounds %>%
+  mutate(
+    pct_slack_available = (6000 - true_amount)/2000
+  )
+tab_latex <- modelsummary(
+	list(`% Claimed Slack` = lm(pct_slack_claimed ~ pct_slack_available*experiment + round*experiment, data = df)),
+	output = "gt",
+	stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  gof_map = list(
+		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
+		list(
+			raw = "nobs", clean = "Number of observations", 
+			fmt = function(x) format(x, big.mark=",")
+		)
+	),
+	coef_rename = c(
+		"round" = "Round",
+		"experimentBusiness Framing" = "Business Framing",
+		"experimentBusiness Framing:round" = "Round \u00d7 Business Framing",
+		"pct_slack_available" = "% Availabe Slack",
+		"pct_slack_available:experimentBusiness Framing" = "% Availabe Slack \u00d7 Business Framing"
+	)
+) %>% as_latex()
+
+# The below is needed since some tex environment chock on the longtable environment
+# See https://github.com/vincentarelbundock/modelsummary/issues/50
+tab_latex[1] <- sub("\\(Intercept\\)", "Intercept", tab_latex) 
+
+sub("Adjusted R2", "\\\\midrule\\\\addlinespace[2.5pt]\nAdjusted R²", tab_latex) %>%
+  fit_gt_table_to_slide_long(scale = 0.7) %>% center_table()
+```
+
+## Honesty: Verbal Response
+
+```{r ReasoningFigHon, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+
+vr <- hrounds %>%
+	unnest_tokens(word, reported_amount_reason) %>%
+	anti_join(stop_words, by = "word") %>% 
+	group_by(experiment, word) %>%
+	filter(n() > 50) %>%
+	summarise(count = n())
+
+ggplot(vr, aes(label = word, size = count, color = experiment)) +
+	geom_text_wordcloud() +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	facet_wrap(~experiment) +
+	theme_minimal()
+
+```
+
+
+
+## Next Steps 
+
+- Implement Fehr, Kirchsteiger, and Riedl (QJE, 1993)
+- Decide on experiments to include in first draft
+- Finalize experimental materials for those
+- Run experiments with reasonable power 
+- Write first draft
+- Later: Compare (selected) findings with results for human participants 

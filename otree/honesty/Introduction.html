@@ -48,8 +48,10 @@
         knows the distribution underlying the true amount but 
         will never learn whether you miss-reported any specific true 
         amount. In any case, the reported amount needs to be at least as large 
-        as the true amount and at most {{ C.MAX_POOL}} points. 
-        Also, it has to be a multiple of {{ C.STEP }} points. 
+        as the true amount.
+        Also, it cannot be higher that {{ C.MAX_POOL}} points as otherwise
+        it would be obvious that you miss-reported.
+        Finally, it has to be a multiple of {{ C.STEP }} points. 
         Your total payoff is equal to the sum of 
         your base compensations and any potential differentials between the
         reported and the true amount over all rounds.
