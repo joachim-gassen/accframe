@@ -1,0 +1,41 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    {{ if group.round_number == 1 }}
+    <p>
+        You have been assigned the role of Participant B. 
+        {{ if C.NUM_ROUNDS > 1 }}
+            This will be your role for the entire game. 
+        {{ endif }}
+        Participant A will be played by another participant.
+    </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}        
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, participant
+        {{ else }}
+            Participant
+        {{ endif }}
+        A sent you {{ group.wage }}. Based on this you can choose your 
+        return payment. This return payment will reduce your payoff and 
+        determine the payoff of participant A by setting the multiple as 
+        detailed in the table below. Remember that the payoff of participant A
+        will be based on the difference of 100 minus the payment to you.
+        This difference will be multiplied by the multiplier that corresponds
+        to the payment that you will choose to determine the payoff of 
+        participant A. 
+    </p>
+    <p>
+        {{ formfields }}
+    </p>
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>    
+    <p>
+        {{ next_button }}
+    </p>
+
+{{ endblock }}

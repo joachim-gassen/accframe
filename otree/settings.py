@@ -49,6 +49,18 @@ SESSION_CONFIGS = [
         app_sequence=['fhonesty'],
         num_demo_participants=1,
         report_other_wealth=True
+    ),
+    dict(
+        name='gift',
+        display_name="Neutral gift exchange game",
+        app_sequence=['gift'],
+        num_demo_participants=2
+    ),
+    dict(
+        name='fgift',
+        display_name="Framed gift exchange game",
+        app_sequence=['fgift'],
+        num_demo_participants=2
     )
 ]
 

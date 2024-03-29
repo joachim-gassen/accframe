@@ -1,0 +1,17 @@
+{{ block title }}A Quick Check{{ endblock }}
+{{ block content }}
+    <p>
+        Thank you for reading the instructions. Let's see whether
+        you understood how the payoffs are determined. 
+        Please answer the following questions.
+        Below, you will find the table that links the multiplier to 
+        the payment that participant B can choose for your reference.
+    </p>
+    <p>Participant A send and amount of 10 and participant B decides on a payment of 2. </p>
+    <p>{{ formfields }}</p>
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>
+    <p> {{ next_button }} <p></p>
+
+{{ endblock }}

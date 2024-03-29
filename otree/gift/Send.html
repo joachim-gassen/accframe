@@ -1,0 +1,40 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    {{ if group.round_number == 1 }}
+        <p>
+            You have been assigned the role of Participant A.
+            {{ if C.NUM_ROUNDS > 1 }}
+                This will be your role for the entire experiment. 
+            {{ endif }}
+            Participant B will be represented by another
+            participant.
+        </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}    
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            Like in every round, you 
+        {{ else }} 
+            You 
+        {{ endif }}
+        have to decide on the payment that you will send to participant B.
+        This payment can be any integer between 0 and {{ C.WAGE_MAX }}.
+        Below, you will find the table that links the multiplier to 
+        the payment that participant B can choose for your reference.
+        This multiplier will determine your payoff. Your payoff will be based on
+        the difference of 100 minus your payment to participant B. 
+        This difference will be multiplied by the multiplier that corresponds
+        to the payment that participant B will choose.
+    </p>
+    {{ formfields }}
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>
+    <p>
+    {{ next_button }}
+    </p>
+
+{{ endblock }}

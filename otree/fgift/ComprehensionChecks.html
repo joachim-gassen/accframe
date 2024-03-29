@@ -1,0 +1,18 @@
+{{ block title }}A Quick Check{{ endblock }}
+{{ block content }}
+    <p>
+        Thank you for reading the instructions. Let's see whether
+        you understood how the payoffs are determined. 
+        Please answer the following questions.
+        Below, you will find the table that links the effort multiplier to 
+        the effort cost levels that participant B can choose for your reference.
+    </p>
+    <p>The supervisory board has decided to compensate the manager with 10 and 
+        the manager has decided to choose an effort cost of 2. </p>
+    <p>{{ formfields }}</p>
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>
+    <p> {{ next_button }} <p></p>
+
+{{ endblock }}

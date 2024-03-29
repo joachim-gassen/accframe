@@ -1,0 +1,42 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    {{ if group.round_number == 1 }}
+        <p>
+            You have been assigned the role of the supervisory board.
+            {{ if C.NUM_ROUNDS > 1 }}
+                This will be your role for the entire experiment. 
+            {{ endif }}
+            The manager will be represented by another
+            participant.
+        </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}    
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            Like in every round, you 
+        {{ else }} 
+            You 
+        {{ endif }}
+        have to decide on the compensation that you will award to the manager.
+        This compensation can be any integer between 0 and {{ C.WAGE_MAX }}.
+        In turn, the manager will choose a certain effort level inducing costs
+        to the manager and an effort multiple that affects firm value and thus
+        your payoff. It will be based on the difference of the initial firm value
+        (100) minus the compensation multiple. This difference will be multiplied
+        by the effort multiple to reflect the firm value and thus your payoff
+        post compensation.
+        Below, you will find the table that links the effort multiplier to 
+        the effort cost that the manager can choose for your reference.
+    </p>
+    {{ formfields }}
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>
+    <p>
+    {{ next_button }}
+    </p>
+
+{{ endblock }}

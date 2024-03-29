@@ -1,0 +1,42 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+    {{ if group.round_number == 1 }}
+    <p>
+        You have been assigned the role of the manager. 
+        {{ if C.NUM_ROUNDS > 1 }}
+            This will be your role for the entire experiment. 
+        {{ endif }}
+        The supervisory board will be played by another participant.
+    </p>
+    {{ else }}
+    <p>
+        You are in round {{ group.round_number }} of {{ C.NUM_ROUNDS }} rounds.
+    </p>
+    {{ endif }}        
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, the 
+        {{ else }}
+            The
+        {{ endif }}
+        supervisory board has awarded you a compensation of {{ group.wage }}. 
+        Based on this you can now choose your effort level. This effort level
+        will reduce your payoff by causing effort costs while at the same 
+        time affecting the firm value. You find the link between effort cost 
+        and effort multiple in the table below.
+        Remember that the firm value and thus the payoff of the supervisory 
+        board will be based on the difference between the initial firm value of 
+        100 and your compensation. This difference will be multiplied by the
+        effort multiple that corresponds to your effort choice. 
+    </p>
+    <p>
+        {{ formfields }}
+    </p>
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>    
+    <p>
+        {{ next_button }}
+    </p>
+
+{{ endblock }}
