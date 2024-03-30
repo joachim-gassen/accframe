@@ -46,10 +46,10 @@ RUN QUARTO_VERSION=1.4.550 \
     && dpkg -i quarto.deb \
     && rm quarto.deb
 
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN dpkg -i google-chrome-stable_current_amd64.deb
-RUN apt-get -y install -f
-RUN git clone https://github.com/joachim-gassen/botex /workspaces/botex 
+# RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# RUN dpkg -i google-chrome-stable_current_amd64.deb
+# RUN apt-get -y install -f
+# RUN git clone https://github.com/joachim-gassen/botex /workspaces/botex 
 
 CMD /bin/sh
 
