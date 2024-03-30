@@ -15,6 +15,7 @@ RUN apt-get -y install ghostscript && apt-get clean
 RUN apt-get -y install python3 && apt-get clean
 RUN apt-get -y install python3-venv && apt-get clean
 RUN apt-get -y install python3-wheel && apt-get clean
+RUN apt-get -y install gnupg2 && apt-get clean
 
 RUN install2.r --error --skipinstalled tidyverse 
 RUN install2.r --error --skipinstalled lubridate 
@@ -46,10 +47,13 @@ RUN QUARTO_VERSION=1.4.550 \
     && dpkg -i quarto.deb \
     && rm quarto.deb
 
-# RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-# RUN dpkg -i google-chrome-stable_current_amd64.deb
-# RUN apt-get -y install -f
-# RUN git clone https://github.com/joachim-gassen/botex /workspaces/botex 
+# The following method to add keys is depreciated but I am leavoing it the way it is
+# for the time being. See:
+# https://stackoverflow.com/questions/68992799/warning-apt-key-is-deprecated-manage-keyring-files-in-trusted-gpg-d-instead
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+RUN apt-get -y update
+RUN apt-get install -y google-chrome-stable
 
-CMD /bin/sh
+RUN git clone https://github.com/joachim-gassen/botex /workspaces/botex
 
