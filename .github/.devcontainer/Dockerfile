@@ -55,5 +55,5 @@ RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc
 RUN apt-get -y update
 RUN apt-get install -y google-chrome-stable
 
-RUN git clone https://github.com/joachim-gassen/botex /workspaces/botex
+CMD /bin/sh
 

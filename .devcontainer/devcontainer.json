@@ -2,7 +2,7 @@
 // README at: https://github.com/rocker-org/devcontainer-templates/tree/main/src/r-ver
 {
 	"name": "accframe_rver_4.2",
-	"dockerFile": "Dockerfile",
+	"image": "ghcr.io/joachim-gassen/accframe:latest",
 	"customizations": {
 		"vscode": {
 			"extensions": [

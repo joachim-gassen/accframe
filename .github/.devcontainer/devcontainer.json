@@ -1,0 +1,9 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/rocker-org/devcontainer-templates/tree/main/src/r-ver
+{
+	"name": "accframe_rver_4.2",
+	"dockerFile": "Dockerfile",
+	"build": {  
+		"cacheFrom": "ghcr.io/joachim-gassen/accframe:latest"
+	}
+}
