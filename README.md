@@ -10,26 +10,23 @@ This repository contains the code to run the LLM-based experiments outlined in t
 
 The oTree experiments conducted are in `otree` and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
 
-If you are interested in reproducing these output documents (currently only a short presentation) and have [quarto](https://quarto.org), Python, R, and a make environment installed, you might be able to produce the output by running `make all` in the project's root directory. The output will be generated in the `output` folder. An alternative (and potentially easier) way to reproduce the output would be to use [GitHub Codespaces](https://github.com/features/codespaces).
+If you are interested in reproducing these output documents (currently only a short presentation) and have [quarto](https://quarto.org), Python, R, and a make environment installed, you might be able to produce the output by running `make all` in the project's root directory. The output will be generated in the `output` folder.
 
-In case that you use GitHub Codespaces, these are the steps that you need to
-take:
+An alternative (and potentially easier) way to reproduce the output would be to use [GitHub Codespaces](https://github.com/features/codespaces). In case that you use GitHub Codespaces, these are the steps that you need to take:
 
 1. Create a GitHub codespace on main.
-2. Agree to give the codespace access to the botex repo.
-3. Once the codespace starts up, run `make all` to recreate the output
+2. Once the codespace starts up, run `make all` to recreate the output
 
 If you also want to run an experiment to see how everything works, you first
 need an OpenAI API key. Then
 
-1. Copy `_secrets.env` to `secrets.env` and edit. 
-2. Once the codespace starts up, run `cd .. && git clone https://github.com/joachim-gassen/botex` in its terminal to clone the botex repo locally. 
-3. `cd accframe` to return to the main repo.
-4. Activate the virtual environment `. .venv/bin/activate`.
-5. Install the botex package `pip install -e ../botex`
-6. Source the file `code/run_deception_exp.py` and observe the logging to the terminal
+1. Copy `_secrets.env` to `secrets.env` and add your OpenAI key 
+2. Run `git clone https://github.com/joachim-gassen/botex ../botex` in the terminal to clone the botex repo locally. 
+3. Activate the virtual environment `. venv/bin/activate`.
+4. Install the botex package `pip install -e ../botex`
+5. Source the file `code/run_deception_exp.py` and observe the logging to the terminal
 
-After that, you can find botex data in the database whose path you provided in `secrets.env`.
+After that, you can find botex data in the database whose path you provided in `secrets.env`. (`data/generated/botex_db.sqlite` by default)
 
 ## Todos
 

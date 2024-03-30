@@ -4,7 +4,7 @@
 # Commands
 
 RSCRIPT := Rscript --encoding=UTF-8
-PYTHON := . .venv/bin/activate; python
+PYTHON := . venv/bin/activate; python
 
 # Static Output
 
@@ -16,7 +16,7 @@ PRESENTATION := output/presentation.pdf
 
 # Setup targets
 
-VENV := .venv/touchfile
+VENV := venv/touchfile
 
 # Data Targets
 
@@ -43,15 +43,15 @@ clean:
 	rm -f $(ALL_TARGETS)
 
 distclean: clean
-	rm -rf .venv
+	rm -rf venv
 	rm -rf output/*
 	rm -rf data/generated/*
 
 # Recipes
 
 $(VENV): requirements.txt 
-	python3 -m venv .venv
-	. .venv/bin/activate && pip install -r requirements.txt
+	python3 -m venv venv
+	. venv/bin/activate && pip install -r requirements.txt
 	touch $(VENV)
 
 $(TRUST_EXP_DATA): $(VENV) code/extract_trust_exp_data.py \
