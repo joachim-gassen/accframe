@@ -1,56 +1,7 @@
 {{ block title }}Introduction{{ endblock }}
 {{ block content }}
-<p> 
-    This is an experiment on decision-making.
-    You have been randomly and anonymously paired with another participant.
-    One of you will be selected at random to be participant A;
-    the other will be participant B.
-    You will learn whether you are participant A or B prior to making any
-    decision.
-</p>
-<p>
-    {{ if C.NUM_ROUNDS == 1 }}
-        This experiment will be played for only 1 round. 
-        First, 
-    {{ else }} 
-        This experiment will be played over {{ C.NUM_ROUNDS }} rounds.
-        Throughout the experiment, you will remain in the same role.
-        Each round, 
-    {{ endif }}
-    participant A has to choose an amount that she or he 
-    will send to participant B. This amount can be any integer between
-    0 and {{ C.WAGE_MAX }}.
-    Next, participant B has to decide on a payment. 
-    She or he can choose between 10 different payments ranging from 0 to 18.
-    Each payment is linked to a multiplier between 0.1 and 1 in the way
-    that a higher payment implies a higher multiple. The link is as follows:
-</p>
-<p>
-{{ include_sibling 'multiplier_table.html' }} 
-</p>
-<p>
-    The payoff to participant B will be the amount sent by participant A
-    minus the chosen payment. The payoff of participant A
-    will be based on the difference of 100 minus the amount sent to participant B.
-    This difference will be multiplied by the multiplier that corresponds
-    to the payment that participant B has chosen to determine the payoff.
-    If this value is not an integer it will be rounded to yield the payoff.
-</p>
-<p>
-    So, for example, if participant A chooses to send an amount 50 to 
-    participant B and participant B chooses to pay 10, 
-    the payoff to participant B
-    will be 50 - 10 = 40 and the payoff to participant A will be 
-    (100 - 50) * 0.7 = 35.
-</p>
-    {{ if C.NUM_ROUNDS == 1 }}
-        The objective of the game is to maximize your payoff. 
-    {{ else }}
-        The payoffs that both players receive in each round increase their
-        private wealth. The objective of the game is to maximize your 
-        private wealth over the duration of the game. 
-    {{ endif }}
-</p>
+
+{{ include_sibling 'instructions.html' }} 
 
 <p>{{ next_button }}</p>
 

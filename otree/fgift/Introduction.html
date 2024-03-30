@@ -1,62 +1,8 @@
 {{ block title }}Introduction{{ endblock }}
 {{ block content }}
-<p>
-    This is an experiment on managerial compensation and managerial effort. 
-    You have been randomly and anonymously paired with another participant.
-    One of you will represent the role of a supervisory board 
-    deciding on managerial compensation. The other will be the manager 
-    deciding on managerial effort.
-    You will learn whether you are representing the supervisory board or 
-    the manager prior to taking any decision.
-</p>
-<p>
-    {{ if C.NUM_ROUNDS == 1 }}
-        This experiment will be played for only 1 round. 
-        First, 
-    {{ else }} 
-        This experiment will be played over {{ C.NUM_ROUNDS }} rounds.
-        Throughout the experiment, you will remain in the same role.
-        Each round, 
-    {{ endif }}
-    the supervisory board has to decide on the compensation that it will
-    pay to the manager. This amount can be any integer between
-    0 and the total value of the firm ({{ C.WAGE_MAX }}).
-    Next, the manager has to decide on her or his effort level. 
-    She or he can choose between 10 different effort levels. Each effort
-    level will be causing an effort cost to the manager ranging from 0 to 18 
-    and an effort multiplier affecting firm value between 0.1 and 1 in the way
-    that a higher effort cost implies a higher effort multiple. 
-    The link is as follows:
-</p>
-<p>
-{{ include_sibling 'multiplier_table.html' }} 
-</p>
-<p>
-    The payoff of the manager will be her or his compensation minus
-    minus the effort cost. The payoff of the supervisory board
-    will be based on the difference of the firm value of 100 and the 
-    managerial compensation. This difference will be multiplied by the 
-    effort multiplier that corresponds
-    to the effort cost that the manager is willing to incur in order to 
-    to increase firm value. 
-    If this value is not an integer it will be rounded to yield the payoff
-    to the supervisory board.
-</p>
-<p>
-    So, for example, if the supervisory board chooses a compensation of 50 
-    and the manager chooses an effort cost of 10, 
-    the payoff to the manager will be 
-    will be 50 - 10 = 40 and the payoff to the supervisory board will be 
-    (100 - 50) * 0.7 = 35.
-</p>
-    {{ if C.NUM_ROUNDS == 1 }}
-        The objective of the game is to maximize your payoff. 
-    {{ else }}
-        The payoffs that both players receive in each round increase their
-        private wealth. The objective of the game is to maximize your 
-        private wealth over the duration of the game. 
-    {{ endif }}
-</p> 
+
+{{ include_sibling 'instructions.html' }} 
+
 <p>{{ next_button }}</p>
 
 {{ endblock }}

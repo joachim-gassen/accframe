@@ -26,7 +26,7 @@ cost_effort = {
     10: 0.7,
     12: 0.8,
     15: 0.9,
-    18: 1
+    18: 1.0
 }    
 
 class Subsession(BaseSubsession):
@@ -37,11 +37,11 @@ class Group(BaseGroup):
         min=0,
         max=100,
         doc="""Amount received by the other participant""",
-        label="How much do you want to send to participant B? Please enter an amount from 0 to 100:",
+        label="What is the amount that you want to send to participant B? Please enter an amount from 0 to 100:",
     )
     cost = models.IntegerField(
         doc="""Amount sent back to the other participant""",
-        label="How much do you want to pay to affect the payoff of participant A? Please choose a feasible amount from the list below:",
+        label="How much effort cost do you want to spend to affect the payoff of participant A? Please choose a feasible amount from the list below:",
     )
     effort = models.FloatField()
 
@@ -71,7 +71,7 @@ class Player(BasePlayer):
         ],
     )
     comprehension_check_post2 = models.IntegerField(
-        label="What was the effect of the payment of participant B?",
+        label="What was the effect of the effort cost chosen by participant B?",
         blank=False,
         choices=[
             [1, 'It directly flew to participant A, increasing his or her payoff'],
@@ -125,6 +125,16 @@ class ComprehensionChecks(Page):
         return player.round_number == 1
     form_model = 'player'
     form_fields = ['comprehension_check_pre1', 'comprehension_check_pre2']
+
+class Feedback(Page):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
+    def vars_for_template(player: Player):
+        return dict(
+            both_correct=player.comprehension_check_pre1 == 27 and 
+                player.comprehension_check_pre2 == 8
+        )
 
 
 class Send(Page):
@@ -190,6 +200,7 @@ class Thanks(Page):
 page_sequence = [
     Introduction,
     ComprehensionChecks,
+    Feedback,
     Send,
     SendBackWaitPage,
     SendBack,

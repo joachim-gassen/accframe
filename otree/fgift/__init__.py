@@ -126,6 +126,15 @@ class ComprehensionChecks(Page):
     form_model = 'player'
     form_fields = ['comprehension_check_pre1', 'comprehension_check_pre2']
 
+class Feedback(Page):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
+    def vars_for_template(player: Player):
+        return dict(
+            both_correct=player.comprehension_check_pre1 == 27 and 
+                player.comprehension_check_pre2 == 8
+        )
 
 class Send(Page):
     """This page is only for P1
@@ -190,6 +199,7 @@ class Thanks(Page):
 page_sequence = [
     Introduction,
     ComprehensionChecks,
+    Feedback,
     Send,
     SendBackWaitPage,
     SendBack,

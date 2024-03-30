@@ -16,20 +16,25 @@
     {{ endif }}    
     <p>
         {{ if C.NUM_ROUNDS > 1 }}
-            Like in every round, you 
+            Like in every round, the 
         {{ else }} 
-            You 
+            The 
         {{ endif }}
-        have to decide on the compensation that you will award to the manager.
+        initial value of the firm is 100 and you have to decide on the 
+        compensation that you will award to the manager.
         This compensation can be any integer between 0 and {{ C.WAGE_MAX }}.
         In turn, the manager will choose a certain effort level inducing costs
-        to the manager and an effort multiple that affects firm value and thus
-        your payoff. It will be based on the difference of the initial firm value
-        (100) minus the compensation multiple. This difference will be multiplied
-        by the effort multiple to reflect the firm value and thus your payoff
-        post compensation.
+        to the manager. 
         Below, you will find the table that links the effort multiplier to 
         the effort cost that the manager can choose for your reference.
+        This effort multiplier will determine your payoff. Your payoff 
+        will be calculated as the product of the effort multiplier with
+        the difference of the initial firm value of 100 minus the compensation
+        that you choose to pay to the manager.
+        <ul>
+            <li>Your Payoff = Effort Multiplier * (Initial firm value of 100 - Compensation paid by you to manager)</li>
+            <li>Payoff Manager = Compensation received from you - Effort Cost</li>
+        </ul>
     </p>
     {{ formfields }}
     <p>

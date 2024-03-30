@@ -20,15 +20,22 @@
         {{ else }} 
             You 
         {{ endif }}
-        have to decide on the payment that you will send to participant B.
-        This payment can be any integer between 0 and {{ C.WAGE_MAX }}.
-        Below, you will find the table that links the multiplier to 
-        the payment that participant B can choose for your reference.
-        This multiplier will determine your payoff. Your payoff will be based on
-        the difference of 100 minus your payment to participant B. 
-        This difference will be multiplied by the multiplier that corresponds
-        to the payment that participant B will choose.
+        have an initial wealth of 100 and have to decide on the amount 
+        that you will send to participant B.
+        This amount can be any integer between 0 and {{ C.WAGE_MAX }}.
+        Based on the amount that she or he has received, participant B 
+        will choose an effort level, inducing an effort cost.
+        Below, you will find the table that links the effort multiplier to 
+        the effort cost that participant B can choose for your reference.
+        This effort multiplier will determine your payoff. Your payoff 
+        will be calculated as the product of the effort multiplier with
+        the difference of your initial wealth of 100 minus the amount 
+        sent to participant B.
     </p>
+    <ul>
+        <li>Your Payoff = Effort Multiplier * (100 - Amount sent by you)</li>
+        <li>Payoff B = Amount sent by you - Effort Cost</li>
+    </ul>    
     {{ formfields }}
     <p>
         {{ include_sibling 'multiplier_table.html' }} 

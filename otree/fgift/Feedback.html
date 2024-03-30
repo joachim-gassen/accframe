@@ -1,0 +1,69 @@
+{{ block title }}A Quick Check{{ endblock }}
+{{ block content }}
+    <p>
+        Thank you for taking these comprehension checks.
+        Let's see whether you understood how the payoffs are determined.
+    </p>
+    <p>
+        The setting was: 
+        "The supervisory board has decided to compensate the manager with 
+        10 and the manager has decided to choose an effort cost of 2."
+    </p>
+    <p>You answered</p>
+    <ul>
+        <li>Supervisory board payoff is {{ player.comprehension_check_pre1 }}.</li>
+        <li>Manager payoff is {{ player.comprehension_check_pre2 }}.</li>
+    </ul>
+    {{ if both_correct }}
+        <p>
+            <strong>Great! You answered both questions correctly.</strong>
+        </p>
+        <p>
+            Below you can find the calculation of the payoffs for this 
+            setting and a copy of the instructions from the previous page 
+            for your reference. Press 'Next' when you are ready to start 
+            the experiment.
+        </p>
+    {{ else }}
+        <p>
+            <strong>
+                Unfortunately, you answered at least one question incorrectly.
+            </strong>
+        </p>
+        <p>
+            Please carefully inspect the calculations below to understand
+            where your mistake was. You can also review the instructions
+            from the previous page copied below for your reference. 
+            Press 'Next' when you are ready to start the experiment.
+        </p>
+    {{ endif }}
+    <p>
+        The payoffs of the participants for the setting below are
+        calculated as follows:
+    </p>
+    <ul>
+        <li>
+            The supervisory board awards a compensation of 10 to the manager, 
+            reducing the initial firm value from 100 to 90.</li>
+        <li>Based on this conversation, the manager decides for an effort level 
+            leading to effort costs of 2.</li>
+        <li>Following the table below this implies a effort multiplier of 0.3.</li>
+        <li>The payoff for the manager is 10 (his or her compensation) 
+            - 2 (the effort costs) = <strong>8</strong>.</li>
+        <li>The payoff of the supervisory board is the product of the 
+            effort multiplier as chosen by the manager (0.3) 
+            with initial firm value after compensation (100 - 10 = 90) = 
+            <strong>27</strong>.</li>
+    </ul>
+    </p>
+    <div class="card bg-light m-3">
+        <div class="card-body">
+            <h3>
+                Instructions
+            </h3>
+                {{ include_sibling 'instructions.html' }} 
+            </div>
+    </div>
+    <p> {{ next_button }} <p></p>
+
+{{ endblock }}

@@ -19,15 +19,19 @@
         {{ else }}
             Participant
         {{ endif }}
-        A sent you {{ group.wage }}. Based on this you can choose your 
-        return payment. This return payment will reduce your payoff and 
-        determine the payoff of participant A by setting the multiple as 
-        detailed in the table below. Remember that the payoff of participant A
-        will be based on the difference of 100 minus the payment to you.
-        This difference will be multiplied by the multiplier that corresponds
-        to the payment that you will choose to determine the payoff of 
-        participant A. 
+        A sent you an amount of {{ group.wage }}. Based on this you can 
+        choose your effort level, inducing effort costs. These effort costs
+        will reduce your payoff and determine the payoff of participant A 
+        by setting the effort multiple as detailed in the table below. 
+        
+        Remember that the payoff of participant A will be calculated as the 
+        product of the effort multiplier with the difference of her or his 
+        initial wealth of 100 minus the amount sent to you.       
     </p>
+    <ul>
+        <li>Your Payoff = Amount received from A - Effort Cost</li>
+        <li>Payoff A = Effort multiplier chosen by you * (100 - Amount sent to you)</li>
+    </ul>    
     <p>
         {{ formfields }}
     </p>

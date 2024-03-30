@@ -26,9 +26,11 @@ DECEPTION_EXP_DATA := data/generated/deception_participants.csv \
 	data/generated/deception_rounds.csv
 HONESTY_EXP_DATA := data/generated/honesty_participants.csv \
 	data/generated/honesty_rounds.csv
+GIFT_EXP_DATA := data/generated/gift_participants.csv \
+	data/generated/gift_rounds.csv
 
 ALL_TARGETS := $(PRESENTATION) $(TRUST_EXP_DATA) \
-	$(DECEPTION_EXP_DATA) $(HONESTY_EXP_DATA)
+	$(DECEPTION_EXP_DATA) $(HONESTY_EXP_DATA) $(GIFT_EXP_DATA)
 	
 # Phony targets
 
@@ -69,8 +71,13 @@ $(HONESTY_EXP_DATA): $(VENV) code/extract_honesty_exp_data.py \
 	data/exp_runs/honesty_botex_db_2024-03-27.sqlite3
 	$(PYTHON) code/extract_honesty_exp_data.py
 
+$(GIFT_EXP_DATA): $(VENV) code/extract_gift_exp_data.py \
+	data/exp_runs/gift_otree_2024-03-29.csv \
+	data/exp_runs/gift_botex_db_2024-03-29.sqlite3
+	$(PYTHON) code/extract_gift_exp_data.py
+
 $(PRESENTATION): $(TRUST_EXP_DATA) $(DECEPTION_EXP_DATA) \
-	$(HONESTY_EXP_DATA) \
+	$(HONESTY_EXP_DATA) $(GIFT_EXP_DATA) \
 	docs/materials/beamer_theme_trr266_16x9.sty \
 	docs/materials/trr266_logo.eps \
 	docs/materials/trust_otree_inst.jpeg \

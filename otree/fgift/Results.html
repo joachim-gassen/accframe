@@ -19,8 +19,8 @@
             costs of {{ group.cost }}, and
             an effort multiple of {{ effort }}. 
             The firm value after compensation and thus your payoff thus is 
-            thus (100 - {{ group.wage }}) * 
-            {{ effort }} = <strong>{{ player.payoff }}</strong>.
+            thus {{ effort }} * (100 - {{ group.wage }}) 
+            = <strong>{{ player.payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>

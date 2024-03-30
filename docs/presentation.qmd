@@ -103,6 +103,20 @@ hparticipants <- read_csv("../data/generated/honesty_participants.csv", show_col
 		), c("Neutral Framing", "Business Framing")),
 	)
 
+grounds <- read_csv("../data/generated/gift_rounds.csv", show_col_types = FALSE) %>%
+	mutate(
+		experiment = factor(ifelse(
+			experiment == "fgift",
+			"Business Framing", "Neutral Framing"
+		), c("Neutral Framing", "Business Framing")),
+	)
+gparticipants <- read_csv("../data/generated/gift_participants.csv", show_col_types = FALSE) %>%
+	mutate(
+		experiment = factor(ifelse(
+			experiment == "fgift",
+			"Business Framing", "Neutral Framing"
+		), c("Neutral Framing", "Business Framing")),
+	)
 
 
 # Needs \usepackage{adjustbox} in preamble
@@ -296,14 +310,15 @@ How does business context framing affect the response behavior of LLMs?
 - LLMs reflect the priors of the average population in terms of, e.g., first order believes and social desirability biases. Thus, they might inform us how a general participant pool might react to contextual frames
 
 
-## Some First Examples
+## The Games
 
-- Multi-round investment trust game (Berg, Dickhaut and McCabe, Games and Econ Behav 1995) 
+- Investment trust game (Berg, Dickhaut and McCabe, Games and Econ Behav 1995) 
 
 - Deception (Gneezy, AER 200)
 
 - Honesty in budgeting (Evans et al., TAR 2001)
 
+- Gift exchange (Fehr, Kirchsteiger, and Riedl, QJE 1993)
 
 ## Trust: The Neutral Frame
 
@@ -588,11 +603,105 @@ ggplot(vr, aes(label = word, size = count, color = experiment)) +
 
 ```
 
+## Gift: Descriptives
+
+```{r DecDescStatsGift}
+datasummary((`Wage offered` = wage) + (`Effort Cost`= cost) ~ experiment*(N + (`Mean`=Mean) + (`S.D.` = SD) + (`Median`=Median)), data = grounds )
+
+wt = t.test(grounds$wage ~ grounds$experiment)
+ct = t.test(grounds$cost ~ grounds$experiment)
+```
+
+Difference in wage offered (t-stat): `r star_stat(wt, neg = T)`
+
+Difference in effort cost (t-stat): `r star_stat(ct, neg = T)`
+
+
+## Gift: Association between Wage and Effort
+
+```{r FigGift, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+names(color_scale) <- unique(levels(hrounds$experiment))
+color_scale_labs <- c("Neutral", "Business Framing")
+
+ggplot(grounds, aes(x = wage, y = cost, color = experiment)) +
+  geom_jitter(size = 1) +
+  labs(
+    x = "Wage offered",
+    y = "Effort cost"
+  ) +
+  geom_smooth(method = "lm", model = y ~ x) +
+  theme_classic(base_size = 16) +
+  coord_cartesian(clip = 'off', xlim = c(0, 100), ylim = c(0, 18)) + 
+  scale_color_manual("", values = color_scale, labels = color_scale_labs)
+```
+
+## Gift: Wage by Round
+
+```{r GiftWageRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+ggplot(grounds, aes(x = as.factor(round), y = wage, group = experiment, color = experiment)) +
+	geom_beeswarm(size = 0.25, corral = "wrap") +
+	stat_summary(
+		aes(fill = experiment), color = NA, 
+		geom = "ribbon", fun = "mean", alpha=0.1,
+		fun.min = function(x) mean(x) - 1.96 / (length(x) - 1) * sd(x), 
+		fun.max = function(x) mean(x) + 1.96 / (length(x) - 1) * sd(x),
+		show.legend = FALSE
+	) + 
+	labs(x = "Round", y = "", color = "") +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	scale_fill_manual("", values = color_scale, labels = color_scale_labs) +
+	theme_minimal() +
+	theme(
+		panel.grid.major.x  = element_blank(),
+		panel.grid.minor = element_blank()
+	)
+```
+
+## Gift: Effort Cost by Round
+
+```{r GiftCostRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+ggplot(grounds, aes(x = as.factor(round), y = cost, group = experiment, color = experiment)) +
+	geom_beeswarm(size = 0.25, corral = "wrap") +
+	stat_summary(
+		aes(fill = experiment), color = NA, 
+		geom = "ribbon", fun = "mean", alpha=0.1,
+		fun.min = function(x) mean(x) - 1.96 / (length(x) - 1) * sd(x), 
+		fun.max = function(x) mean(x) + 1.96 / (length(x) - 1) * sd(x),
+		show.legend = FALSE
+	) + 
+	labs(x = "Round", y = "", color = "") +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	scale_fill_manual("", values = color_scale, labels = color_scale_labs) +
+	theme_minimal() +
+	theme(
+		panel.grid.major.x  = element_blank(),
+		panel.grid.minor = element_blank()
+	)
+```
+
+## Honesty: Verbal Response
+
+```{r ReasoningFigGift, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+
+vr <- grounds %>%
+	mutate(reasons = paste(wage_reason, cost_reason)) %>%
+	unnest_tokens(word, reasons) %>%
+	anti_join(stop_words, by = "word") %>% 
+	group_by(experiment, word) %>%
+	filter(n() > 50) %>%
+	summarise(count = n())
+
+ggplot(vr, aes(label = word, size = count, color = experiment)) +
+	geom_text_wordcloud() +
+	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+	facet_wrap(~experiment) +
+	theme_minimal()
+
+```
 
 
 ## Next Steps 
 
-- Implement Fehr, Kirchsteiger, and Riedl (QJE, 1993)
 - Decide on experiments to include in first draft
 - Finalize experimental materials for those
 - Run experiments with reasonable power 
