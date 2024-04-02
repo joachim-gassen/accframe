@@ -21,6 +21,7 @@ After that, you can find can also run other experiments if you want. This would 
 
 ## Todos
 
+- [ ] Make a change in the README
 - [ ] Decide on accounting studies to LLM-replicate with and without context framing.
 - [ ] Submit a proposal to the [ENEAR conference](https://sites.google.com/view/enearonline/2024-conference)
 - [ ] Write a short and potentially more technical draft not containing any human experiments before the workshop so that we can take this public.  
