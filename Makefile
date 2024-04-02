@@ -8,11 +8,12 @@ PYTHON := . venv/bin/activate; python
 
 # Static Output
 
-OUTPUT := static/presentation.pdf
+OUTPUT := static/presentation.pdf static/appendix_trust_example.pdf
 
 # Main targets
 
 PRESENTATION := output/presentation.pdf
+APPENDIX_TRUST_EXAMPLE := output/appendix_trust_example.pdf
 
 # Setup targets
 
@@ -29,8 +30,16 @@ HONESTY_EXP_DATA := data/generated/honesty_participants.csv \
 GIFT_EXP_DATA := data/generated/gift_participants.csv \
 	data/generated/gift_rounds.csv
 
-ALL_TARGETS := $(PRESENTATION) $(TRUST_EXP_DATA) \
-	$(DECEPTION_EXP_DATA) $(HONESTY_EXP_DATA) $(GIFT_EXP_DATA)
+# Experiment targets
+
+EXP_RUN_APPENDIX := data/exp_runs/app_example.sqlite3
+
+
+# All Targets besides experiment targets
+
+ALL_TARGETS := $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE) \
+	$(TRUST_EXP_DATA) $(DECEPTION_EXP_DATA) \
+	$(HONESTY_EXP_DATA) $(GIFT_EXP_DATA)
 	
 # Phony targets
 
@@ -46,12 +55,27 @@ distclean: clean
 	rm -rf venv
 	rm -rf output/*
 	rm -rf data/generated/*
+	rm -rf $(EXP_RUN_APPENDIX)
+
+# oTree Dependencies
+
+$(OTREE_TRUST): otree/trust/__init__.py \
+	otree/trust/instructions.html \
+	otree/trust/Introduction.html \
+	otree/trust/Send.html \
+	otree/trust/SendBack.html \
+	otree/trust/Results.html \
+	otree/trust/Thanks.html
+	
 
 # Recipes
 
 $(VENV): requirements.txt 
 	python3 -m venv venv
-	. venv/bin/activate && pip install -r requirements.txt
+	. venv/bin/activate 
+	pip install -r requirements.txt
+	pip install --no-deps otree 
+	pip install -e ../botex
 	touch $(VENV)
 
 $(TRUST_EXP_DATA): $(VENV) code/extract_trust_exp_data.py \
@@ -76,6 +100,10 @@ $(GIFT_EXP_DATA): $(VENV) code/extract_gift_exp_data.py \
 	data/exp_runs/gift_botex_db_2024-03-29.sqlite3
 	$(PYTHON) code/extract_gift_exp_data.py
 
+$(EXP_RUN_APPENDIX): $(VENV) $(OTREE_TRUST) \
+	code/run_appendix_trust_example.py
+	$(PYTHON) code/run_appendix_trust_example.py
+	
 $(PRESENTATION): $(TRUST_EXP_DATA) $(DECEPTION_EXP_DATA) \
 	$(HONESTY_EXP_DATA) $(GIFT_EXP_DATA) \
 	docs/materials/beamer_theme_trr266_16x9.sty \
@@ -86,7 +114,13 @@ $(PRESENTATION): $(TRUST_EXP_DATA) $(DECEPTION_EXP_DATA) \
 	docs/presentation.qmd
 	quarto render docs/presentation.qmd --quiet
 	rm -rf output/presentation_files
+	
+$(APPENDIX_TRUST_EXAMPLE): $(EXP_RUN_APPENDIX) \
+	docs/appendix_trust_example.qmd
+	quarto render docs/appendix_trust_example.qmd --quiet
+	rm -rf output/appendix_trust_example_files
 
-$(OUTPUT): $(PRESENTATION)
-	cp $(PRESENTATION) $(OUTPUT)
+$(OUTPUT): $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE)
+	cp $(PRESENTATION) static/
+	cp $(APPENDIX_TRUST_EXAMPLE) static/
 	
