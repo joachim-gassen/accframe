@@ -7,6 +7,6 @@ jupyter
 # a very old version of markupsafe (otree 5.10.4 requires markupsafe==1.1.1)
 # and thus cannot only installed without dependencies
 setuptools
-psycopg2
+psycopg2-binary
 sentry-sdk
 uvicorn
