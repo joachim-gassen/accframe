@@ -15,28 +15,28 @@
             {{ else }}
                 You chose to send participant B {{ group.sent_amount }}.
             {{ endif }}
-            Participant B returned {{ group.sent_back_amount }}. Your payoff 
-            thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
+            Participant B returned {{ group.sent_back_amount }} points. 
+            Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
             {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the game, your accumulated total 
-                wealth is {{ p1_wealth }}, while the accumulated wealth of 
-                participant B is {{ p2_wealth }}.
+                As this was the only round of the experiment, your total 
+                points are {{ p1_wealth }}, while the total points of 
+                participant B are {{ p2_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total wealth is 
-                    {{ p1_wealth }}, while the accumulated wealth of 
-                    participant B is {{ p2_wealth }}.
+                    This was the last round. Your accumulated total points are 
+                    {{ p1_wealth }}, while the accumulated total points of
+                    participant B are {{ p2_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated wealth over the rounds so far is 
-                    {{ p1_wealth }}, while the accumulated wealth of 
-                    participant B is {{ p2_wealth }}.
+                    Your accumulated total points over the rounds so far are 
+                    {{ p1_wealth }}, while the accumulated total points of 
+                    participant B are {{ p2_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}
@@ -51,22 +51,22 @@
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the game, your accumulated total 
-                wealth is {{ p2_wealth }}, while the accumulated wealth of 
-                participant A is {{ p1_wealth }}.
+                As this was the only round of the experiment, your total 
+                points are {{ p2_wealth }}, while the total points
+                of participant A are {{ p1_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total wealth is 
-                    {{ p2_wealth }}, while the accumulated wealth of 
-                    participant A is {{ p1_wealth }}.
+                    This was the last round. Your accumulated total points are 
+                    {{ p2_wealth }}, while the accumulated total points of 
+                    participant A are {{ p1_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated wealth over the rounds so far is 
+                    Your accumulated total points over the rounds so far are 
                     {{ p2_wealth }}, while the accumulated wealth of 
-                    participant A is {{ p1_wealth }}.
+                    participant A are {{ p1_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}

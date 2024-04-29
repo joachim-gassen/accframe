@@ -10,65 +10,63 @@
     {{ if player.id_in_group == 1 }}
         <p>
             {{ if C.NUM_ROUNDS > 1 }}
-                This round, you decided to invest 
-                {{ group.sent_amount }} into the firm.
+                This round, you chose to invest 
+                {{ group.sent_amount }}.
             {{ else }}
-                You decided to invest {{ group.sent_amount }} into the firm.
+                You chose to invest {{ group.sent_amount }}.
             {{ endif }}
-            The manager paid you a dividend of  {{ group.sent_back_amount }}. 
+            The manager returned {{ group.sent_back_amount }} points. 
             Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
             {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the experiment, your accumulated 
-                total wealth is {{ p1_wealth }}, while the accumulated wealth of 
-                the manager is {{ p2_wealth }}.
+                As this was the only round of the experiment, your total 
+                points are {{ p1_wealth }}, while the total points of 
+                the manager are {{ p2_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total wealth is 
-                    {{ p1_wealth }}, while the accumulated wealth of 
-                    the manager is {{ p2_wealth }}.
+                    This was the last round. Your accumulated total points are 
+                    {{ p1_wealth }}, while the accumulated total points of
+                    the manager are {{ p2_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated wealth over the rounds so far is 
-                    {{ p1_wealth }}, while the accumulated wealth of 
-                    the manager is {{ p2_wealth }}.
+                    Your accumulated total points over the rounds so far are 
+                    {{ p1_wealth }}, while the accumulated total points of 
+                    the manager are {{ p2_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}
     {{ else }}
         <p>
-            This round, your investor has decided to invest 
-            {{ group.sent_amount }} into the firm.
-            As the firm is very profitable, this investment has lead to
-            a firm return of {{ tripled_amount }}.
-            You chose to pay a dividend of {{ group.sent_back_amount }},
-            to the investor. Thus your private compensation of this round is
+            This round, the investor invested {{ group.sent_amount }}.
+            They were tripled so you received {{ tripled_amount }}.
+            You chose to return {{ group.sent_back_amount }} as a dividend,
+            thus your payoff of this round is
             {{ tripled_amount }} - {{ group.sent_back_amount }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the game, your accumulated total 
-                wealth is {{ p2_wealth }}, while the accumulated wealth of 
-                the investor is {{ p1_wealth }}.
+                As this was the only round of the experiment, your total 
+                points are {{ p2_wealth }}, while the total points
+                of the investor are {{ p1_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total wealth is 
-                    {{ p2_wealth }}, while the accumulated wealth of 
-                    the investor is {{ p1_wealth }}.
+                    This was the last round. Your accumulated total points are 
+                    {{ p2_wealth }}, while the accumulated total points of 
+                    the investor are {{ p1_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated wealth over the rounds so far is 
+                    Your accumulated total points over the rounds so far are 
                     {{ p2_wealth }}, while the accumulated wealth of 
-                    the investor is {{ p1_wealth }}.
+                    the investor are {{ p1_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}

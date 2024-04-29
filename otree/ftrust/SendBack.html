@@ -2,13 +2,11 @@
 {{ block content }}
     {{ if group.round_number == 1 }}
     <p>
-        You have been assigned the role of a manager of a publicly-listed firm.
-        Please try to impersonate the role of a publicly-listed firm manager 
-        very closely when taking your decisions. 
+        You have been assigned the role of the manager. 
         {{ if C.NUM_ROUNDS > 1 }}
-            This will be your role for the entire game. 
+            This will be your role for the entire experiment. 
         {{ endif }}
-        The investor will be impersonated by another participant.
+        The role of the investor will be assigned to another participant.
     </p>
     {{ else }}
     <p>
@@ -21,12 +19,10 @@
         {{ else }}
             The investor
         {{ endif }}
-        has decided to invest {{ group.sent_amount }} into the firm.
-        Given that the firm is very profitable, its returns are now 
-        {{ tripled_amount }}.
-        How much do you want to pay out as a dividend to the investor?
-        Remember that any remaining amount will be paid out to you 
-        as compensation.
+        invested {{ group.sent_amount }} 
+        and you received {{ tripled_amount }}.
+        Now you have {{ tripled_amount }}.
+        How much will you send as a dividend to the investor?
     </p>
 
     {{ formfields }}
