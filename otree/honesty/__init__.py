@@ -9,7 +9,7 @@ This a is a neutral variant of experiment 1 in Evans III et al. (2001).
 class C(BaseConstants):
     NAME_IN_URL = 'exp3'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 10
+    NUM_ROUNDS = 1
     COMPENSATION = 250
     MIN_POOL = 4000
     MAX_POOL = 6000
@@ -31,15 +31,19 @@ class Player(BasePlayer):
         blank=False
     )
     comprehension_check1 = models.IntegerField(
-        label="In each round: Who was informed about the true amount?",
-        blank=False
+        label="Who was informed about the true amount?",
+        blank=False,
+        choices = [
+            [1, 'Only me'],
+            [2, 'Me and the computer of the organizers']
+        ]
     )
     comprehension_check2 = models.IntegerField(
         label="Assuming that you only care about your points at the end, what would have been the optimal strategy?",
         blank=False,
         choices=[
-            [1, 'Reporting 6000 points every round'],
-            [2, 'Reporting the true amount every round']
+            [1, 'Reporting 6000 points'],
+            [2, 'Reporting the true amount']
         ],
     )
     human_check = models.IntegerField(
@@ -58,12 +62,6 @@ class Player(BasePlayer):
 def reported_amount_choices(player):
     return list(range(int(player.true_amount), C.MAX_POOL + C.STEP, C.STEP))
 
-def comprehension_check1_choices(player):
-    if player.session.config['fake_participant']:
-        option_2 = 'Me and the other participant'
-    else:
-        option_2 = 'Me and the external party'
-    return [[1, 'Only me'], [2, option_2]]
 
 # --- Functions ----------------------------------------------------------------
 

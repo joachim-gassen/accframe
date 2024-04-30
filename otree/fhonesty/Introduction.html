@@ -1,42 +1,51 @@
 {{ block title }}Introduction{{ endblock }}
 {{ block content }}
     <p>
-        This is an experiment in corporate decision making that runs over 
-        {{ C.NUM_ROUNDS }} rounds. 
-        In it, you will take the role of a unit manager that produces 
-        products that are sold to customers in an external market. The price
-        of product is fixed at {{ price }} US-$ and each round you will sell 
-        a quantity of {{ quantity }} units. To produce the goods, you need
-        a cost budget from your company's headquarters. 
-        In each round, you will receive a compensation of {{ C.COMPENSATION }} 
-        US-$ regardless of your choices. 
+        This is an experiment on budgeting in organizations.
+        Your objective in this experiment is maximizing your points.
+        Your role in the experiment is division manager in a firm.
+        You will be interacting with the computer of the organizers, which will 
+        represent the firm's corporate headquarters.
+        Your task is to report the production costs of your division for the 
+        upcoming period to the firm's corporate headquarters in the form 
+        of a budget request. 
+        As division manager you have access to a reliable private forecasting 
+        system that allows you to accurately predict what the actual production 
+        costs will be before you submit your budget request to the 
+        firm's corporate headquarters.
+        The firm's corporate headquarters does not have access to this forecasting system.
+        Both you and corporate headquarters know the 
+        probability distribution of the number that you need to report. 
+        This probability distribution is a uniform distribution with a 
+        minimum of 4,000 points, a maximum of 6,000 points, and possible 
+        increments of 50 points.
+        The firm will sell 1,000 units of the product that is produced 
+        by your division for a sales price of 6 points per unit. Thus the 
+        firm will earn a sales revenue of 1,000 x 6 = 6,000 points. 
+        You can make any budget request that is between the actual costs 
+        and the maximum costs, including these values. 
+        Corporate headquarters will always fund your request independent 
+        of what the actual costs are.
+        The difference between the requested budget and the actual costs is yours to keep.
+        As manager, you also receive a fixed wage of 250 points.
+        Thus, your payoff will be determined as follows: 250 + (budget cost - actual cost).
     </p>
-    <p> 
-        Each period, you will learn the total costs that it will take to produce 
-        the demanded goods. The total costs will be univariately distributed 
-        between {{ C.MIN_POOL }} to {{ C.MAX_POOL }} US-$ in {{ C.STEP }} US-$ 
-        increments. 
-        You are then required to file these costs as a budget request 
-        with your company's headquarters to finance production. 
-        This budget request needs at the minimum be large enough to cover your 
-        production costs. But also if you decide to 
-        file an inflated budget request, your company's headquarters will
-        grant you the requested amount as it is unable to 
-        tell your miss-reporting. The resulting budget slack will increase
-        your private wealth but at the same time reduce your company's profits 
-        that are defined as the differential between product revenues and your 
-        filed budget request.
-    </p>
-    <p>
-        Your company's headquarter is informed about the general distribution of 
-        production costs but will never learn whether you inflated your budget
-        in any specific round. In any case, your budget request needs to be 
-        at least as large as the true costs. Also, it cannot be higher than
-        {{ C.MAX_POOL}} US-$ as in that case the company's headquarters would
-        know for sure that the budget is inflated. 
-        Also, it has to be a multiple of {{ C.STEP }} US-$. 
-        Your total payoff is equal to the sum of 
-        your compensations and any potential budget slacks over all rounds.
+    <p>   
+        Here are two examples.
+        <ul>
+            <li>
+                Example 1: Suppose your forecasting system tells you that the 
+                actual production costs are 5,000 
+                and you also request a budget of 5,000. 
+                Then your payoff is 250 + (5,000 - 5,000) = 250.
+            </li>
+            <li>
+                Example 2: Suppose your forecasting system tells you that the 
+                actual production costs are 4,500 
+                and you request a budget of 5,500. 
+                Then your payoff is 250 + (5,500 - 4,500) = 1,250.
+            </li>
+        </ul>
     </p>
     <p>
         {{ next_button }}

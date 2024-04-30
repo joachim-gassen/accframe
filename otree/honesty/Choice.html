@@ -1,52 +1,7 @@
 {{ block title }}Your Choice{{ endblock }}
 {{ block content }}
     <p>
-        You are in round {{ player.round_number }} of {{ C.NUM_ROUNDS }} rounds.
-    </p>
-    {{ if player.round_number > 1 }}
-        <p>
-            You started last round with a balance of {{last_round_wealth}} 
-            points, and received a compensation of {{C.COMPENSATION}} points. 
-            {{ if last_round_true < last_round_reported }}
-                In addition, you received the reporting differential of 
-                {{ last_round_diff }} points.
-            {{ endif }} 
-            Your current point balance is therefore {{ wealth }}.
-        </p>
-        {{ if session.config.report_other_wealth }}
-        <p>
-            The 
-            {{ if session.config.fake_participant }} 
-            other participant {{ else }} external party {{ endif }} 
-            started last round with a balance of 
-            {{last_round_wealth_other}} points. 
-            Based on your reported amount, 
-            {{ if session.config.fake_participant }} 
-            she or he {{ else }} it {{ endif }} 
-            received a differential of 
-            {{ last_round_diff_other }} points.
-            {{ if session.config.fake_participant }} 
-            Her or his {{ else }} Its {{ endif }} 
-            current point balance is therefore {{ wealth_other }}.
-        </p>
-        {{ endif }}
-    {{ endif }}
-    <p>
-        In this round, the true amount is {{ true_amount }} points.
-    </p>
-    <p>
-        Remember, you are expected to report the true amount but the 
-        {{ if session.config.fake_participant }} 
-        other participant {{ else }} external party {{ endif }}, 
-        while knowing the underlying distribution of the true amount,
-        will never learn whether you miss-reported any specific true amount. 
-        The differential between the amount that you report and the 
-        true amount increases your point balance. In addition, in each round, 
-        you will be compensated {{ C.COMPENSATION }} points for your effort 
-        in any case. The differential between {{ C.MAX_POOL }} and the 
-        reported amount will increase the point balance of the 
-        {{ if session.config.fake_participant }} 
-        other participant{{ else }} external party{{ endif }}. 
+        The true amount is {{ true_amount }}.
     </p>
     <p>
         {{ formfields }}

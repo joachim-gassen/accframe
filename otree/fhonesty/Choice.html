@@ -1,48 +1,9 @@
 {{ block title }}Your Choice{{ endblock }}
 {{ block content }}
-    <p>
-        You are in round {{ player.round_number }} of {{ C.NUM_ROUNDS }} rounds.
-    </p>
-    {{ if player.round_number > 1 }}
-        <p>
-            You started last round with a private wealth of {{last_round_wealth}} 
-            US-$, and received a compensation of {{C.COMPENSATION}} points. 
-            {{ if last_round_true < last_round_reported }}
-                In addition, you received a budget slack of
-                {{ last_round_diff }} US-$.
-            {{ endif }} 
-            Your current private wealth is therefore {{ wealth }} US-$.
-        </p>
-        {{ if session.config.report_other_wealth }}
-        <p>
-            Corporate headquarters started last round with accumulated profits
-            of
-            {{last_round_wealth_other}} US-$. 
-            Based on your filed budget, 
-            they have realized a profit of 
-            {{ last_round_diff_other }} US-$.
-            Their accumulated profits at the end of the last period 
-            were therefore {{ wealth_other }} US-$.
-        </p>
-        {{ endif }}
-    {{ endif }}
-    <p>
-        In this round, the required production costs are {{ true_amount }} US-$.
-    </p>
-    <p>
-        Remember, your company's headquarter requires you to file a correct 
-        budget but, 
-        while knowing the underlying distribution of the costs,
-        will never learn whether you inflated any particular requested budget. 
-        Any potential budget slack will increase your private wealth but will
-        decrease your company's profits. Independent from the budget that 
-        you file, in each round, you will be compensated {{ C.COMPENSATION }} 
-        US-$ for your managerial efforts in every round. 
-        The differential between product revenue and your 
-        budget request constitutes your company's profits of the respective 
-        round. 
-    </p>
-    <p>
+<p>
+    The actual costs predicted by your private forecasting system are {{ true_amount }}.
+</p>
+<p>
         {{ formfields }}
     </p>
         {{ next_button }}

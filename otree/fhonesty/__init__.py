@@ -9,7 +9,7 @@ This a is a neutral variant of experiment 1 in Evans III et al. (2001).
 class C(BaseConstants):
     NAME_IN_URL = 'exp4'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 10
+    NUM_ROUNDS = 1
     COMPENSATION = 250
     MIN_POOL = 4000
     MAX_POOL = 6000
@@ -31,16 +31,16 @@ class Player(BasePlayer):
         blank=False
     )
     comprehension_check1 = models.IntegerField(
-        label="In each round: Who knew the true cost structure?",
+        label="Who knew the true cost structure?",
         blank=False,
-        choices = [[1, 'Only me'], [2, "Me an my company's headquarter"]]
+        choices = [[1, 'Only me'], [2, "Me and corporate headquarters"]]
     )
     comprehension_check2 = models.IntegerField(
         label="Assuming that you only care about your private wealth, what would have been the optimal strategy?",
         blank=False,
         choices=[
-            [1, f'Filing a budget request for {C.MAX_POOL} every round'],
-            [2, 'Filing a budget request reflecting the true costs every round']
+            [1, f'Filing a budget request for {C.MAX_POOL}'],
+            [2, 'Filing a budget request reflecting the true costs']
         ],
     )
     human_check = models.IntegerField(

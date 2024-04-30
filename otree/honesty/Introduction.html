@@ -1,60 +1,42 @@
 {{ block title }}Introduction{{ endblock }}
 {{ block content }}
     <p>
-        This is an experiment in decision making that runs over 
-        {{ C.NUM_ROUNDS }} rounds. 
-        In involves three parties: An algorithm that acts as 
-        experimenter, you as a participant and 
-        {{ if session.config.fake_participant }} 
-        another matched participant who is taking a passive role.
-        {{ else }}
-        a passive external party.
-        {{ endif }}
-        In each round, you will receive a compensation of {{ C.COMPENSATION }} 
-        points for your efforts independent of your choices. 
-        In addition and also in each round, there is a pool of {{ C.MAX_POOL }}
-        points. This pool belongs to the 
-        {{ if session.config.fake_participant }} 
-        other participant {{ else }} external party {{ endif }}
-        but to obtain it, 
-        {{ if session.config.fake_participant }} 
-        he or she {{ else }} it {{ endif }}
-        has to transfer a certain amount of points from this pool
-        back to the experimenter.
+        This is an experiment on decision-making.
+        Your objective in this experiment is maximizing your points.
+        Your role in the experiment is decision-maker.
+        You will be interacting with the computer of the organizers.
+        Your task is to report a number of points to the computer of the organizers.
+        You will be privately informed about this number before you will be asked to report it.
+        The computer of the organizers will not be informed about the number.
+        Both you and the computer of the organizers know the 
+        probability distribution of the number that you need to report. 
+        This probability distribution is a uniform distribution with a 
+        minimum of 4,000 points, a maximum of 6,000 points, and possible 
+        increments of 50 points.
+        The organizers will start with a total of 6,000 points.
+        You can report any number that is between 
+        the actual number and the maximum number, including these values. 
+        The computer of the organizers will always 
+        send you the number of points that you report, independent of what 
+        the actual number is. 
+        The difference between the reported number and the actual number is yours to keep.
+        You will also receive an additional fixed amount of 250 points.
+        Thus, your payoff will be determined as follows: 250 + (reported number - actual number).
     </p>
-    <p> 
-        This process will be facilitated by you. Each round you will receive
-        the information on the magnitude of this amount from the experimenter. 
-        The amount will be a random draw from a uniform distribution between 
-        {{ C.MIN_POOL }} to {{ C.MAX_POOL }} points in {{ C.STEP }} point 
-        increments (the true amount). 
-        You then have to report this amount to the 
-        {{ if session.config.fake_participant }} 
-        other participant. He or she {{ else }} external party. It {{ endif }} 
-        will then transfer this amount of reported points 
-        to you and you will transfer the true amount back
-        to the experimenter. The 
-        {{ if session.config.fake_participant }} 
-        other participant {{ else }} external party {{ endif }} 
-        will keep the difference between {{ C.MAX_POOL }} 
-        and the amount of points that you reported. 
-        You will keep your compensation of {{ C.COMPENSATION }} 
-        and any potential differential between the reported and the true amount. 
-    </p>
-    <p>
-        The 
-        {{ if session.config.fake_participant }} 
-        other participant {{ else }} external party {{ endif }} 
-        knows the distribution underlying the true amount but 
-        will never learn whether you miss-reported any specific true 
-        amount. In any case, the reported amount needs to be at least as large 
-        as the true amount.
-        Also, it cannot be higher that {{ C.MAX_POOL}} points as otherwise
-        it would be obvious that you miss-reported.
-        Finally, it has to be a multiple of {{ C.STEP }} points. 
-        Your total payoff is equal to the sum of 
-        your base compensations and any potential differentials between the
-        reported and the true amount over all rounds.
+    <p>   
+        Here are two examples.
+        <ul>
+            <li>
+                Example 1: Suppose you observe that the actual number is 5,000 
+                and you also report that the number is 5,000. Then your 
+                payoff is 250 + (5,000 - 5,000) = 250.
+            </li>
+            <li>
+                Example 2: Suppose you observe that the actual number is 4,500 
+                and you report that the number is 5,500. 
+                Then your payoff is 250 + (5,500 - 4,500) = 1,250.
+            </li>
+        </ul>
     </p>
     <p>
         {{ next_button }}
