@@ -10,14 +10,14 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/trust_botex_db_2024-03-19.sqlite3'
-OTREE_DATA = 'data/exp_runs/trust_otree_2024-03-19.csv'
+BOTEX_DB = 'data/exp_runs/trust_botex_db_2024-04-29.sqlite3'
+OTREE_DATA = 'data/exp_runs/trust_otree_2024-04-29.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM conversations")
 conversations = cursor.fetchall()
-cursor.execute("SELECT * FROM sessions")
+cursor.execute("SELECT * FROM participants")
 sessions = cursor.fetchall()
 cursor.close()
 conn.close()
