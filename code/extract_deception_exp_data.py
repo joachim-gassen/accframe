@@ -10,16 +10,14 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/deception_botex_db_2024-03-24.sqlite3'
-OTREE_DATA = [
-    f'data/exp_runs/deception_otree_{i}_2024-03-24.csv' for i in range(1, 4)
-]
+BOTEX_DB = 'data/exp_runs/deception_botex_db_2024-04-30.sqlite3'
+OTREE_DATA = 'data/exp_runs/deception_otree_2024-04-30.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM conversations")
 conversations = cursor.fetchall()
-cursor.execute("SELECT * FROM sessions")
+cursor.execute("SELECT * FROM participants")
 sessions = cursor.fetchall()
 cursor.close()
 conn.close()
@@ -148,61 +146,41 @@ def extract_rationales(participant_code):
     return reason
 
 
-for otree_file_no, otree_file in enumerate(OTREE_DATA):
-    otree_raw = pd.read_csv(otree_file, index_col= False)
+otree_raw = pd.read_csv(OTREE_DATA, index_col= False)
 
-    participants = pd.concat([
-        extract_participant_data(otree_raw, 'deception'),
-        extract_participant_data(otree_raw, 'fdeception')
-    ])
-    rounds = pd.concat([
-        extract_round_data(otree_raw, 'deception'),
-        extract_round_data(otree_raw, 'fdeception')
-    ])
+participants = pd.concat([
+    extract_participant_data(otree_raw, 'deception'),
+    extract_participant_data(otree_raw, 'fdeception')
+])
+rounds = pd.concat([
+    extract_round_data(otree_raw, 'deception'),
+    extract_round_data(otree_raw, 'fdeception')
+])
 
-    rounds['message_reason'] = ""
-    rounds['choice_reason'] = ""
-    for s in participants.session_code.unique():
-        ps = participants.loc[
-            participants.session_code == s, 'participant_code'
-        ].tolist()
-        for p in ps:
-            g = participants.loc[
-                participants.participant_code == p, 'group_id'
-            ].item()
-            r = participants.loc[
-                participants.participant_code == p, 'role_in_group'
-            ].item()
-            if int(r) == 1:
-                rounds.loc[
-                    (rounds.session_code == s) & (rounds.group_id == g),
-                    ['message_reason']
-                ] = extract_rationales(p)
-            else:
-                rounds.loc[
-                    (rounds.session_code == s) & (rounds.group_id == g),
-                    'choice_reason'
-                ] = extract_rationales(p)
-     
-    participants.to_csv(f'data/generated/deception_{otree_file_no+1}_participants.csv', index = False)
-    rounds.to_csv(f'data/generated/deception_{otree_file_no+1}_rounds.csv', index = False)
+rounds['message_reason'] = ""
+rounds['choice_reason'] = ""
+for s in participants.session_code.unique():
+    ps = participants.loc[
+        participants.session_code == s, 'participant_code'
+    ].tolist()
+    for p in ps:
+        g = participants.loc[
+            participants.participant_code == p, 'group_id'
+        ].item()
+        r = participants.loc[
+            participants.participant_code == p, 'role_in_group'
+        ].item()
+        if int(r) == 1:
+            rounds.loc[
+                (rounds.session_code == s) & (rounds.group_id == g),
+                ['message_reason']
+            ] = extract_rationales(p)
+        else:
+            rounds.loc[
+                (rounds.session_code == s) & (rounds.group_id == g),
+                'choice_reason'
+            ] = extract_rationales(p)
+    
+participants.to_csv('data/generated/deception_participants.csv', index = False)
+rounds.to_csv('data/generated/deception_rounds.csv', index = False)
 
-
-mparticipants = pd.concat([
-    pd.read_csv(f'data/generated/deception_{i}_participants.csv') 
-    for i in range(1, 4)
-]).drop_duplicates().sort_values(
-    by = ['experiment', 'session_code', 'group_id', 'role_in_group']
-)
-mrounds = pd.concat([
-    pd.read_csv(f'data/generated/deception_{i}_rounds.csv') 
-    for i in range(1, 4)
-]).drop_duplicates().sort_values(
-    by = ['experiment', 'session_code', 'group_id']
-)
-for i in range(1, 4):
-    os.remove(f'data/generated/deception_{i}_participants.csv')
-    os.remove(f'data/generated/deception_{i}_rounds.csv')
-
-mparticipants.to_csv('data/generated/deception_participants.csv', index = False)
-mrounds.to_csv('data/generated/deception_rounds.csv', index = False)

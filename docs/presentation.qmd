@@ -338,9 +338,9 @@ How does business context framing affect the response behavior of LLMs?
 
 |                             |   Sender | Receiver |
 |:----------------------------|---------:|---------:|
-| Neutral Framing             |       15 |       15 |
-| Investor/Management Framing |       15 |       15 |
-| Total                       |       30 |       30 |
+| Neutral Framing             |`r nrow(tparticipants %>% filter(experiment == "Neutral", role_in_group == 1))` |`r nrow(tparticipants %>% filter(experiment == "Neutral", role_in_group == 2))`|
+| Investor/Management Framing |`r nrow(tparticipants %>% filter(experiment == "Inv/Manag", role_in_group == 1))`|`r nrow(tparticipants %>% filter(experiment == "Inv/Manag", role_in_group == 2))`|
+| Total                       |`r nrow(tparticipants %>% filter(role_in_group == 1))`|`r nrow(tparticipants %>% filter(role_in_group == 2))`|
 
 
 ## Trust: Descriptive Statistics by Framing
@@ -606,15 +606,15 @@ ggplot(vr, aes(label = word, size = count, color = experiment)) +
 ## Gift: Descriptives
 
 ```{r DecDescStatsGift}
-datasummary((`Wage offered` = wage) + (`Effort Cost`= cost) ~ experiment*(N + (`Mean`=Mean) + (`S.D.` = SD) + (`Median`=Median)), data = grounds )
+datasummary((`Wage offered` = wage) + (`Effort Level`= effort) ~ experiment*(N + (`Mean`=Mean) + (`S.D.` = SD) + (`Median`=Median)), data = grounds )
 
 wt = t.test(grounds$wage ~ grounds$experiment)
-ct = t.test(grounds$cost ~ grounds$experiment)
+et = t.test(grounds$effort ~ grounds$experiment)
 ```
 
 Difference in wage offered (t-stat): `r star_stat(wt, neg = T)`
 
-Difference in effort cost (t-stat): `r star_stat(ct, neg = T)`
+Difference in effort level (t-stat): `r star_stat(et, neg = T)`
 
 
 ## Gift: Association between Wage and Effort
@@ -623,15 +623,15 @@ Difference in effort cost (t-stat): `r star_stat(ct, neg = T)`
 names(color_scale) <- unique(levels(hrounds$experiment))
 color_scale_labs <- c("Neutral", "Business Framing")
 
-ggplot(grounds, aes(x = wage, y = cost, color = experiment)) +
+ggplot(grounds, aes(x = wage, y = effort, color = experiment)) +
   geom_jitter(size = 1) +
   labs(
     x = "Wage offered",
-    y = "Effort cost"
+    y = "Effort level"
   ) +
   geom_smooth(method = "lm", model = y ~ x) +
   theme_classic(base_size = 16) +
-  coord_cartesian(clip = 'off', xlim = c(0, 100), ylim = c(0, 18)) + 
+  coord_cartesian(clip = 'off', xlim = c(0, 100), ylim = c(0, 1)) + 
   scale_color_manual("", values = color_scale, labels = color_scale_labs)
 ```
 
@@ -657,10 +657,10 @@ ggplot(grounds, aes(x = as.factor(round), y = wage, group = experiment, color = 
 	)
 ```
 
-## Gift: Effort Cost by Round
+## Gift: Effort Level by Round
 
-```{r GiftCostRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
-ggplot(grounds, aes(x = as.factor(round), y = cost, group = experiment, color = experiment)) +
+```{r GiftEffortRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+ggplot(grounds, aes(x = as.factor(round), y = effort, group = experiment, color = experiment)) +
 	geom_beeswarm(size = 0.25, corral = "wrap") +
 	stat_summary(
 		aes(fill = experiment), color = NA, 
@@ -679,12 +679,12 @@ ggplot(grounds, aes(x = as.factor(round), y = cost, group = experiment, color = 
 	)
 ```
 
-## Honesty: Verbal Response
+## Gift: Verbal Response
 
 ```{r ReasoningFigGift, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 
 vr <- grounds %>%
-	mutate(reasons = paste(wage_reason, cost_reason)) %>%
+	mutate(reasons = paste(wage_reason, effort_reason)) %>%
 	unnest_tokens(word, reasons) %>%
 	anti_join(stop_words, by = "word") %>% 
 	group_by(experiment, word) %>%

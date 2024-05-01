@@ -21,8 +21,11 @@ if not OTREE_IS_RUNNING:
     )
     time.sleep(OTREE_STARTUP_WAIT)
 
-for i in range(1):
-    sdict = botex.init_otree_session(config_name = "deception", npart = 2)
+for i in range(6):
+    sdict = botex.init_otree_session(config_name = "deception", npart = 10)
+    botex.run_bots_on_session(session_id = sdict['session_id'])
+    time.sleep(5)
+    sdict = botex.init_otree_session(config_name = "fdeception", npart = 10)
     botex.run_bots_on_session(session_id = sdict['session_id'])
     time.sleep(5)
 

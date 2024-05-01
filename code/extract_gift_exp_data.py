@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/gift_botex_db_2024-03-29.sqlite3'
-OTREE_DATA = 'data/exp_runs/gift_otree_2024-03-29.csv'
+BOTEX_DB = 'data/exp_runs/gift_botex_db_2024-04-30.sqlite3'
+OTREE_DATA = 'data/exp_runs/gift_otree_2024-04-30.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -96,7 +96,7 @@ def extract_round_data(otree_raw, exp):
     })
         
     vars = [
-        [f'{exp}.{r}.group.wage', f'{exp}.{r}.group.cost']
+        [f'{exp}.{r}.group.wage', f'{exp}.{r}.group.effort']
         for r in range(1, 11)
     ]  
     vars = [item for sublist in vars for item in sublist]
@@ -113,7 +113,7 @@ def extract_round_data(otree_raw, exp):
         columns = 'var', values = 'value', aggfunc = 'first'
     ).sort_index().reset_index()
     rounds['wage'] = rounds['wage'].astype(int)
-    rounds['cost'] = rounds['cost'].astype(int)
+    rounds['effort'] = rounds['effort'].astype(float)
     return rounds 
 
 def extract_rationales(participant_code):
@@ -131,7 +131,7 @@ def extract_rationales(participant_code):
                     cont = json.loads(resp_str)
                     if 'questions' in cont:
                         for q in cont['questions']: 
-                            if q['id'] == "id_wage" or q['id'] == "id_cost": 
+                            if q['id'] == "id_wage" or q['id'] == "id_effort": 
                                 reason.append(q['reason'])
                                 check_for_error = True
                 except:
@@ -162,7 +162,7 @@ rounds = pd.concat([
 ])
 
 rounds['wage_reason'] = ""
-rounds['cost_reason'] = ""
+rounds['effort_reason'] = ""
 for s in participants.session_code.unique():
     ps = participants.loc[
         participants.session_code == s, 'participant_code'
@@ -182,7 +182,7 @@ for s in participants.session_code.unique():
         else:
             rounds.loc[
                 (rounds.session_code == s) & (rounds.group_id == g),
-                'cost_reason'
+                'effort_reason'
             ] = extract_rationales(p)
      
 participants.to_csv('data/generated/gift_participants.csv', index = False)
