@@ -2,11 +2,11 @@
 {{ block content }}
     {{ if group.round_number == 1 }}
         <p>
-            You have been assigned the role of participant A.
+            You have been assigned the role of Participant A.
             {{ if C.NUM_ROUNDS > 1 }}
                 This will be your role for the entire experiment. 
             {{ endif }}
-            The role of participant B will be assigned to another participant.
+            The role of Participant B will be assigned to another participant.
         </p>
     {{ else }}
     <p>
@@ -15,12 +15,12 @@
     {{ endif }}    
     <p>
         {{ if C.NUM_ROUNDS > 1 }}
-            Like in every round, you 
+            As in every round, you 
         {{ else }} 
             You 
         {{ endif }}
         have received an endowment of {{C.ENDOWMENT}}. 
-        How much will you send to participant B?
+        How much do you want to send to Participant B?
     </p>
 
     {{ formfields }}
