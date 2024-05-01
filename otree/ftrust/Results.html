@@ -27,8 +27,8 @@
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
                     This was the last round. 
-                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }}.
-                    The total number of points the manager earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }}.
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
+                    The total number of points the manager earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
                 </p>
             {{ else }}
                 <p>
@@ -53,8 +53,8 @@
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
                     This was the last round. 
-                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }}.
-                    The total number of points the investor earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }}.
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
+                    The total number of points the investor earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
                 </p>
             {{ else }}
                 <p>
