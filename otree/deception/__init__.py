@@ -25,8 +25,8 @@ class Group(BaseGroup):
         label="Which message do you want to send to your counterpart?",
         blank=False,
         choices=[
-            [1, 'Message 1: “Option A will earn you more money than option B.”'],
-            [2, 'Message 2: “Option B will earn you more money than option A.”']
+            [1, 'Message 1: “Option A will earn you more points than option B.”'],
+            [2, 'Message 2: “Option B will earn you more points than option A.”']
         ],
     )
     choice = models.IntegerField(
@@ -74,9 +74,6 @@ class Player(BasePlayer):
 def creating_session(subsession: Subsession):
     pass
     
-def sent_back_amount_max(group: Group):
-    return group.sent_amount * C.MULTIPLIER
-
 def set_payoffs(group: Group):
     p1 = group.get_player_by_id(1)
     p2 = group.get_player_by_id(2)

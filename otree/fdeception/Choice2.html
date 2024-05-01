@@ -1,50 +1,47 @@
 {{ block title }}Your Choice{{ endblock }}
 {{ block content }}
     <p>
-        This is a short experiment on corporate behavior. 
-        In this experiment, you will represent the role of corporate 
-        headquarters that has to decide between to alternative investment
-        options A and B. You are informed about the relative favorability
-        of these two investment options by receiving a report from an
-        accountant. inform corporate headquarters about the 
-        desirability of two alternative investment opportunities. 
-    </p>
-    <p>   
-        This accountant is represented by another experimental participant.
-        As an accountant, he is able to observe the payoffs of the two 
-        investment options. Both options generate a payoff to you (corporate
-        headquarters) and the other participant (the accountant). 
+        This is a short experiment in decision making. 
+        Your objective in this experiment is maximizing your points.
+        You have been randomly and anonymously paired with another participant.
+        In the experiment, there are two roles: an accountant and the firm.
+        The roles are randomly assigned to you and the other participant. 
+        You have been assigned the role of the firm. 
     </p>
     <p>
-        Based on his or her private information, the accountant will send 
-        you an accounting report that advises you on which investment to take.
-        The payments to both participants then depend on the investment 
+        Two possible points payments are available to you and the accountant 
+        in the experiment. The payments depend on an investment 
         chosen by you. 
+        Both investments have divergent payments to you and the accountant, 
+        meaning that one option favors you and the other option favors 
+        the accountant. 
+        We showed the two investments and their payments to the accountant. 
+        The only information you will have is the message the accountant 
+        sends to you.
     </p>
     <p>
-        The accounting report could take one of the following two forms:
+        Two possible messages could be sent:
     </p>
     <ul>
         <li>
-            Accounting Report 1: 
-            “Investment A will be more profitable to you then investment B.”
+            Message 1: “Investment A will earn you more points than investment B.”
         </li>
         <li>
-            Accounting Report 2: 
-            “Investment B will be more profitable to you then investment A.”
+            Message 2: “Investment B will earn you more points than investment A.”
         </li>
     </ul>
     <p>
-        Your accountant decided to send you Report {{message}}.
+        The accountant decided to send you the message {{message}}.
     </p>
     <p>
-        We now ask you to choose either investment A or B. 
-        Your choice will determine the payments in the experiment. 
-        You will never know the payoffs of the other investment 
-        (that is, if the accounting report sent by your 
-        accountant was true or not). Moreover, you will never know 
-        the payoffs your accountant could be paid with the other investment.
-        We will pay the two of you according to the investment you pick.    
+        We now ask you to choose either investment A or investment B. 
+        Your choice will determine the point payments in the experiment. 
+        You will never know what points were actually offered for the 
+        investment not chosen (that is, if the message sent by your 
+        counterpart was true or not). Moreover, you will never know 
+        the points that the accountant could be awarded with either option.
+        We will awards points to the two of you according to the investment 
+        you choose.    
     </p>
     <p>
         {{ formfields }}

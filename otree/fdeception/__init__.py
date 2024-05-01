@@ -3,7 +3,7 @@ from otree.api import *
 doc = """
 This is an almost word-identical version of the classic deception game
 <a href="https://doi.org/10.1257/0002828053828662" target="_blank">
-    (Gneezy, AER 2006)
+    (Gneezy, AER 2005)
 </a>.
 """
 
@@ -22,11 +22,11 @@ class Subsession(BaseSubsession):
 
 class Group(BaseGroup):
     message = models.IntegerField(
-        label="Which accounting report do you want to send to corporate headquarters?",
+        label="Which message do you want to send to your counterpart?",
         blank=False,
         choices=[
-            [1, 'Accounting Report 1: “Investment A will be more profitable to you then investment B.”'],
-            [2, 'Accounting Report 2: “Investment B will be more profitable to you then investment A.”']
+            [1, 'Message 1: “Investment A will earn you more points than investment B.”'],
+            [2, 'Message 2: “Investment B will earn you more points than investment A.”']
         ],
     )
     choice = models.IntegerField(
@@ -51,8 +51,8 @@ class Player(BasePlayer):
         label="What was your role in this game?",
         blank=False,
         choices=[
-            [1, 'I had to prepare an accounting report and send it to corporate headquarters'],
-            [2, 'I had to pick an investment that decided the payoffs for both participants'],
+            [1, 'I was the accountant and had to send a message to the firm'],
+            [2, 'I was the firm had to pick one of two investments that decided the payoffs for both participants'],
         ]
     )
     human_check = models.IntegerField(
@@ -74,9 +74,6 @@ class Player(BasePlayer):
 def creating_session(subsession: Subsession):
     pass
     
-def sent_back_amount_max(group: Group):
-    return group.sent_amount * C.MULTIPLIER
-
 def set_payoffs(group: Group):
     p1 = group.get_player_by_id(1)
     p2 = group.get_player_by_id(2)

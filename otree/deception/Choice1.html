@@ -2,53 +2,54 @@
 {{ block content }}
     <p>
     This is a short experiment in decision making. 
-    In this experiment, you will be matched with another participant. 
-    Neither of you will ever know the identity of the other. 
-    The money that you earn will be paid to you privately and in cash.
+    Your objective in this experiment is maximizing your points.
+    You have been randomly and anonymously paired with another participant.
+    In the experiment, there are two roles: participant A and participant B.
+    The roles are randomly assigned to you and the other participant. 
+    You have been assigned the role of participant A. 
     </p>
     <p>
-    Two possible monetary payments are available to you and your 
-    counterpart in the experiment. The two payment options are:
+    Two possible point payments are available to you and participant B
+    in the experiment. The two payment options are:
     <ul>
-        <li>Option A: ${{ C.AMOUNT_A1 }} to you and 
-            ${{ C.AMOUNT_A2 }} to the other participant.
+        <li>Option A: {{ C.AMOUNT_A1 }} points to you and 
+            {{ C.AMOUNT_A2 }} points to participant B.
         </li>
     </li>
-        <li>Option B: ${{ C.AMOUNT_B1 }} to you and 
-            ${{ C.AMOUNT_B2 }} to the other participant.
+        <li>Option B: {{ C.AMOUNT_B1 }} points to you and 
+            {{ C.AMOUNT_B2 }} points to participant B.
         </li>
     </ul>
     <p>
-        The choice rests with the other participant who will have 
-        to choose either option A or option B. The only information 
-        your counterpart will have is information sent by you in a 
-        message. That is, he or she will not know the monetary payments 
-        associated with each choice.
+        The choice rests with the participant B who will have 
+        to choose either option A or option B. 
+        Participant B is informed that one option favors you and 
+        the other option favors them but they do not know the point 
+        payments associated with each option so they cannot tell 
+        which is which.
+        The only information on the options that participant B receives 
+        is the information sent by you in a message.
     </p>
     <p>
         We now ask you to choose one of the following two possible messages, 
-        which you will send to your counterpart:
+        which you will send to participant B:
     </p>
     <ul>
         <li>
-            Message 1: “Option A will earn you more money than option B.”
+            Message 1: “Option A will earn you more points than option B.”
         </li>
         <li>
-            Message 2: “Option B will earn you more money than option A.”
+            Message 2: “Option B will earn you more points than option A.”
         </li>
     </ul>
     <p>
-        We will show the other participant your message, and ask him or her 
-        to choose either A or B. To repeat, your counterpart's choice will 
-        determine the payments in the experiment. However, your counterpart 
-        will never know what sums were actually offered in the option not 
-        chosen (that is, he or she will never know whether your message was 
-        true or not). Moreover, he or she will never know the sums to be 
-        paid to you according to the different options.
-    </p>
-    <p>
-        We will pay the two of you according to the choice made by your 
-        counterpart.
+        We will show the participant B your message, and ask them 
+        to choose either option A or B. To repeat, participant B's choice will 
+        determine the point payments in the experiment. However, participant B
+        will never know what points were actually offered for the option not 
+        chosen (that is, they will never know whether your message was 
+        true or not). Moreover, they will never know the points to be 
+        awarded to you according to the different options.
     </p>
     <p>
         {{ formfields }}
