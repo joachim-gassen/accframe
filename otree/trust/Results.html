@@ -10,59 +10,59 @@
     {{ if player.id_in_group == 1 }}
         <p>
             {{ if C.NUM_ROUNDS > 1 }}
-                This round, you chose to send Participant B {{ group.sent_amount }} points.
+                This round, you chose to send Participant B {{ group.sent_amount }}.
             {{ else }}
-                You chose to send Participant B {{ group.sent_amount }} points.
+                You chose to send Participant B {{ group.sent_amount }}.
             {{ endif }}
-                Participant B returned {{ group.sent_back_amount }} points. 
+                Participant B returned {{ group.sent_back_amount }}. 
                 Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
-                {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong> points.
+                {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-               In summary, you earned {{ p1_wealth }} points and Participant B earned {{ p2_wealth }} points.
+               In summary, you earned {{ p1_wealth }} and Participant B earned {{ p2_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
                     This was the last round. 
-                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }} points.
-                    The total number of points Participant B earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }} points.
+                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }}.
+                    The total number of points Participant B earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }} points.
-                    The total number of points Participant B earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }} points.
+                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }}.
+                    The total number of points Participant B earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}
     {{ else }}
         <p>
         {{ if C.NUM_ROUNDS > 1 }}
-            This round, Participant A sent you {{ group.sent_amount }} points.
+            This round, Participant A sent you {{ group.sent_amount }}.
         {{ else }}
-            Participant A sent you {{ group.sent_amount }} points.
+            Participant A sent you {{ group.sent_amount }}.
         {{ endif }}
-            These points were tripled, so you received {{ tripled_amount }} points.
-            You chose to return {{ group.sent_back_amount }} points.
+            These points were tripled, so you received {{ tripled_amount }}.
+            You chose to return {{ group.sent_back_amount }}.
             Your payoff thus is {{ tripled_amount }} - {{ group.sent_back_amount }} = 
-            <strong>{{ player.payoff }}</strong> points.
+            <strong>{{ player.payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-               In summary, you earned {{ p2_wealth }} points and Participant A earned {{ p1_wealth }} points.
+               In summary, you earned {{ p2_wealth }} and Participant A earned {{ p1_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
                     This was the last round. 
-                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }} points.
-                    The total number of points Participant A earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }} points.
+                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }}.
+                    The total number of points Participant A earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }} points.
-                    The total number of points Participant A earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }} points.
+                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }}.
+                    The total number of points Participant A earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}

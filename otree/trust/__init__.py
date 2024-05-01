@@ -31,6 +31,7 @@ class Group(BaseGroup):
         min=cu(0),
         max=sent_amount*C.MULTIPLIER,
         doc="""Amount sent back to the other participant""",
+        label="Please enter an amount:"
     )
 
 class Player(BasePlayer):
