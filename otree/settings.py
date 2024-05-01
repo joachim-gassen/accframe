@@ -31,24 +31,13 @@ SESSION_CONFIGS = [
         name='honesty',
         display_name="Honesty game (neutral version of Evans et al., 2001)",
         app_sequence=['honesty'],
-        num_demo_participants=1,
-        fake_participant=False,
-        report_other_wealth=True
-    ),
-     dict(
-        name='honesty_fake_participant',
-        display_name="Honesty game with fake participant",
-        app_sequence=['honesty'],
-        num_demo_participants=1,
-        fake_participant=True,
-        report_other_wealth=True
+        num_demo_participants=1
     ),
     dict(
         name='fhonesty',
         display_name="Honesty game with Evans et al framing",
         app_sequence=['fhonesty'],
-        num_demo_participants=1,
-        report_other_wealth=True
+        num_demo_participants=1
     ),
     dict(
         name='gift',
