@@ -6,17 +6,14 @@
         Instructions
     </h3>
     <p>
-        This is an experiment on the interaction of managers and investors.
-        Your objective in this experiment is maximizing your points. 
+        This is an experiment on decision-making by managers and investors.
         You have been randomly and anonymously paired with another participant.
         In the experiment, there are two roles: manager and investor.
         The roles are randomly assigned to you and the other participant. 
         You will learn whether your role is manager or investor prior to making any decision.
     </p>
     <p>
-        {{ if C.NUM_ROUNDS == 1 }}
-            This experiment lasts only 1 round.
-        {{ else }} 
+        {{ if C.NUM_ROUNDS > 1 }}
             This experiment lasts {{ C.NUM_ROUNDS }} rounds.
         {{ endif }}
 
@@ -27,13 +24,10 @@
             The investor
         {{ endif }}
         starts with an endowment of {{ C.ENDOWMENT }} points and the manager starts with an endowment of 0 points.
-        The investor can send none, some, or all of their endowment to the manager.
-        The investment of the investor is multiplied by 3.
-        The manager then needs to decide how much of this multiplied amount they send back to the investor as a dividend.
-        Anything that the manager does not send back to the investor, they can keep for themselves.  
-        {{ if C.NUM_ROUNDS > 1 }}
-            The points that both participants receive in each round are accumulated. 
-        {{ endif }}
+        The investor can invest none, some, or all of their endowment in the firm run by the manager.
+        Each point that the investor invests in the firm run by the manager is multiplied by 3.
+        The manager then needs to decide how much of this multiplied amount they send to the investor as a dividend.
+        Anything that the manager does not send to the investor, they can keep for themselves.  
     </p>
     <p>
         <b>Example</b>
