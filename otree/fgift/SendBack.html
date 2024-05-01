@@ -6,7 +6,7 @@
         {{ if C.NUM_ROUNDS > 1 }}
             This will be your role for the entire experiment. 
         {{ endif }}
-        The supervisory board will be played by another participant.
+        The firm will be represented by another participant.
     </p>
     {{ else }}
     <p>
@@ -15,23 +15,22 @@
     {{ endif }}        
     <p>
         {{ if C.NUM_ROUNDS > 1 }}
-            This round, the 
+            This round, the firm
         {{ else }}
-            The
+            The firm
         {{ endif }}
-        supervisory board has awarded you a compensation of {{ group.wage }}. 
-        Based on this you can now choose your effort level. This effort level
-        will reduce your payoff by causing effort costs while at the same 
-        time affecting the firm value. You find the link between effort cost 
-        and effort multiple in the table below.
-
-        Remember that the payoff of the supervisory board will be calculated 
-        as the product of the effort multiplier chosen by you with the 
-        difference of the initial firm value of 100 minus your compensation.       
+        has rewarded you a wage of {{ group.wage }}. Based on this you can 
+        choose your effort level, inducing costs. The costs
+        will reduce your payoff and 
+        the effort level will determine the payoff of the firm. 
+        
+        Remember that the payoff of the firm will be calculated as the 
+        product of the effort level with the difference of their
+        endowment of 100 minus the wage that they paid you.       
     </p>
     <ul>
-        <li>Your Payoff = Compensation received from supervisory board - Effort Cost</li>
-        <li>Payoff Supervisory Board  = Effort Multiplier chosen by you * (100 - Your compensation)</li>
+        <li>Your payoff = wage received from the firm - effort level cost</li>
+        <li>Firm's payoff  = (100 - wage paid to you) * effort level</li>
     </ul>    
     <p>
         {{ formfields }}

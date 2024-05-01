@@ -2,12 +2,11 @@
 {{ block content }}
     {{ if group.round_number == 1 }}
         <p>
-            You have been assigned the role of the supervisory board.
+            You have been assigned the role of the firm.
             {{ if C.NUM_ROUNDS > 1 }}
                 This will be your role for the entire experiment. 
             {{ endif }}
-            The manager will be represented by another
-            participant.
+            The manager will be represented by another participant.
         </p>
     {{ else }}
     <p>
@@ -16,26 +15,26 @@
     {{ endif }}    
     <p>
         {{ if C.NUM_ROUNDS > 1 }}
-            Like in every round, the 
+            Like in every round, you 
         {{ else }} 
-            The 
+            You 
         {{ endif }}
-        initial value of the firm is 100 and you have to decide on the 
-        compensation that you will award to the manager.
-        This compensation can be any integer between 0 and {{ C.WAGE_MAX }}.
-        In turn, the manager will choose a certain effort level inducing costs
-        to the manager. 
-        Below, you will find the table that links the effort multiplier to 
-        the effort cost that the manager can choose for your reference.
-        This effort multiplier will determine your payoff. Your payoff 
-        will be calculated as the product of the effort multiplier with
-        the difference of the initial firm value of 100 minus the compensation
-        that you choose to pay to the manager.
-        <ul>
-            <li>Your Payoff = Effort Multiplier * (Initial firm value of 100 - Compensation paid by you to manager)</li>
-            <li>Payoff Manager = Compensation received from you - Effort Cost</li>
-        </ul>
+        have received an initial endowment of 100 and have to decide on the wage 
+        that you will reward to the manager.
+        This wage can be any integer between 0 and {{ C.WAGE_MAX }}.
+        Based on the wage that they has received, the manager 
+        will choose their effort level, inducing a cost.
+        Below, you will again find the table that links the effort level 
+        that the manager can choose to its cost for your reference.
+        This effort level will determine your payoff. Your payoff 
+        will be calculated as the product of the effort level with
+        the difference of your endowment of 100 points 
+        minus the wage sent to the manager.
     </p>
+    <ul>
+        <li>Your payoff = (100 - wage paid to manager) * effort level</li>
+        <li>Payoff manager = wage paid by you - cost of effort level</li>
+    </ul>    
     {{ formfields }}
     <p>
         {{ include_sibling 'multiplier_table.html' }} 

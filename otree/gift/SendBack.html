@@ -4,9 +4,9 @@
     <p>
         You have been assigned the role of Participant B. 
         {{ if C.NUM_ROUNDS > 1 }}
-            This will be your role for the entire game. 
+            This will be your role for the entire experiment. 
         {{ endif }}
-        Participant A will be played by another participant.
+        Participant A will be represented by another participant.
     </p>
     {{ else }}
     <p>
@@ -20,17 +20,17 @@
             Participant
         {{ endif }}
         A sent you an amount of {{ group.wage }}. Based on this you can 
-        choose your effort level, inducing effort costs. These effort costs
-        will reduce your payoff and determine the payoff of participant A 
-        by setting the effort multiple as detailed in the table below. 
+        choose the multiplier, inducing costs. The costs
+        will reduce your payoff and 
+        the multiplier will determine the payoff of participant A. 
         
         Remember that the payoff of participant A will be calculated as the 
-        product of the effort multiplier with the difference of her or his 
-        initial wealth of 100 minus the amount sent to you.       
+        product of the multiplier with the difference of their
+        endowment of 100 minus the amount sent to you.       
     </p>
     <ul>
-        <li>Your Payoff = Amount received from A - Effort Cost</li>
-        <li>Payoff A = Effort multiplier chosen by you * (100 - Amount sent to you)</li>
+        <li>Your Payoff = amount received from participant A - cost of multiple</li>
+        <li>Payoff participant A = (100 - amount sent to you) * multiplier</li>
     </ul>    
     <p>
         {{ formfields }}

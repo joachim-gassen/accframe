@@ -1,57 +1,54 @@
 <p> 
     This is an experiment on decision-making.
+    Your objective in this experiment is maximizing your points. 
     You have been randomly and anonymously paired with another participant.
-    One of you will be selected at random to be participant A;
-    the other will be participant B.
-    You will learn whether you are participant A or B prior to making any
-    decision.
+    In the experiment, there are two roles: participant A and participant B.
+    The roles are randomly assigned to you and the other participant. 
+    You will learn whether your role is participant A or participant B prior to making any decision.
 </p>
 <p>
     {{ if C.NUM_ROUNDS == 1 }}
-        This experiment will be played for only 1 round. 
-        First, 
+        This experiment will be played for only 1 round. Participant A
     {{ else }} 
         This experiment will be played over {{ C.NUM_ROUNDS }} rounds.
+        The points that you receive in each round are accumulated.
         Throughout the experiment, you will remain in the same role.
-        Each round, 
+        Each round, participant A
     {{ endif }}
-    participant A has an initial wealth of 100 and has to choose an amount 
-    that she or he will send to participant B. 
-    This amount can be any integer between 0 and {{ C.WAGE_MAX }}.
-    Next, participant B has to decide on an effort, inducing an effort cost.
-    This effort cost will reduce her or his payoff so that the payoff of 
-    participant B will be the amount sent by participant A minus the effort 
-    cost. Participant B cannot choose an effort cost that is higher than
-    the amount received from participant A.
-    She or he can choose between 10 different effort costs from 0 to 18. 
-    Each cost level is linked to an effort multiplier between 0.1 and 1.0
-    as detailed by the table below.
+    starts with an endowment of 100 points 
+    and participant B starts with an endowment of 0 points.
+    First, participant A decides how many points they want to transfer to participant B.
+    The amount transferred can be any integer between 0 and {{ C.WAGE_MAX }}.
+    Next, participant B selects a multiplier from the table below. 
+    The multiplier selected by participant B determines the payoff of participant A.
+    Specifically, the payoff of participant A is calculated as follows:
 </p>
 <p>
-{{ include_sibling 'multiplier_table.html' }} 
+    (100 - transfer to participant B) * multiplier. 
 </p>
 <p>
-    The effort multiplier will determine the payoff of participant A.
-    This payoff is calculated as the product of the effort multiplier with
-    the difference of participant A's initial wealth of 100 
-    minus the amount sent to participant B.
+    Participant B can select multipliers between 0.1 and 1.0. 
+    Higher multipliers are more costly for participant B. 
 </p>
+<p>
+    In summary, the payoffs are calculated as follows:
+</p>        
 <ul>
-    <li>Payoff A = Effort Multiplier * (100 - Amount sent by A)</li>
-    <li>Payoff B = Amount sent by A - Effort Cost</li>
+    <li>Payoff participant A = (100 - transfer to participant B) * multiplier </li>
+    <li>Payoff participant B = Transfer received from participant A - cost of multiplier </li>
 </ul>
 <p>
-    So, for example, if participant A chooses to send an amount 50 to 
-    participant B and participant B chooses an effort cost of 10, 
-    the payoff to participant B
-    will be 50 - 10 = 40 and the payoff to participant A will be 
-    0.7 * (100 - 50) = 35.
+    Example:
+    <ul>
+        <li>
+            Suppose that participant A chooses to transfer 30 points to participant B 
+            and participant B then chooses the multiplier 0.7, which costs 10 points. 
+            The payoff of participant A then is (100 points - 30 points) * 0.7 = 49 points. 
+            The payoff of participant B then is 30 points - 10 points = 20 points.
+        </li>
+    </ul>
 </p>
-    {{ if C.NUM_ROUNDS == 1 }}
-        The objective of the game is to maximize your payoff. 
-    {{ else }}
-        The payoffs that both players receive in each round increase their
-        private wealth. The objective of the game is to maximize your 
-        private wealth over the duration of the game. 
-    {{ endif }}
+<p>
+    {{ include_sibling 'multiplier_table.html' }} 
 </p>
+    

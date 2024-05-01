@@ -27,37 +27,38 @@ cost_effort = {
     12: 0.8,
     15: 0.9,
     18: 1.0
-}    
+} 
+effort_cost = {v: k for k, v in cost_effort.items()}   
 
 class Subsession(BaseSubsession):
     pass
 
 class Group(BaseGroup):
-    wage = models.IntegerField(
-        min=0,
-        max=100,
-        doc="""Amount received by the other participant""",
+    wage = models.CurrencyField(
+        min=cu(0),
+        max=cu(100),
+        doc="""Amount to send to the other participant""",
         label="What is the amount that you want to send to participant B? Please enter an amount from 0 to 100:",
     )
-    cost = models.IntegerField(
-        doc="""Amount sent back to the other participant""",
-        label="How much effort cost do you want to spend to affect the payoff of participant A? Please choose a feasible amount from the list below:",
+    effort = models.FloatField(
+        doc="""Multiplier to affect payoff of other participant""",
+        label="Which multiplier do you want to choose to affect the payoff of participant A? Please select one from the table below:",
     )
-    effort = models.FloatField()
+    cost = models.CurrencyField()
 
-def cost_choices(group):
-    return list(range(0, group.wage + 1)) & cost_effort.keys()
+def effort_choices(group):
+    return [k for k, v in effort_cost.items() if v <= group.wage]
 
 class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
 
     comprehension_check_pre1 = models.IntegerField(
-        label="What are the payoffs to participant A?",
+        label="What is the payoff to participant A?",
         min=0,
         max=100
     )
     comprehension_check_pre2 = models.IntegerField(
-        label="What are the payoffs to participant B?",
+        label="What is the payoff to participant B?",
         min=0,
         max=100
     )
@@ -65,17 +66,18 @@ class Player(BasePlayer):
         label="What is the role of the multiplier in this game?",
         blank=False,
         choices=[
-            [1, 'It increases the payoff of Participant A'],
-            [2, 'It increases the payoff of Participant B'],
-            [3, 'It increases the payoff of both participants']
+            [1, 'It is used to calculate the payoff of participant A'],
+            [2, 'It is used to calculate the payoff of participant B'],
+            [3, 'It is used to calculate the payoff of both participants']
         ],
     )
     comprehension_check_post2 = models.IntegerField(
-        label="What was the effect of the effort cost chosen by participant B?",
+        label="What is the effect of the cost of the multiplier?",
         blank=False,
         choices=[
-            [1, 'It directly flew to participant A, increasing his or her payoff'],
-            [2, 'It determined a multiple that was used to determine the payoff of participant A'],
+            [1, 'It reduces the payoff of participant A'],
+            [1, 'It reduces the payoff of participant B'],
+            [1, 'It reduces the payoff of both participants']
         ]
     )
     human_check = models.IntegerField(
@@ -99,13 +101,10 @@ def creating_session(subsession: Subsession):
         for p in subsession.get_players():
             p.participant.wealth = cu(0)
     
-def sent_back_amount_max(group: Group):
-    return group.sent_amount * C.MULTIPLIER
-
 def set_payoffs(group: Group):
     p1 = group.get_player_by_id(1)
     p2 = group.get_player_by_id(2)
-    group.effort = cost_effort[group.cost]
+    group.cost = effort_cost[group.effort]
     p1.payoff = int((100 - group.wage)*group.effort)
     p2.payoff = group.wage - group.cost
     p1.participant.wealth += p1.payoff
@@ -158,7 +157,7 @@ class SendBack(Page):
     P2 sets effort level for P1"""
 
     form_model = 'group'
-    form_fields = ['cost']
+    form_fields = ['effort']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -178,6 +177,8 @@ class Results(Page):
             wage=group.wage,
             cost=group.cost,
             effort=group.effort,
+            p1_payoff=group.get_player_by_id(1).payoff,
+            p2_payoff=group.get_player_by_id(2).payoff,
             p1_wealth=group.get_player_by_id(1).participant.wealth,
             p2_wealth=group.get_player_by_id(2).participant.wealth
         )

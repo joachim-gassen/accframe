@@ -15,10 +15,14 @@
             {{ else }}
                 You chose to send participant B {{ group.wage }}.
             {{ endif }}
-            Participant B decided for effort costs of {{ group.cost }}, which 
-            result in an effort multiplier of {{ effort }}. 
-            Your payoff thus is {{ effort }} * (100 - {{ group.wage }}) = 
-            = <strong>{{ player.payoff }}</strong>.
+            Participant B decided for a multiplier of {{ effort }},
+            inducing costs of {{ group.cost }}. 
+            Your payoff is (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        <p>
+            The payoff of participant B is 
+            {{ group.wage }} - {{ group.cost }} = {{ p2_payoff }}.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
@@ -44,11 +48,16 @@
     {{ else }}
         <p>
             This round, participant A sent you {{ group.wage }}.
-            You chose an effort cost of {{ group.cost }},
+            You chose an multiplier of {{ effort }},
+            inducing costs of {{ group.cost }},
             thus your payoff of this round is
             {{ group.wage }} - {{ group.cost }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
+        <p>
+            The payoff of participant A is 
+            (100 points - {{ group.wage }}) * {{ effort }} = {{ p1_payoff }}.
+       </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
                 As this was the only round of the experiment, your total 

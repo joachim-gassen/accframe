@@ -2,7 +2,7 @@
 {{ block content }}
     {{ if group.round_number == 1 }}
         <p>
-            You have been assigned the role of Participant A.
+            You have been assigned the role of participant A.
             {{ if C.NUM_ROUNDS > 1 }}
                 This will be your role for the entire experiment. 
             {{ endif }}
@@ -20,21 +20,21 @@
         {{ else }} 
             You 
         {{ endif }}
-        have an initial wealth of 100 and have to decide on the amount 
+        have received an initial endowment of 100 and have to decide on the amount 
         that you will send to participant B.
         This amount can be any integer between 0 and {{ C.WAGE_MAX }}.
-        Based on the amount that she or he has received, participant B 
-        will choose an effort level, inducing an effort cost.
-        Below, you will find the table that links the effort multiplier to 
-        the effort cost that participant B can choose for your reference.
-        This effort multiplier will determine your payoff. Your payoff 
-        will be calculated as the product of the effort multiplier with
-        the difference of your initial wealth of 100 minus the amount 
+        Based on the amount that they has received, participant B 
+        will choose an multiplier, inducing a cost.
+        Below, you will again find the table that links the multiplier 
+        that participant B can choose to its cost for your reference.
+        This multiplier will determine your payoff. Your payoff 
+        will be calculated as the product of the multiplier with
+        the difference of your endowment of 100 points minus the amount 
         sent to participant B.
     </p>
     <ul>
-        <li>Your Payoff = Effort Multiplier * (100 - Amount sent by you)</li>
-        <li>Payoff B = Amount sent by you - Effort Cost</li>
+        <li>Your payoff = (100 - amount sent by you) * multiplier set by participant B</li>
+        <li>Payoff participant B = amount sent by you - cost of multiplier</li>
     </ul>    
     {{ formfields }}
     <p>

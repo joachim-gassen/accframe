@@ -10,17 +10,19 @@
     {{ if player.id_in_group == 1 }}
         <p>
             {{ if C.NUM_ROUNDS > 1 }}
-                This round, you chose to award the manager a compensation of
+                This round, you chose to reward the manager a wage of 
                 {{ group.wage }}.
             {{ else }}
-                You chose to award the manager a compensation of {{ group.wage }}.
+                You chose to reward the manager a wage of {{ group.wage }}.
             {{ endif }}
-            The manger decided to set an effort level that resulted in effort 
-            costs of {{ group.cost }}, and
-            an effort multiple of {{ effort }}. 
-            The firm value after compensation and thus your payoff thus is 
-            thus {{ effort }} * (100 - {{ group.wage }}) 
-            = <strong>{{ player.payoff }}</strong>.
+            The manager decided for an effort level of {{ effort }},
+            inducing costs of {{ group.cost }}. 
+            Your payoff is (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        <p>
+            The payoff of the manager is 
+            {{ group.wage }} - {{ group.cost }} = {{ p2_payoff }}.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
@@ -32,7 +34,7 @@
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
                     This was the last round. Your accumulated total wealth is 
-                    {{ p1_wealth }}, while the accumulated wealth of 
+                    {{ p1_wealth }}, while the accumulated total wealth of 
                     the manager is {{ p2_wealth }}.
                 </p>
             {{ else }}
@@ -45,31 +47,35 @@
         {{ endif }}
     {{ else }}
         <p>
-            This round, the supervisory board awarded you a compensation of 
-            {{ group.wage }}.
-            You chose an effort level leading to effort costs of {{ group.cost }},
+            This round, that firm has rewarded you a wage of {{ group.wage }}.
+            You chose an effort level of {{ effort }},
+            inducing costs of {{ group.cost }},
             thus your payoff of this round is
             {{ group.wage }} - {{ group.cost }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
+        <p>
+            The payoff of the firm is 
+            (100 points - {{ group.wage }}) * {{ effort }} = {{ p1_payoff }}.
+       </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
                 As this was the only round of the experiment, your total 
                 wealth is {{ p2_wealth }}, while the total wealth of 
-                the supervisory board is {{ p1_wealth }}.
+                the firm is {{ p1_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
                     This was the last round. Your accumulated total wealth is 
                     {{ p2_wealth }}, while the accumulated total wealth of 
-                    the supervisory board is {{ p1_wealth }}.
+                    the firm is {{ p1_wealth }}.
                 </p>
             {{ else }}
                 <p>
                     Your accumulated wealth over the rounds so far is 
                     {{ p2_wealth }}, while the accumulated wealth of 
-                    the supervisory board is {{ p1_wealth }}.
+                    the firm is {{ p1_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}

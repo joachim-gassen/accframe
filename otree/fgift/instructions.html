@@ -1,63 +1,55 @@
-<p>
-    This is an experiment on managerial compensation and managerial effort. 
+<p> 
+    This is an experiment on managers' compensation and effort.
+    Your objective in this experiment is maximizing your points. 
     You have been randomly and anonymously paired with another participant.
-    One of you will be selected at random to represent the role of a 
-    supervisory board deciding on managerial compensation. 
-    The other will be selected at random to represent the manager 
-    deciding on managerial effort.
-    You will learn whether you are representing the supervisory board or 
-    the manager prior to making any decision.
+    In the experiment, there are two roles: firm and manager.
+    The roles are randomly assigned to you and the other participant. 
+    You will learn whether your role is participant A or participant B prior to making any decision.
 </p>
 <p>
     {{ if C.NUM_ROUNDS == 1 }}
-        This experiment will be played for only 1 round. 
-        First, 
+        This experiment will be played for only 1 round. The firm
     {{ else }} 
         This experiment will be played over {{ C.NUM_ROUNDS }} rounds.
+        The points that you receive in each round are accumulated.
         Throughout the experiment, you will remain in the same role.
-        Each round, 
+        Each round, the firm
     {{ endif }}
-    the supervisory board is representing a firm with an initial value of 100.
-    It has to decide on the compensation that it will
-    pay to the manager. This amount can be any integer between
-    0 and the firm value ({{ C.WAGE_MAX }}).
-    Next, the manager has to decide on her or his effort level, inducing an 
-    effort cost. 
-
-    This effort cost will reduce her or his payoff so that the payoff of 
-    the manager will be the compensation received from the supervisory board
-    minus the effort cost. The manager cannot choose an effort level that
-    results in effort cost that a higher or her or his compensation received
-    from the supervisory board.
-    She or he can choose between 10 different effort costs from 0 to 18. 
-    Each cost level is linked to an effort multiplier between 0.1 and 1.0
-    as detailed by the table below.
+    starts with an endowment of 100 points 
+    and the manager starts with an endowment of 0 points. 
+    First, the firm decides how many points they want to transfer to the manager.
+    This transfer represents the wage paid to the manager by the firm.
+    The wage can be any integer between 0 and {{ C.WAGE_MAX }}.
+    Next, the manager selects an effort level from the table below. 
+    The effort level selected by the manager determines the payoff of the firm.
+    Specifically, the payoff of the firm is calculated as follows:
 </p>
 <p>
-{{ include_sibling 'multiplier_table.html' }} 
+    (100 - wage paid to manager) * effort level. 
 </p>
 <p>
-    The effort multiplier will determine the firm value and thus the 
-    payoff of the supervisory board.
-    This payoff is calculated as the product of the effort multiplier with
-    the value of the firm after compensation.
+    The manager can select effort levels between 0.1 and 1.0. 
+    Higher effort levels are more costly for the manager. 
 </p>
+<p>
+    In summary, the payoffs are calculated as follows:
+</p>        
 <ul>
-    <li>Payoff Supervisory Board = Effort Multiplier * (Initial firm value of 100 - Compensation paid to manager)</li>
-    <li>Payoff Manager = Compensation received from Supervisory Board - Effort Cost</li>
+    <li>Payoff firm = (100 - wage paid to manager) * effort level </li>
+    <li>Payoff participant B = wage received from firm - cost of effort level </li>
 </ul>
 <p>
-    So, for example, if the supervisory board chooses a compensation of 50 
-    and the manager chooses an effort cost of 10, 
-    the payoff to the manager will be 
-    will be 50 - 10 = 40 and the payoff to the supervisory board will be 
-    0.7 * (100 - 50) = 35.
+    Example:
+    <ul>
+        <li>
+            Suppose that the firm chooses to award the manager a wage of 30 points 
+            and that the manager then chooses the effort level 0.7, which costs 10 points. 
+            The payoff of the firm then is (100 points - 30 points) * 0.7 = 49 points. 
+            The payoff of the manager then is 30 points - 10 points = 20 points.
+        </li>
+    </ul>
 </p>
-    {{ if C.NUM_ROUNDS == 1 }}
-        The objective of the game is to maximize your payoff. 
-    {{ else }}
-        The payoffs that both players receive in each round increase their
-        private wealth. The objective of the game is to maximize your 
-        private wealth over the duration of the game. 
-    {{ endif }}
-</p> 
+<p>
+    {{ include_sibling 'multiplier_table.html' }} 
+</p>
+    
