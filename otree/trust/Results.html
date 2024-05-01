@@ -10,63 +10,59 @@
     {{ if player.id_in_group == 1 }}
         <p>
             {{ if C.NUM_ROUNDS > 1 }}
-                This round, you chose to send participant B 
-                {{ group.sent_amount }}.
+                This round, you chose to send Participant B {{ group.sent_amount }} points.
             {{ else }}
-                You chose to send participant B {{ group.sent_amount }}.
+                You chose to send Participant B {{ group.sent_amount }} points.
             {{ endif }}
-            Participant B returned {{ group.sent_back_amount }} points. 
-            Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
-            {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
+                Participant B returned {{ group.sent_back_amount }} points. 
+                Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
+                {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong> points.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the experiment, your total 
-                points are {{ p1_wealth }}, while the total points of 
-                participant B are {{ p2_wealth }}.
+               In summary, your earned {{ p1_wealth }} points and Participant B earned {{ p2_wealth }} points.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total points are 
-                    {{ p1_wealth }}, while the accumulated total points of
-                    participant B are {{ p2_wealth }}.
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }} points.
+                    The total number of points Participant B earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }} points.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated total points over the rounds so far are 
-                    {{ p1_wealth }}, while the accumulated total points of 
-                    participant B are {{ p2_wealth }}.
+                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }} points.
+                    The total number of points Participant B earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }} points.
                 </p>
             {{ endif }}
         {{ endif }}
     {{ else }}
         <p>
-            This round, participant A sent you {{ group.sent_amount }}.
-            They were tripled so you received {{ tripled_amount }}.
-            You chose to return {{ group.sent_back_amount }},
-            thus your payoff of this round is
-            {{ tripled_amount }} - {{ group.sent_back_amount }} = 
-            <strong>{{ player.payoff }}</strong>.
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, Participant A sent you {{ group.sent_amount }} points.
+        {{ else }}
+            Participant A sent you {{ group.sent_amount }} points.
+        {{ endif }}
+            These points were tripled, so you received {{ tripled_amount }} points.
+            You chose to return {{ group.sent_back_amount }} points.
+            Your payoff thus is {{ tripled_amount }} - {{ group.sent_back_amount }} = 
+            <strong>{{ player.payoff }}</strong> points.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the experiment, your total 
-                points are {{ p2_wealth }}, while the total points
-                of participant A are {{ p1_wealth }}.
+               In summary, your earned {{ p2_wealth }} points and Participant A earned {{ p1_wealth }} points.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total points are 
-                    {{ p2_wealth }}, while the accumulated total points of 
-                    participant A are {{ p1_wealth }}.
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM.ROUNDS }} combined is {{ p2_wealth }} points.
+                    The total number of points Participant A earned in the {{ C.NUM.ROUNDS }} combined is {{ p1_wealth }} points.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated total points over the rounds so far are 
-                    {{ p2_wealth }}, while the accumulated wealth of 
-                    participant A are {{ p1_wealth }}.
+                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }} points.
+                    The total number of points Participant A earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }} points.
                 </p>
             {{ endif }}
         {{ endif }}
