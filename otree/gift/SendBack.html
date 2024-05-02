@@ -21,15 +21,15 @@
         {{ endif }}
         A sent you {{ group.wage }}. 
         You should now select a multiplier.
-        The multiplier you select will determine the payoff of Participant A
+        The multiplier you select will determine the payoff of Participant A.
         Specifically, the payoff of Participant A will be calculated as (100 - {{ group.wage }}) times the multiplier.
         Multipliers are costly to you. 
         In the table below you can look up the cost of each multiplier that you can choose.
         Your payoff will be calculated as {{ group.wage }} minus the cost of the multiplier you select.
     </p>
     <ul>
-        <li>Your Payoff = amount received from participant A - cost of multiple</li>
-        <li>Payoff participant A = (100 - amount sent to you) * multiplier</li>
+        <li>Your Payoff = number of points received from Participant A - cost of multiplier</li>
+        <li>Payoff Participant A = (100 - number of points sent to you) * multiplier</li>
     </ul>    
     <p>
         {{ formfields }}
