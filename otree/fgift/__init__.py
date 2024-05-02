@@ -38,11 +38,11 @@ class Group(BaseGroup):
         min=cu(0),
         max=cu(100),
         doc="""Amount to send to the other participant""",
-        label="What is the wage that you reward to the manager? Please enter an amount from 0 to 100:",
+        label="What is the wage that you want to pay to the manager? Please enter a number of points from from 0 to 100:",
     )
     effort = models.FloatField(
         doc="""Multiplier to affect payoff of other participant""",
-        label="Which effort level do you want to choose to affect the payoff of the firm? Please select one from the table below:",
+        label="Which effort level do you choose to affect the payoff of the firm? Please select one from the table below:",
     )
     cost = models.CurrencyField()
 
@@ -53,12 +53,12 @@ class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
 
     comprehension_check_pre1 = models.IntegerField(
-        label="What is the payoff to the firm?",
+        label="What is the payoff for the firm?",
         min=0,
         max=100
     )
     comprehension_check_pre2 = models.IntegerField(
-        label="What is the payoff to the manager?",
+        label="What is the payoff for the manager?",
         min=0,
         max=100
     )
@@ -66,13 +66,13 @@ class Player(BasePlayer):
         label="What is the role of the effort level in this game?",
         blank=False,
         choices=[
-            [1, 'It is used to calculate the payoff of the firm'],
-            [2, 'It is used to calculate the payoff of the manager'],
+            [1, 'It is used to calculate the Payoff of the firm'],
+            [2, 'It is used to calculate the Payoff of the manager'],
             [3, 'It is used to calculate the payoff of both participants']
         ],
     )
     comprehension_check_post2 = models.IntegerField(
-        label="What is the effect of the effort cost?",
+        label="What is the effect of the cost of the effort level?",
         blank=False,
         choices=[
             [1, 'It reduces the payoff of the firm'],
