@@ -38,11 +38,11 @@ class Group(BaseGroup):
         min=cu(0),
         max=cu(100),
         doc="""Amount to send to the other participant""",
-        label="What is the amount that you want to send to participant B? Please enter an amount from 0 to 100:",
+        label="What is the number of points that you want to send to Participant B? Please enter a number of points from 0 to 100:",
     )
     effort = models.FloatField(
         doc="""Multiplier to affect payoff of other participant""",
-        label="Which multiplier do you want to choose to affect the payoff of participant A? Please select one from the table below:",
+        label="Which multiplier do you choose to affect the payoff of Participant A? Please select one from the table below:",
     )
     cost = models.CurrencyField()
 
@@ -53,12 +53,12 @@ class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
 
     comprehension_check_pre1 = models.IntegerField(
-        label="What is the payoff to participant A?",
+        label="What is the payoff for Participant A?",
         min=0,
         max=100
     )
     comprehension_check_pre2 = models.IntegerField(
-        label="What is the payoff to participant B?",
+        label="What is the payoff for Participant B?",
         min=0,
         max=100
     )
@@ -66,8 +66,8 @@ class Player(BasePlayer):
         label="What is the role of the multiplier in this game?",
         blank=False,
         choices=[
-            [1, 'It is used to calculate the payoff of participant A'],
-            [2, 'It is used to calculate the payoff of participant B'],
+            [1, 'It is used to calculate the payoff of Participant A'],
+            [2, 'It is used to calculate the payoff of Participant B'],
             [3, 'It is used to calculate the payoff of both participants']
         ],
     )
@@ -75,8 +75,8 @@ class Player(BasePlayer):
         label="What is the effect of the cost of the multiplier?",
         blank=False,
         choices=[
-            [1, 'It reduces the payoff of participant A'],
-            [1, 'It reduces the payoff of participant B'],
+            [1, 'It reduces the payoff of Participant A'],
+            [1, 'It reduces the payoff of Participant B'],
             [1, 'It reduces the payoff of both participants']
         ]
     )
