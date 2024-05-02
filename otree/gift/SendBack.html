@@ -6,7 +6,7 @@
         {{ if C.NUM_ROUNDS > 1 }}
             This will be your role for the entire experiment. 
         {{ endif }}
-        Participant A will be represented by another participant.
+        Another participant will be assigned the role of Participant A.
     </p>
     {{ else }}
     <p>
@@ -15,18 +15,17 @@
     {{ endif }}        
     <p>
         {{ if C.NUM_ROUNDS > 1 }}
-            This round, participant
+            This round, Participant
         {{ else }}
             Participant
         {{ endif }}
-        A sent you an amount of {{ group.wage }}. Based on this you can 
-        choose the multiplier, inducing costs. The costs
-        will reduce your payoff and 
-        the multiplier will determine the payoff of participant A. 
-        
-        Remember that the payoff of participant A will be calculated as the 
-        product of the multiplier with the difference of their
-        endowment of 100 minus the amount sent to you.       
+        A sent you {{ group.wage }}. 
+        You should now select a multiplier.
+        The multiplier you select will determine the payoff of Participant A
+        Specifically, the payoff of Participant A will be calculated as (100 - {{ group.wage }}) times the multiplier.
+        Multipliers are costly to you. 
+        In the table below you can look up the cost of each multiplier that you can choose.
+        Your payoff will be calculated as {{ group.wage }} minus the cost of the multiplier you select.
     </p>
     <ul>
         <li>Your Payoff = amount received from participant A - cost of multiple</li>
