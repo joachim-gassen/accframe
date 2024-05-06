@@ -16,6 +16,12 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
     ),
     dict(
+        name='mftrust',
+        display_name="Framed Trust Game with Message Option",
+        app_sequence=['mftrust'],
+        num_demo_participants=2,
+    ),
+    dict(
         name='deception',
         display_name="Deception Game",
         app_sequence=['deception'],

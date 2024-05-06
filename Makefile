@@ -45,6 +45,9 @@ ALL_TARGETS := $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE) \
 
 .phony: all clean distclean 
 
+cleandb:
+	rm -rf data/generated/botex_db.sqlite3
+	rm -rf otree/db.sqlite3
 
 all: $(OUTPUT)
 
