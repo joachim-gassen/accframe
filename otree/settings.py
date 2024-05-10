@@ -71,7 +71,7 @@ SESSION_CONFIG_DEFAULTS = dict(
 PARTICIPANT_FIELDS = [
     'wealth', 'comprehension_check', 'comprehension_check1', 
     'comprehension_check2', 'manipulation_check', 
-    'human_check', 'feedback'
+    'human_check', 'feedback', 'part_id'
 ]
 SESSION_FIELDS = []
 

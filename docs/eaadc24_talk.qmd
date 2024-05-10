@@ -1,0 +1,347 @@
+---
+title: "On the Use of Chat GPT and Friends for Research"
+subtitle: "EAA Doctoral Colloquium 2024, Bucharest " # we use this for the venue
+author: Markus Arnold, Joachim Gassen, and Maximilian Müller
+institute: University Bern, Humboldt-Universität zu Berlin and University of Cologne
+date: today
+date-format: "MMMM D, YYYY"
+format: 
+  beamer: 
+    latex_engine: xelatex # pdflatex creates rastered fonts
+    slide_level: 3
+    
+classoption: "aspectratio=169"
+
+header-includes:
+- \usepackage{booktabs} 
+- \usepackage{tabularx}
+- \usepackage{multirow,makecell}
+- \usepackage{array}
+- \renewcommand\tabularxcolumn[1]{m{#1}}
+- \usepackage{makecell}
+- \usepackage{colortbl}
+- \usepackage{adjustbox}
+- \usepackage{tikz}
+- \usepackage{siunitx}
+- \usepackage{tabu}
+- \usetikzlibrary{arrows,arrows.meta,calc,positioning,matrix}
+- \input{materials/beamer_theme_trr266_16x9.sty}
+- \usepackage{tikz}
+- \usepackage{tikzsymbols}
+- \usetikzlibrary{calc, shapes, arrows.meta, positioning}
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+
+suppressMessages({
+  library(tidyverse)
+  library(ggbeeswarm)
+  library(kableExtra)
+  library(modelsummary)
+  library(showtext)
+	library(ggwordcloud)
+	library(tidytext)
+	library(gt)
+  
+  devtools::source_url(
+    "https://raw.githubusercontent.com/trr266/treat/main/code/R/theme_trr.R"
+  )
+})
+
+options(modelsummary_format_numeric_latex = "plain")
+
+# Needs to be 18 for the final experiment
+CELL_SIZE <- 4
+
+# Participant groups
+LL <- 1:CELL_SIZE
+HL <- (CELL_SIZE+1):(2*CELL_SIZE)
+HH <- (2*CELL_SIZE+1):(3*CELL_SIZE)
+
+rounds <- read_csv("../data/generated/eaatrial2_rounds.csv", show_col_types = FALSE) %>%
+	mutate(pct_returned = sent_back_amount/(3*sent_amount))
+part <- read_csv("../data/generated/eaatrial2_participants.csv", show_col_types = FALSE) 
+
+ll_rounds <- rounds %>% filter(group_id %in% LL)
+hl_rounds <- rounds %>% filter(group_id %in% HL)
+hh_rounds <- rounds %>% filter(group_id %in% HL)
+ll_part <- part %>% filter(group_id %in% LL)
+hl_part <- part %>% filter(group_id %in% HL)
+hh_part <- part %>% filter(group_id %in% HH)
+
+# Needs \usepackage{adjustbox} in preamble
+fit_gt_table_to_slide <- function(x, scale = 1) {
+	if (scale == 1) repstr <- "\\\\resizebox{\\\\columnwidth}{!}{\\\\begin{tabular}"
+	else repstr <- paste0("\\\\resizebox{", scale, "\\\\columnwidth}{!}{\\\\begin{tabular}")
+  x <- sub("\\\\begin\\{longtable\\}", repstr, x)
+  x <- sub("\\\\end\\{longtable\\}", "\\\\end{tabular}}", x)
+  x
+}
+
+fit_gt_table_to_slide_long <- function(x, scale = 1) {
+	if (scale == 1) repstr <- "\\\\resizebox*{!}{\\\\textheight}{\\\\begin{tabular}"
+	else repstr <- paste0("\\\\resizebox*{!}{", scale, "\\\\textheight}{\\\\begin{tabular}")
+  x <- sub("\\\\begin\\{longtable\\}", repstr, x)
+  x <- sub("\\\\end\\{longtable\\}", "\\\\end{tabular}}", x)
+  x
+}
+
+center_table <- function(x) {
+	x[1] <- paste0("\\begin{center}", x[1], "\\end{center}")
+	x
+}
+
+star_stat <- function(x, neg = FALSE) {
+  if (neg) x$statistic <- -x$statistic 
+  paste0(
+    format(round(x$statistic, 2), nsmall = 2),
+    ifelse(x$p.value < 0.01, "***", ifelse(x$p.value < 0.05, "**", ifelse(x$p.value < 0.1, "*", "")))
+  )
+}
+```
+
+```{r InstallTRRFonts}
+trr266_fonts_available <- all(c("Cambria", "Calibri Light") %in% font_families())
+
+if (!trr266_fonts_available) {
+  # On Mac with MS Office installation you need to add the Office
+  # Fonts to the font path. The following depends on your 
+  # installation but _should_ work in most cases
+  
+  office_font_path <- "/Applications/Microsoft Word.app/Contents/Resources/DFonts"
+  if (Sys.info()["sysname"] == "Darwin") {
+    if (dir.exists(office_font_path)) font_paths(office_font_path)
+    else stop("MS Office font path not found")
+  }
+  
+  rv <- tryCatch({
+    font_add(family = "Cambria", regular = "Cambria.ttc")
+    font_add(family = "Calibri Light", regular = "calibril.ttf")
+  }, error = function(e) {
+    message(sprintf("Failed to install TRR 266 fonts: %s", e))
+    invisible(font_families())        
+  })
+  
+  trr266_fonts_available <- all(c("Cambria", "Calibri Light") %in% rv)
+  if (trr266_fonts_available) message("Successfully installed TRR 266 fonts") 
+}
+```
+
+## Structure
+
+1. Max: Chat GPT as your research assistant
+
+2. Joachim: Chat GPT as your participant
+
+3. Markus: Chat GPT as your reviewer
+
+## Chat GPT as your participant
+
+\begin{center}
+\includegraphics[height =0.85\textheight]{"materials/exp_qrcode.jpeg"}
+\end{center}
+
+# Chat-GPT 4.0 playing with itself
+
+## Messages Sent
+
+```{r llMessage, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+messages_table <- function(df) {
+  df <- df %>%
+    filter(role_in_group == 1) %>%
+    select(group_id, group_message) %>%
+    rename(ID = group_id, `Message sent` = group_message)
+  
+  kable(df, booktabs = TRUE, linesep = "") %>%
+    kable_styling(full_width = TRUE, font_size = 6) %>% 
+    column_spec(1, width = "0.2cm")
+}
+
+messages_table(ll_part)
+```
+
+
+
+## Descriptive Statistics
+
+```{r llDesc}
+desc_table <- function(df) {
+  datasummary(
+    (`Amount sent`=sent_amount) + 
+      (`Amount returned`=sent_back_amount) + 
+      (`% returned`=pct_returned) ~ 
+      (N + (`Mean`=mean) + (`S.D.` = sd) + (`Median`=median)), 
+    data = df
+  )
+}
+
+desc_table(ll_rounds)
+```
+
+
+## Sent Amount by Round
+
+```{r llRound, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+plot_send_by_round <- function(df) {
+  ggplot(df, aes(x = as.factor(round), y = sent_amount)) +
+    geom_beeswarm(size = 0.25, corral = "wrap") +
+    stat_summary(
+      geom = "smooth",
+      fun.data = mean_cl_normal,
+      fun.args = list(conf.int = 0.95),
+      group = 1,
+      alpha = .5,
+      fill = "lightblue",
+      se = TRUE
+    ) + 
+    labs(x = "Round", y = "") +
+    scale_y_continuous(limits = c(0,100)) +
+    theme_minimal() +
+    theme(
+      panel.grid.major.x  = element_blank(),
+      panel.grid.minor = element_blank()
+    )
+}
+
+plot_send_by_round(ll_rounds)
+```
+
+
+# You playing with yourself
+
+## Messages Sent
+
+```{r hhMessage, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+messages_table(hh_part)
+```
+
+
+## Descriptive Statistics
+
+```{r hhDesc}
+desc_table(hh_rounds)
+```
+
+
+## Sent Amount by Round
+
+```{r hhRound, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+plot_send_by_round(hh_rounds)
+```
+
+
+# You playing with Chat-GPT 4.0
+
+## Messages Sent
+
+```{r hlMessage, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+messages_table(hl_part)
+```
+
+
+## Descriptive Statistics
+
+```{r hlDesc}
+desc_table(hl_rounds)
+```
+
+
+## Sent Amount by Round
+
+```{r hlRound, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+plot_send_by_round(hl_rounds)
+```
+
+
+## How does this work? Traditional oTree Setup
+
+\begin{center}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
+
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
+\end{center}
+
+
+## How does this work? oTree + botex
+
+\begin{center}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
+
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[block, above=1cm of webpages] (botex) {botex};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[block, right=2cm of botex] (llm) {LLM};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+\draw[line] ($(webpages.north)!0.5!(webpages.north west)$) -- node[left] {Scrape} ($(botex.south)!0.5!(botex.south west)$);
+\draw[line] ($(botex.south)!0.5!(botex.south east)$) -- node[right] {Response} ($(webpages.north)!0.5!(webpages.north east)$);
+\draw[line] ($(llm.west)!0.5!(llm.north west)$) -- node[above] {Response} ($(botex.east)!0.5!(botex.north east)$);
+\draw[line] ($(botex.east)!0.5!(botex.south east)$) -- node[below] {Prompt} ($(llm.west)!0.5!(llm.south west)$);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
+
+\end{center}
+
+## And.... 
+
+```{r WinnerWinnerChickenDinner}
+set.seed(42)
+humans <- part %>% filter(is_human == 1, !is.na(payoff))
+winner <- sample(seq_len(nrow(humans)), 1, prob=humans$payoff)
+```
+\begin{center}
+... the lucky winner is: `r substr(humans$participant_id[winner],1, 4)`
+\end{center}
+
+
+
+## Verification of winner 
+
+\begin{center}
+Second part of the winning code: `r substr(humans$participant_id[winner],6, 9)`
+\end{center}
+

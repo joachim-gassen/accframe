@@ -1,3 +1,6 @@
+import string
+import random
+
 from otree.api import *
 # This code is an adjusted variant of the oTree example code
 
@@ -12,9 +15,18 @@ tripled. The trust game was first proposed by
 class C(BaseConstants):
     NAME_IN_URL = 'mftrust'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 3
+    NUM_ROUNDS = 1
     ENDOWMENT = cu(100)
     MULTIPLIER = 3
+
+# This is running the N*(1/62^4) risk that two public IDs are identical.
+# I am willing to take that risk ;-)
+ 
+def create_id():
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    id_public = ''.join(random.choices(chars, k = 4))
+    id_private = ''.join(random.choices(chars, k = 4))
+    return("{} {}".format(id_public, id_private))
 
 class Subsession(BaseSubsession):
     pass
@@ -25,7 +37,7 @@ class Group(BaseGroup):
         blank=True
     )
     sent_amount = models.CurrencyField(
-        min=0,
+        min=cu(0),
         max=C.ENDOWMENT,
         doc="""Amount to invest into the firm""",
         label="Please enter an amount from 0 to 100:",
@@ -57,11 +69,11 @@ class Player(BasePlayer):
         ]
     )
     human_check = models.IntegerField(
-        label="Please characterize your personality",
+        label="What do you think: Was the other role represented by a human or a bot?",
         blank=False,
         choices=[
-            [1, 'I am a Human'],
-            [2, 'I am a Bot'],
+            [1, 'A Human'],
+            [2, 'A Bot'],
         ]
     )
     feedback = models.LongStringField(
@@ -76,6 +88,7 @@ def creating_session(subsession: Subsession):
     if subsession.round_number == 1:
         for p in subsession.get_players():
             p.participant.wealth = cu(0)
+            p.participant.part_id = create_id()
     
 def sent_back_amount_max(group: Group):
     return group.sent_amount * C.MULTIPLIER
@@ -83,6 +96,7 @@ def sent_back_amount_max(group: Group):
 def set_payoffs(group: Group):
     p1 = group.get_player_by_id(1)
     p2 = group.get_player_by_id(2)
+    if group.sent_amount == cu(0): group.sent_back_amount = cu(0)
     p1.payoff = C.ENDOWMENT - group.sent_amount + group.sent_back_amount
     p2.payoff = group.sent_amount * C.MULTIPLIER - group.sent_back_amount
     p1.participant.wealth += p1.payoff
@@ -139,7 +153,13 @@ class SendBack(Page):
     P2 sends back some amount (of the tripled amount received) to P1"""
 
     form_model = 'group'
-    form_fields = ['sent_back_amount']
+
+    @staticmethod
+    def get_form_fields(player):
+        if player.group.sent_amount > 0:
+            return ['sent_back_amount']
+        else:
+            return []
 
     @staticmethod
     def is_displayed(player: Player):
@@ -182,6 +202,12 @@ class Thanks(Page):
     @staticmethod
     def is_displayed(player):
         return player.round_number == C.NUM_ROUNDS
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(
+            participant_id=player.participant.part_id
+        )
     
 
 

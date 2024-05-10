@@ -20,12 +20,15 @@
             The investor
         {{ endif }}
         invested {{ group.sent_amount }}.
-        This amount was multiplied by 3 so you now have {{ tripled_amount }}.
-        
-        How many points do you want to send as a dividend to the investor?
-    </p>
-
-    {{ formfields }}
+        {{ if group.sent_amount > 0 }}
+            This amount was multiplied by 3 so you now have {{ tripled_amount }}.
+            How many points do you want to send as a dividend to the investor?
+            </p>
+            <p>{{ formfields }}</p>
+        {{ else }}
+            Thus, you cannot send any points back to the investor as a dividend.
+            </p>
+        {{ endif }}
     <p>{{ next_button }}</p>
 
 {{ endblock }}
