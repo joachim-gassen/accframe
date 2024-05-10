@@ -10,8 +10,11 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/eaatrial_botex_db_2024-05-09.sqlite3'
-OTREE_DATA = 'data/exp_runs/eaatrial_otree_2024-05-09.csv'
+BOTEX_DB = 'data/generated/botex_db.sqlite3'
+OTREE_DATA = '~/Downloads/all_apps_wide_2024-05-12.csv'
+#BOTEX_DB = 'data/exp_runs/eaadc24ll_botex_db_2024-05-10.sqlite3'
+#OTREE_DATA = 'data/exp_runs/eaadc24ll_otree_2024-05-10.csv'
+
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -36,6 +39,8 @@ def extract_participant_data(otree_raw, exp):
         f'{exp}.1.group.id_in_subsession', f'{exp}.1.player.id_in_group',
         f'{exp}.1.group.message',
         f'{exp}.3.player.comprehension_check', f'{exp}.3.player.manipulation_check',
+        f'{exp}.3.player.altruism', f'{exp}.3.player.trust',
+        f'{exp}.3.player.reciprocity', f'{exp}.3.player.negative_reciprocity',
         f'{exp}.3.player.human_check', f'{exp}.3.player.feedback'
     ]
 
@@ -55,6 +60,10 @@ def extract_participant_data(otree_raw, exp):
         f'{exp}.1.group.message': 'group_message',
         f'{exp}.3.player.comprehension_check': 'comprehension_check',
         f'{exp}.3.player.manipulation_check': 'manipulation_check',
+        f'{exp}.3.player.altruism': 'altruism',
+        f'{exp}.3.player.trust': 'trust',
+        f'{exp}.3.player.reciprocity': 'reciprocity',
+        f'{exp}.3.player.negative_reciprocity': 'negative_reciprocity',
         f'{exp}.3.player.human_check': 'human_check',
         f'{exp}.3.player.feedback': 'feedback'
     })
@@ -64,6 +73,10 @@ def extract_participant_data(otree_raw, exp):
     participants['payoff'] = pd.to_numeric(participants['payoff'], errors='coerce').astype('Int64')
     participants['comprehension_check'] = pd.to_numeric(participants['comprehension_check'], errors='coerce').astype('Int64')
     participants['manipulation_check'] = pd.to_numeric(participants['manipulation_check'], errors='coerce').astype('Int64')
+    participants['altruism'] = pd.to_numeric(participants['altruism'], errors='coerce').astype('Int64')
+    participants['trust'] = pd.to_numeric(participants['trust'], errors='coerce').astype('Int64')
+    participants['reciprocity'] = pd.to_numeric(participants['reciprocity'], errors='coerce').astype('Int64')
+    participants['negative_reciprocity'] = pd.to_numeric(participants['negative_reciprocity'], errors='coerce').astype('Int64')
     participants['human_check'] = pd.to_numeric(participants['human_check'], errors='coerce').astype('Int64')
 
     ordered_columns = [
@@ -71,6 +84,7 @@ def extract_participant_data(otree_raw, exp):
         'time_started', 
         'group_id', 'role_in_group', 'group_message', 'payoff', 
         'comprehension_check', 'manipulation_check',
+        'altruism', 'trust', 'reciprocity', 'negative_reciprocity',
         'human_check', 'feedback'
     ]
 
@@ -113,7 +127,10 @@ def extract_round_data(otree_raw, exp):
 
 def extract_rationales(participant_code):
     reason = []        
-    c = pd.DataFrame(conversations)        
+    c = pd.DataFrame(conversations)
+    if not any(c[0] == participant_code):
+        logging.warning(f"participant {participant_code} not found in conversations")
+        return None   
     conv = json.loads(c.loc[c[0] == participant_code, 2].item())
     check_for_error = False
     for message in conv:
@@ -172,5 +189,5 @@ for p in ps:
             (rounds.group_id == g), ['sent_back_reason']
         ] = extract_rationales(p)
      
-participants.to_csv('data/generated/eaatrial2_participants.csv', index = False)
-rounds.to_csv('data/generated/eaatrial2_rounds.csv', index = False)
+participants.to_csv('data/generated/eaadc24_participants.csv', index = False)
+rounds.to_csv('data/generated/eaadc24_rounds.csv', index = False)
