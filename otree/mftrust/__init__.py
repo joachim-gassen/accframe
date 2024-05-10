@@ -15,7 +15,7 @@ tripled. The trust game was first proposed by
 class C(BaseConstants):
     NAME_IN_URL = 'mftrust'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 1
+    NUM_ROUNDS = 3
     ENDOWMENT = cu(100)
     MULTIPLIER = 3
 
@@ -33,25 +33,25 @@ class Subsession(BaseSubsession):
 
 class Group(BaseGroup):
     message = models.LongStringField(
-        label="Please enter your message to the investor",
+        label="Please enter your message to the investor:",
         blank=True
     )
     sent_amount = models.CurrencyField(
         min=cu(0),
         max=C.ENDOWMENT,
-        doc="""Amount to invest into the firm""",
+        doc="""Amount to invest into the firm:""",
         label="Please enter an amount from 0 to 100:",
     )
     sent_back_amount = models.CurrencyField(
         min=cu(0),
         max=sent_amount*C.MULTIPLIER,
-        doc="""Dividend to be paid out to the investor""",
+        doc="""Dividend to be paid out to the investor:""",
     )
 
 class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
     comprehension_check = models.IntegerField(
-        label="What is the role of the multiplier in this game?",
+        label="What is the role of the multiplier in the experiment?",
         blank=False,
         choices=[
             [1, 'It increases the private wealth of the investor'],
@@ -61,13 +61,60 @@ class Player(BasePlayer):
         ],
     )
     manipulation_check = models.IntegerField(
-        label="What was your role in this game?",
+        label="What was your role in the experiment?",
         blank=False,
         choices=[
             [1, 'Investor'],
             [2, 'Manager'],
         ]
     )
+
+    altruism = models.IntegerField(
+        label="I am willing to help others even if I expect that I will never meet them again.",
+        blank=False,
+        choices = [
+            [1, 'Extremely'],
+            [2, 'Very'],
+            [3, 'Moderately'],
+            [4, 'Slightly'],
+            [5, 'Not at all']
+        ]
+    )
+    trust = models.IntegerField(
+        label="I believe that most people can be trusted.",
+        blank=False,
+        choices = [
+            [1, 'Extremely'],
+            [2, 'Very'],
+            [3, 'Moderately'],
+            [4, 'Slightly'],
+            [5, 'Not at all']
+        ]
+    )
+    reciprocity = models.IntegerField(
+        label="I am willing to incur costs to help someone who has helped me before.",
+        blank=False,
+        choices = [
+            [1, 'Extremely'],
+            [2, 'Very'],
+            [3, 'Moderately'],
+            [4, 'Slightly'],
+            [5, 'Not at all']
+        ]
+    )
+    negative_reciprocity = models.IntegerField(
+        label="If someone puts me in a difficult position, I would do the same to that person.",
+        blank=False,
+        choices = [
+            [1, 'Extremely'],
+            [2, 'Very'],
+            [3, 'Moderately'],
+            [4, 'Slightly'],
+            [5, 'Not at all']
+        ]
+    )
+
+
     human_check = models.IntegerField(
         label="What do you think: Was the other role represented by a human or a bot?",
         blank=False,
@@ -122,6 +169,9 @@ class Message(Page):
         return player.id_in_group == 2 and player.round_number == 1
 
 class SendWaitPage(WaitPage):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
     pass
 
 class Send(Page):
@@ -195,7 +245,11 @@ class Checks(Page):
         return player.round_number == C.NUM_ROUNDS
     
     form_model = 'player'
-    form_fields = ['comprehension_check', 'manipulation_check', 'human_check', 'feedback']
+    form_fields = [
+        'comprehension_check', 'manipulation_check', 
+        'altruism', 'trust', 'reciprocity', 'negative_reciprocity',
+        'human_check', 'feedback'
+    ]
 
 class Thanks(Page):
     """This page is displayed after the experimental run is complete."""
