@@ -162,7 +162,7 @@ if (!trr266_fonts_available) {
 ## Chat GPT as your Participant
 
 \begin{center}
-\includegraphics[height =0.7\textheight]{"materials/exp_qrcode.jpeg"} \\
+\includegraphics[height =0.7\textheight]{"materials/eaadc24_qrcode.jpeg"} \\
 http://exp.trr266.de/room/eaadc24
 \end{center}
 
@@ -170,7 +170,7 @@ http://exp.trr266.de/room/eaadc24
 ## The Experiment
 
 \begin{center}
-\includegraphics[height =0.8\textheight]{"materials/eaadc24_exp_inst.jpeg"}
+\includegraphics[height =0.8\textheight]{"materials/eaadc24_otree_inst.jpeg"}
 \end{center}
 
 

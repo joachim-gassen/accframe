@@ -10,10 +10,10 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/generated/botex_db.sqlite3'
-OTREE_DATA = '~/Downloads/all_apps_wide_2024-05-12.csv'
-#BOTEX_DB = 'data/exp_runs/eaadc24ll_botex_db_2024-05-10.sqlite3'
-#OTREE_DATA = 'data/exp_runs/eaadc24ll_otree_2024-05-10.csv'
+#BOTEX_DB = 'data/generated/botex_db.sqlite3'
+#OTREE_DATA = '~/Downloads/all_apps_wide_2024-05-12.csv'
+BOTEX_DB = 'data/exp_runs/eaadc24_botex_db_2024-05-12.sqlite3'
+OTREE_DATA = 'data/exp_runs/eaadc24_otree_2024-05-12.csv'
 
 
 conn = sqlite3.connect(BOTEX_DB)
