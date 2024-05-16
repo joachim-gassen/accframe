@@ -1,7 +1,13 @@
 {{ block title }}Your Choice{{ endblock }}
 {{ block content }}
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds.
+        </p>
+    {{ endif }}    
     <p>
-        The actual number is {{ true_amount }} points.
+        The actual number is {{ true_amount }}.
     </p>
     <p>
         {{ formfields }}

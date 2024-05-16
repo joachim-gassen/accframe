@@ -1,9 +1,15 @@
 {{ block title }}Your Choice{{ endblock }}
 {{ block content }}
-<p>
-    The actual costs predicted by your private forecasting system are {{ true_amount }} points.
-</p>
-<p>
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds.
+        </p>
+    {{ endif }}    
+    <p>
+        The actual costs predicted by your private forecasting system are {{ true_amount }}.
+    </p>
+    <p>
         {{ formfields }}
     </p>
         {{ next_button }}

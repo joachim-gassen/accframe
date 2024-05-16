@@ -4,7 +4,21 @@
         This is an experiment on budgeting in organizations.
         In the experiment, there are two roles: division manager and firm corporate headquarters.
         Your will act as division manager, the computer of the organizers will act as the firm's corporate headquarters.
-        Your task as division manager is to report the production costs of your division for the 
+    </p>
+    <p>
+        In the experiment, you can earn points. 
+        Points will be exchanged for money at the end of the experiment.
+    </p>
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            The experiment consists of {{ C.NUM_ROUNDS }} rounds.
+            Throughout the experiment, you will remain in the role of the decision manager.
+            The points that you earn in each round are added up.
+            Each round, your 
+        {{ else }}
+            Your
+        {{ endif }}
+        task as division manager is to report the production costs of your division for the 
         upcoming period to the firm's corporate headquarters in the form of a budget request. 
         As division manager you have access to a reliable private forecasting 
         system that allows you to accurately predict what the actual production 

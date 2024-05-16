@@ -4,7 +4,21 @@
         This is an experiment on decision-making.
         In the experiment, there are two roles: Participant A and Participant B.
         You will act as Participant A, the computer of the organizers will act as Participant B. 
-        Your task as Participant A is to report a number of points to Participant B.
+    </p>
+    <p>
+        In the experiment, you and the other participant can earn points. 
+        Points will be exchanged for money at the end of the experiment.
+    </p>
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            The experiment consists of {{ C.NUM_ROUNDS }} rounds.
+            Throughout the experiment, you will remain in the role of Participant A.
+            The points that you earn in each round are added up.
+            Each round, your 
+        {{ else }}
+            Your
+        {{ endif }}
+        task as Participant A is to report a number of points to Participant B.
         You will be privately informed about this number before you will be asked to report it.
         Participant B will not be informed about the number.
         Both you and Participant B know the 

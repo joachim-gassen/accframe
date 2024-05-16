@@ -13,7 +13,7 @@ simplified version of the classic
 class C(BaseConstants):
     NAME_IN_URL = 'exp8'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 10
+    NUM_ROUNDS = 2
     WAGE_MAX = 100
 
 cost_effort = {

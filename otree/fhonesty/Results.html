@@ -1,0 +1,50 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds. 
+        </p>
+    {{ endif }}
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, your
+        {{ else }} 
+            Your
+        {{ endif }}
+        private forecasting system predicted that the true costs
+        are {{ player.true_amount}} and 
+        you chose to file a budget request of {{ player.reported_amount }}
+        to the firm's corporate headquarters. Your payoff 
+        {{ if C.NUM_ROUNDS > 1 }} for this round {{ endif }}
+        thus is 
+        250 points + {{ player.reported_amount }} - {{ player.true_amount }} =
+        <strong>{{ player.pay }}</strong>.
+    </p>
+    <p>
+        The payoff of the firm is 
+        6000 points -  {{ player.reported_amount }} = 
+        <strong>{{ player.pay_other }}</strong>.
+    </p>
+    {{ if C.NUM_ROUNDS == 1 }}
+        <p>
+        In summary, you earned {{ player.pay }} and the firm earned {{ player.pay_other }}.
+        </p>
+    {{ else }}
+        {{ if group.round_number == C.NUM_ROUNDS }}
+            <p>
+                This was the last round. 
+                The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ player.wealth }}.
+                The total number of points the firm earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ player.wealth_other }}.
+            </p>
+        {{ else }}
+            <p>
+                The total number of points you earned so far is {{ player.wealth }}.
+                The total number of points the firm earned so far is {{ player.wealth_other }}.
+            </p>
+        {{ endif }}
+    {{ endif }}
+
+    <p>{{ next_button }}</p>
+
+{{ endblock }}

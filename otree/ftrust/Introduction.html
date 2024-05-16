@@ -1,8 +1,43 @@
-{{ block title }}Introduction{{ endblock }}
+{{ block title }}Instructions{{ endblock }}
 {{ block content }}
+<p>
+    This is an experiment on decision-making by managers and investors.
+    You have been randomly and anonymously paired with another participant.
+    In the experiment, there are two roles: manager and investor.
+    The roles are randomly assigned to you and the other participant. 
+    You will learn whether your role is manager or investor prior to making any decision.
+</p>
+<p>
+    In the experiment, you and the other participant can earn points. 
+    Points will be exchanged for money at the end of the experiment.
+</p>
+<p>
+    {{ if C.NUM_ROUNDS > 1 }}
+        This experiment lasts {{ C.NUM_ROUNDS }} rounds.
+    {{ endif }}
 
-    {{ include_sibling 'instructions.html' }}
+    The rules are as follows.
+    {{ if C.NUM_ROUNDS > 1 }} 
+        Each round, the investor
+    {{ else }} 
+        The investor
+    {{ endif }}
+    starts with an endowment of {{ C.ENDOWMENT }} and the manager starts with an endowment of 0 points.
+    The investor can invest none, some, or all of their endowment in the firm run by the manager.
+    Each point that the investor invests in the firm run by the manager is multiplied by 3.
+    The manager then needs to decide how much of this multiplied amount they send to the investor as a dividend.
+    Anything that the manager does not send to the investor, they can keep for themselves.  
+</p>
+<p>
+    <b>Example</b>
+    Suppose that the investor chooses to invest 50 points. 
+    This amount is then multiplied by 3, such that the manager now 
+    has 150 points. Suppose the manager sends back 50 points to 
+    the investor. The payoff of the investor then is 100 points 
+    (100 - 50 + 50) and the payoff of the manager then is 100 points 
+    (0 + 150 - 50).
+</p>
 
-    {{ next_button }}
+{{ next_button }}
 
 {{ endblock }}

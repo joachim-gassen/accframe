@@ -9,7 +9,7 @@ This a is a neutral variant of experiment 1 in Evans III et al. (2001).
 class C(BaseConstants):
     NAME_IN_URL = 'exp3'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 1
+    NUM_ROUNDS = 2
     COMPENSATION = 250
     MIN_POOL = 4000
     MAX_POOL = 6000
@@ -22,11 +22,12 @@ class Group(BaseGroup):
     pass
 
 class Player(BasePlayer):
-    pay = models.IntegerField(initial=0)
-    wealth = models.IntegerField(initial = 0)
-    wealth_other = models.IntegerField(initial = 0)
-    true_amount = models.IntegerField(initial=4000)
-    reported_amount = models.IntegerField(
+    pay = models.CurrencyField(initial=cu(0))
+    pay_other = models.CurrencyField(initial=cu(0))
+    wealth = models.CurrencyField(initial = cu(0))
+    wealth_other = models.CurrencyField(initial = cu(0))
+    true_amount = models.CurrencyField(initial=cu(4000))
+    reported_amount = models.CurrencyField(
         label="What is the amount that you want to report?",
         blank=False
     )
@@ -73,6 +74,7 @@ def creating_session(subsession: Subsession):
 
 def set_payoffs(p):
     p.pay = p.reported_amount - p.true_amount + C.COMPENSATION
+    p.pay_other = C.MAX_POOL - p.reported_amount
     if p.round_number > 1: 
         p.wealth = p.in_round(p.round_number - 1).wealth + \
             p.pay
@@ -133,6 +135,11 @@ class Choice(Page):
     def before_next_page(player, timeout_happened):
         set_payoffs(player)
 
+class Results(Page):
+    """
+    Reports results.
+    """
+    pass
 
 
 class Checks(Page):
@@ -146,7 +153,7 @@ class Checks(Page):
         'comprehension_check1', 'comprehension_check2', 'human_check', 'feedback'
     ]
 
-class PayoffThanks(Page):
+class Thanks(Page):
     """This page is displayed after the experimental run is complete."""
     @staticmethod
     def is_displayed(player):
@@ -156,6 +163,7 @@ class PayoffThanks(Page):
 page_sequence = [
     Introduction,
     Choice,
+    Results,
     Checks,
-    PayoffThanks
+    Thanks
 ]

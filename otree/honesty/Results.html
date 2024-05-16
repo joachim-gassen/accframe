@@ -1,0 +1,49 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds. 
+        </p>
+    {{ endif }}
+    <p>
+        {{ if C.NUM_ROUNDS > 1 }}
+            This round, you
+        {{ else }} 
+            You
+        {{ endif }}
+        received the information that the true amount
+        is {{ player.true_amount}} and chose to report {{ player.reported_amount }}
+        to participant B. Your payoff 
+        {{ if C.NUM_ROUNDS > 1 }} for this round {{ endif }}
+        thus is 
+        250 points + {{ player.reported_amount }} - {{ player.true_amount }} =
+        <strong>{{ player.pay }}</strong>.
+    </p>
+    <p>
+        The payoff of participant B is 
+        6000 points -  {{ player.reported_amount }} = 
+        <strong>{{ player.pay_other }}</strong>.
+    </p>
+    {{ if C.NUM_ROUNDS == 1 }}
+        <p>
+        In summary, you earned {{ player.pay }} and Participant B earned {{ player.pay_other }}.
+        </p>
+    {{ else }}
+        {{ if group.round_number == C.NUM_ROUNDS }}
+            <p>
+                This was the last round. 
+                The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ player.wealth }}.
+                The total number of points Participant B earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ player.wealth_other }}.
+            </p>
+        {{ else }}
+            <p>
+                The total number of points you earned so far is {{ player.wealth }}.
+                The total number of points Participant B earned so far is {{ player.wealth_other }}.
+            </p>
+        {{ endif }}
+    {{ endif }}
+
+    <p>{{ next_button }}</p>
+
+{{ endblock }}

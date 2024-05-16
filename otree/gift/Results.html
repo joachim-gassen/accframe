@@ -10,10 +10,10 @@
     {{ if player.id_in_group == 1 }}
         <p>
             {{ if C.NUM_ROUNDS > 1 }}
-                This round, you chose to send participant B 
+                This round, you chose to send Participant B 
                 {{ group.wage }}.
             {{ else }}
-                You chose to send participant B {{ group.wage }}.
+                You chose to send Participant B {{ group.wage }}.
             {{ endif }}
             Participant B decided for a multiplier of {{ effort }},
             inducing costs of {{ group.cost }}. 
@@ -22,32 +22,31 @@
         </p>
         <p>
             The payoff of participant B is 
-            {{ group.wage }} - {{ group.cost }} = {{ p2_payoff }}.
+            {{ group.wage }} - {{ group.cost }} = 
+            <strong>{{ p2_payoff }}</strong>.
         </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the experiment, your total 
-                wealth is {{ p1_wealth }}, while the total wealth of 
-                participant B is {{ p2_wealth }}.
+               In summary, you earned {{ p1_wealth }} and Participant B earned {{ p2_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total wealth is 
-                    {{ p1_wealth }}, while the accumulated total wealth of 
-                    participant B is {{ p2_wealth }}.
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
+                    The total number of points Participant B earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated wealth over the rounds so far is 
-                    {{ p1_wealth }}, while the accumulated wealth of 
-                    participant B is {{ p2_wealth }}.
+                    The total number of points you earned so far is {{ p1_wealth }}.
+                    The total number of points Participant B earned so far is {{ p2_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}
+
     {{ else }}
         <p>
-            This round, participant A sent you {{ group.wage }}.
+            This round, Participant A sent you {{ group.wage }}.
             You chose an multiplier of {{ effort }},
             inducing costs of {{ group.cost }},
             thus your payoff of this round is
@@ -55,27 +54,25 @@
             <strong>{{ player.payoff }}</strong>.
         </p>
         <p>
-            The payoff of participant A is 
-            (100 points - {{ group.wage }}) * {{ effort }} = {{ p1_payoff }}.
-       </p>
+            The payoff of Participant A is 
+            (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ p1_payoff }}</strong>.
+        </p>
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
-                As this was the only round of the experiment, your total 
-                wealth is {{ p2_wealth }}, while the total wealth of 
-                participant A is {{ p1_wealth }}.
+                In summary, you earned {{ p2_wealth }} and Participant A earned {{ p1_wealth }}.
             </p>
         {{ else }}
             {{ if group.round_number == C.NUM_ROUNDS }}
                 <p>
-                    This was the last round. Your accumulated total wealth is 
-                    {{ p2_wealth }}, while the accumulated total wealth of 
-                    participant A is {{ p1_wealth }}.
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
+                    The total number of points Participant A earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
                 </p>
             {{ else }}
                 <p>
-                    Your accumulated wealth over the rounds so far is 
-                    {{ p2_wealth }}, while the accumulated wealth of 
-                    participant A is {{ p1_wealth }}.
+                    The total number of points you earned so far is {{ p2_wealth }}.
+                    The total number of points Participant A earned so far is {{ p1_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}

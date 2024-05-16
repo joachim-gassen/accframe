@@ -9,7 +9,7 @@ This a is a neutral variant of experiment 1 in Evans III et al. (2001).
 class C(BaseConstants):
     NAME_IN_URL = 'exp4'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 1
+    NUM_ROUNDS = 2
     COMPENSATION = 250
     MIN_POOL = 4000
     MAX_POOL = 6000
@@ -22,25 +22,26 @@ class Group(BaseGroup):
     pass
 
 class Player(BasePlayer):
-    pay = models.IntegerField(initial=0)
-    wealth = models.IntegerField(initial = 0)
-    wealth_other = models.IntegerField(initial = 0)
-    true_amount = models.IntegerField(initial=4000)
-    reported_amount = models.IntegerField(
+    pay = models.CurrencyField(initial=cu(0))
+    pay_other = models.CurrencyField(initial=cu(0))
+    wealth = models.CurrencyField(initial = cu(0))
+    wealth_other = models.CurrencyField(initial = cu(0))
+    true_amount = models.CurrencyField(initial=cu(4000))
+    reported_amount = models.CurrencyField(
         label="What is the budget request that you want to file?",
         blank=False
     )
     comprehension_check1 = models.IntegerField(
         label="Who knew the true cost structure?",
         blank=False,
-        choices = [[1, 'Only me'], [2, "Me and corporate headquarters"]]
+        choices = [[1, 'Only I'], [2, "I and the firm's corporate headquarters"]]
     )
     comprehension_check2 = models.IntegerField(
-        label="Assuming that you only care about your private wealth, what would have been the optimal strategy?",
+        label="Assuming that you only care about about your points at the end, what would have been the optimal strategy?",
         blank=False,
         choices=[
             [1, f'Filing a budget request for {C.MAX_POOL}'],
-            [2, 'Filing a budget request reflecting the true costs']
+            [2, 'Filing a budget request reflecting the true production costs']
         ],
     )
     human_check = models.IntegerField(
@@ -70,6 +71,7 @@ def creating_session(subsession: Subsession):
 
 def set_payoffs(p):
     p.pay = p.reported_amount - p.true_amount + C.COMPENSATION
+    p.pay_other = C.MAX_POOL - p.reported_amount
     if p.round_number > 1: 
         p.wealth = p.in_round(p.round_number - 1).wealth + \
             p.pay
@@ -90,13 +92,6 @@ class Introduction(Page):
     """
     def is_displayed(player):
         return player.round_number == 1
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(
-            price=C.MAX_POOL/1000,
-            quantity=1000
-        )
-
     pass
 
 
@@ -137,6 +132,11 @@ class Choice(Page):
     def before_next_page(player, timeout_happened):
         set_payoffs(player)
 
+class Results(Page):
+    """
+    Reports results.
+    """
+    pass
 
 
 class Checks(Page):
@@ -150,7 +150,7 @@ class Checks(Page):
         'comprehension_check1', 'comprehension_check2', 'human_check', 'feedback'
     ]
 
-class PayoffThanks(Page):
+class Thanks(Page):
     """This page is displayed after the experimental run is complete."""
     @staticmethod
     def is_displayed(player):
@@ -160,6 +160,7 @@ class PayoffThanks(Page):
 page_sequence = [
     Introduction,
     Choice,
+    Results,
     Checks,
-    PayoffThanks
+    Thanks
 ]
