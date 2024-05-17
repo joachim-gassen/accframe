@@ -18,6 +18,12 @@
                 Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
                 {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
         </p>
+        <p>
+            The payoff of Participant B is 
+            {{ C.MULTIPLIER }} * {{ group.sent_amount }} - {{ group.sent_back_amount }} = 
+            <strong>{{ receiver_payoff }}</strong>.
+        </p>
+
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
                In summary, you earned {{ p1_wealth }} and Participant B earned {{ p2_wealth }}.
@@ -48,6 +54,12 @@
             Your payoff thus is {{ tripled_amount }} - {{ group.sent_back_amount }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
+        <p>
+            The payoff of Participant A is 
+            {{ C.ENDOWMENT }} - {{ group.sent_amount }} + {{ group.sent_back_amount }} = 
+            <strong>{{ sender_payoff }}</strong>.
+        </p>
+
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
                In summary, you earned {{ p2_wealth }} and Participant A earned {{ p1_wealth }}.
@@ -61,8 +73,8 @@
                 </p>
             {{ else }}
                 <p>
-                    The total number of points you earned in the {{ group.round_number }} rounds so far is {{ p2_wealth }}.
-                    The total number of points Participant A earned in the {{ group.round_number }} rounds so far is {{ p1_wealth }}.
+                    The total number of points you earned so far is {{ p2_wealth }}.
+                    The total number of points Participant A earned so far is {{ p1_wealth }}.
                 </p>
             {{ endif }}
         {{ endif }}

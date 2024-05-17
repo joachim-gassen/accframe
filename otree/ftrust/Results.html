@@ -19,6 +19,12 @@
             Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
             {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
         </p>
+        <p>
+            The payoff of the manager is 
+            {{ C.MULTIPLIER }} * {{ group.sent_amount }} - {{ group.sent_back_amount }} = 
+            <strong>{{ receiver_payoff }}</strong>.
+        </p>
+
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
             In summary, you earned {{ p1_wealth }} and the manager earned {{ p2_wealth }}. 
@@ -39,12 +45,23 @@
         {{ endif }}
     {{ else }}
         <p>
-            This round, the investor invested {{ group.sent_amount }}.
+            {{ if C.NUM_ROUNDS > 1 }}
+                This round, the
+            {{ else }}
+                The
+            {{ endif }}
+            investor invested {{ group.sent_amount }}.
             These points were multiplied by 3 so you received {{ tripled_amount }}.
             You chose to return {{ group.sent_back_amount }} as a dividend.
             Your payoff thus is {{ tripled_amount }} - {{ group.sent_back_amount }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
+        <p>
+            The payoff of the investor is 
+            {{ C.ENDOWMENT }} - {{ group.sent_amount }} + {{ group.sent_back_amount }} = 
+            <strong>{{ sender_payoff }}</strong>.
+        </p>
+
         {{ if C.NUM_ROUNDS == 1 }}
             <p>
           In summary, you earned {{ p2_wealth }} and the investor earned {{ p1_wealth }}.

@@ -21,7 +21,7 @@
             <strong>{{ player.payoff }}</strong>.
         </p>
         <p>
-            The payoff of participant B is 
+            The payoff of Participant B is 
             {{ group.wage }} - {{ group.cost }} = 
             <strong>{{ p2_payoff }}</strong>.
         </p>
@@ -46,7 +46,8 @@
 
     {{ else }}
         <p>
-            This round, Participant A sent you {{ group.wage }}.
+            {{ if C.NUM_ROUNDS > 1 }}This round, {{ endif }} 
+            Participant A sent you {{ group.wage }}.
             You chose an multiplier of {{ effort }},
             inducing costs of {{ group.cost }},
             thus your payoff of this round is
