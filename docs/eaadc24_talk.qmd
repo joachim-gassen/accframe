@@ -370,6 +370,25 @@ If someone puts me in a difficult position, I would do the same to that person.
 plot_demog_histogram(negative_reciprocity)
 ```
 
+## Demographics by Behavior
+
+```{r DemogBehvTrust, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
+df <- part %>%
+  filter(role_in_group == 1) %>%
+  select(group_id, is_human, trust) %>%
+  left_join(
+    rounds %>% filter(round == 1) %>% select(group_id, sent_amount),
+    by = "group_id"
+  )
+
+ggplot(df, aes(x = trust, y = sent_amount, color = is_human, group = is_human)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal()
+
+```
+
+
 ## How does this work? Traditional oTree Setup
 
 \begin{center}
