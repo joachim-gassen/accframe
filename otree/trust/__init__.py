@@ -13,7 +13,7 @@ tripled. The trust game was first proposed by
 class C(BaseConstants):
     NAME_IN_URL = 'trust'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 10
+    NUM_ROUNDS = 1
     ENDOWMENT = cu(100)
     MULTIPLIER = 3
 
@@ -94,7 +94,6 @@ class Introduction(Page):
     def is_displayed(player):
         return player.round_number == 1
 
-
 class Send(Page):
     """This page is only for P1
     P1 sends amount (all, some, or none) to P2
@@ -141,6 +140,8 @@ class Results(Page):
 
         return dict(
             tripled_amount=group.sent_amount * C.MULTIPLIER,
+            sender_payoff = group.get_player_by_id(1).payoff,
+            receiver_payoff = group.get_player_by_id(2).payoff,
             p1_wealth=group.get_player_by_id(1).participant.wealth,
             p2_wealth=group.get_player_by_id(2).participant.wealth
         )
@@ -160,8 +161,6 @@ class Thanks(Page):
     def is_displayed(player):
         return player.round_number == C.NUM_ROUNDS
     
-
-
 page_sequence = [
     Introduction,
     Send,
