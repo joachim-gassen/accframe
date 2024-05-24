@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/honesty_botex_db_2024-03-27.sqlite3'
-OTREE_DATA = 'data/exp_runs/honesty_otree_2024-03-27.csv'
+BOTEX_DB = 'data/exp_runs/honesty_botex_db_2024-05-23.sqlite3'
+OTREE_DATA = 'data/exp_runs/honesty_otree_2024-05-23.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -29,8 +29,7 @@ otree_raw = pd.read_csv(OTREE_DATA, index_col= False)
 
 def extract_participant_data(otree_raw, exp):
     wide = otree_raw.loc[
-        (otree_raw['participant._current_app_name'] == exp) &
-        (otree_raw['participant._index_in_pages'] == 40) 
+        (otree_raw['participant._current_app_name'] == exp) 
         # Adjust this above to the last page of the experiment
     ].reset_index()
     if wide.shape[0] == 0: return None
@@ -63,9 +62,9 @@ def extract_participant_data(otree_raw, exp):
     })
     participants['experiment'] = exp
     participants['player_id'] = participants['player_id'].astype(int)
-    participants['comprehension_check1'] = participants['comprehension_check1'].astype(int)
-    participants['comprehension_check2'] = participants['comprehension_check2'].astype(int)
-    participants['human_check'] = participants['human_check'].astype(int)   
+    participants['comprehension_check1'] = pd.to_numeric(participants['comprehension_check1'], errors='coerce').astype('Int64')
+    participants['comprehension_check2'] = pd.to_numeric(participants['comprehension_check2'], errors='coerce').astype('Int64')
+    participants['human_check'] = pd.to_numeric(participants['human_check'], errors='coerce').astype('Int64')
 
     ordered_columns = [
         'experiment', 'session_code', 'participant_code', 'time_started', 
@@ -78,8 +77,7 @@ def extract_participant_data(otree_raw, exp):
 
 def extract_round_data(otree_raw, exp):
     wide = otree_raw.loc[
-        (otree_raw['participant._current_app_name'] == exp) &
-        (otree_raw['participant._index_in_pages'] == 40) 
+        (otree_raw['participant._current_app_name'] == exp) 
         # Adjust this above to the last page of the experiment
     ].reset_index()
     if wide.shape[0] == 0: return None
@@ -108,13 +106,16 @@ def extract_round_data(otree_raw, exp):
         index = ['experiment', 'session_code', 'player_id', 'round'], 
         columns = 'var', values = 'value', aggfunc = 'first'
     ).sort_index().reset_index()
-    rounds['true_amount'] = rounds['true_amount'].astype(int)
-    rounds['reported_amount'] = rounds['reported_amount'].astype(int)
+    rounds['true_amount'] = pd.to_numeric(rounds['true_amount'], errors='coerce').astype('Int64')
+    rounds['reported_amount'] = pd.to_numeric(rounds['reported_amount'], errors='coerce').astype('Int64')
     return rounds 
 
 def extract_rationales(participant_code):
     reason = []        
-    c = pd.DataFrame(conversations)        
+    c = pd.DataFrame(conversations)
+    if not any(c[0] == participant_code):
+        logging.warning(f"participant {participant_code} not found in conversations")
+        return None           
     conv = json.loads(c.loc[c[0] == participant_code, 2].item())
     check_for_error = False
     for message in conv:

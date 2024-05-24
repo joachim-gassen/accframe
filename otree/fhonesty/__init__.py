@@ -1,4 +1,6 @@
 import random
+import csv
+import os
 
 from otree.api import *
 
@@ -9,7 +11,7 @@ This a is a neutral variant of experiment 1 in Evans III et al. (2001).
 class C(BaseConstants):
     NAME_IN_URL = 'exp4'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 2
+    NUM_ROUNDS = 10
     COMPENSATION = 250
     MIN_POOL = 4000
     MAX_POOL = 6000
@@ -64,10 +66,25 @@ def reported_amount_choices(player):
 # --- Functions ----------------------------------------------------------------
 
 def creating_session(subsession: Subsession):
+    use_true_amounts_from_csv = False
+    if os.path.exists(__name__ + '/true_amounts.csv'):
+        use_true_amounts_from_csv = True
+        f = open(__name__ + '/true_amounts.csv')
+        reader = list(csv.DictReader(f))
+
     for p in subsession.get_players():
-        p.true_amount = random.choice(
-            range(C.MIN_POOL, C.MAX_POOL + C.STEP, C.STEP)
-        )
+        participant = p.participant
+        if not use_true_amounts_from_csv:
+            p.true_amount = random.choice(
+                range(C.MIN_POOL, C.MAX_POOL + C.STEP, C.STEP)
+            )
+        else:
+            pdata = [
+                row for row in reader 
+                if row['id_in_group'] == str(p.id_in_group) and 
+                row['round'] == str(subsession.round_number)
+            ]
+            p.true_amount = pdata[0]['true_amount']
 
 def set_payoffs(p):
     p.pay = p.reported_amount - p.true_amount + C.COMPENSATION

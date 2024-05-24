@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 import botex
 
-OTREE_IS_RUNNING = True
+OTREE_IS_RUNNING = False
 OTREE_STARTUP_WAIT = 3
 
 dotenv.load_dotenv("secrets.env")

@@ -21,7 +21,8 @@ tparticipants <- read_csv(
     experiment = factor(ifelse(
       experiment == "ftrust",
       "Business Framing", "Neutral Framing"
-    ), c("Neutral Framing", "Business Framing"))
+    ), c("Neutral Framing", "Business Framing")),
+    role = ifelse(role_in_group == 1, "Sender", "Receiver")
   )
 
 dyads <- tparticipants %>%
@@ -76,14 +77,17 @@ confint(mod_trust_pct_returned)[4,]
 
 # Participant Level
 
+mod_part <- feols(payoff ~ experiment*role, data = tparticipants)
+summary(mod_part)
+
 t.test(payoff ~ experiment, data = tparticipants)
 wilcox.test(payoff ~ experiment, data = tparticipants)
 
-t.test(payoff ~ experiment, data = tparticipants %>% filter(role_in_group == 1))
-wilcox.test(payoff ~ experiment, data = tparticipants %>% filter(role_in_group == 1))
+t.test(payoff ~ experiment, data = tparticipants %>% filter(role == "Sender"))
+wilcox.test(payoff ~ experiment, data = tparticipants %>% filter(role == "Sender"))
 
-t.test(payoff ~ experiment, data = tparticipants %>% filter(role_in_group == 2))
-wilcox.test(payoff ~ experiment, data = tparticipants %>% filter(role_in_group == 2))
+t.test(payoff ~ experiment, data = tparticipants %>% filter(role == "Receiver"))
+wilcox.test(payoff ~ experiment, data = tparticipants %>% filter(role == "Receiver"))
 
 # Dyad Level
 

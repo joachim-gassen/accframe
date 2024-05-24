@@ -9,13 +9,17 @@ PYTHON := . venv/bin/activate; python
 # Static Output
 
 OUTPUT := static/presentation.pdf static/appendix_trust_example.pdf \
-	static/eaadc24_talk.pdf
+	static/eaadc24_talk.pdf static/honesty_power_analysis.pdf \
+	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf
 
 # Main targets
 
 PRESENTATION := output/presentation.pdf
 APPENDIX_TRUST_EXAMPLE := output/appendix_trust_example.pdf
 EAADC24_TALK := output/eaadc24_talk.pdf
+HONESTY_POWER := output/honesty_power_analysis.pdf
+TRUST_POWER := output/giftex_power_analysis.pdf
+GIFTEX_POWER := output/giftex_power_analysis.pdf
 
 # Setup targets
 
@@ -142,9 +146,30 @@ $(EAADC24_TALK): $(EAADC24_EXP_DATA) \
 	quarto render docs/eaadc24_talk.qmd --quiet
 	rm -rf output/eaadc24_talk_files
 
+$(HONESTY_POWER): $(HONESTY_EXP_DATA) \
+	docs/_quarto.yml \
+	docs/honesty_power_analysis.qmd
+	quarto render docs/honesty_power_analysis.qmd --quiet
+	rm -rf output/honesty_power_analysis_filed
+
+$(TRUST_POWER): $(TRUST_EXP_DATA) \
+	docs/_quarto.yml \
+	docs/trust_power_analysis.qmd
+	quarto render docs/trust_power_analysis.qmd --quiet
+	rm -rf output/trust_power_analysis_filed
+
+$(GIFTEX_POWER): $(GIFT_EXP_DATA) \
+	docs/_quarto.yml \
+	docs/giftex_power_analysis.qmd
+	quarto render docs/giftex_power_analysis.qmd --quiet
+	rm -rf output/giftex_power_analysis_filed
 
 $(OUTPUT): $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE) $(EAADC24_TALK)
 	cp $(PRESENTATION) static/
 	cp $(APPENDIX_TRUST_EXAMPLE) static/
 	cp $(EAADC24_TALK) static/
+	cp $(HONESTY_POWER) static/
+	cp $(TRUST_POWER) static/
+	cp $(GIFTEX_POWER) static/
+
 	

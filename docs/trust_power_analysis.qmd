@@ -1,0 +1,308 @@
+---
+title: "Power Analysis for Trust Experiment"
+format: pdf
+---
+
+```{r}
+suppressMessages({
+  library(tidyverse)
+  library(fixest)
+  library(pwr)
+})
+
+set.seed(42)
+
+trounds <- read_csv("../data/generated/trust_rounds.csv", show_col_types = FALSE) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "ftrust",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing")),
+    pct_returned = sent_back_amount/(3*sent_amount)
+  )
+tparticipants <- read_csv("../data/generated/trust_participants.csv", show_col_types = FALSE) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "ftrust",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing"))
+  )
+```
+
+
+# Descriptive statistics of pretest data to standardize the power tests
+
+```{r}
+mn_sent_start <- mean(trounds$sent_amount[trounds$round == 1])
+sd_sent <- sd(trounds$sent_amount)
+mn_pct_returned_start <- mean(trounds$pct_returned[trounds$round == 1])
+sd_pct_returned <- sd(trounds$pct_returned)
+
+message(sprintf(
+  "Mean start (SD all) sent: %.2f (%.2f)", mn_sent_start, sd_sent
+))
+message(sprintf(
+    "Mean start (SD all) pct_returned: %.2f (%.2f)", 
+    mn_pct_returned_start, sd_pct_returned
+))
+
+# Some pretest regressions to see how rounds affect our DVs:
+
+ols_sent_amount <- lm(sent_amount ~ round, data = trounds)
+summary(ols_sent_amount)
+summary(lm(sent_amount ~ round*experiment, data = trounds))
+summary(lm(log(sent_amount) ~ round, data = trounds))
+summary(lm(log(sent_amount) ~ round*experiment, data = trounds))
+
+fe_sent_amount <- feols(
+  sent_amount ~ experiment | round, cluster = c("round", "group_id"),
+  data = trounds
+)
+summary(fe_sent_amount)
+fixef(fe_sent_amount)$round
+# Clearly not exponential but decreasing positive trend for rounds. 
+# Sticking to a linear trend for the estimation.
+
+summary(lm(pct_returned ~ round, data = trounds))
+summary(lm(pct_returned ~ round*experiment, data = trounds))
+fe_pct_returned <- feols(
+  pct_returned ~ experiment | round, cluster = c("round", "group_id"),
+  data = trounds
+)
+summary(fe_pct_returned)
+fixef(fe_pct_returned)$round
+# No round trend in pct_returned based on pretest data
+```
+
+# Equation-based Power Analysis based on Pretest Data
+
+## Round Based Analysis
+
+```{r}
+pwr.t.test(500, 5/sd_sent)
+pwr.t.test(d = 5/sd_sent, power = 0.8)
+pr <- pwr.t.test(n = 500, power = 0.8)
+sprintf("MDE Trust sent: %.2f", pr$d * sd_sent)
+sprintf("MDE Trust pct_returned: %.4f", pr$d * sd_pct_returned)
+```
+
+## Participant and Dyad Based Analyis
+
+```{r}
+mn_payoff_part <- mean(tparticipants$payoff)
+sd_payoff_part <- sd(tparticipants$payoff)
+sprintf("Mean (SD) of part payoff: %.2f (%.2f)", mn_payoff_part, sd_payoff_part)
+pwr.t.test(100, (0.1*mn_payoff_part)/sd_payoff_part)
+pr <- pwr.t.test(n = 100, power = 0.8)
+sprintf(
+  "MDE Payoff part: %.2f (%.1f %% of mean)", pr$d * sd_payoff_part,
+  100*(pr$d * sd_payoff_part)/mn_payoff_part
+)
+dyads <- tparticipants %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(sum_payoff = sum(payoff),.groups = "drop")
+
+mn_payoff_dyads <- mean(dyads$sum_payoff)
+sd_payoff_dyads <- sd(dyads$sum_payoff)
+sprintf("Mean (SD) of dyad payoff: %.2f (%.2f)", mn_payoff_dyads, sd_payoff_dyads)
+pwr.t.test(50, (0.1*mn_payoff_dyads)/sd_payoff_dyads)
+pr <- pwr.t.test(n = 50, power = 0.8)
+sprintf(
+  "MDE Payoff dyads: %.2f (%.1f %% of mean)", pr$d * sd_payoff_dyads,
+  100*(pr$d * sd_payoff_dyads)/mn_payoff_dyads
+)
+```
+
+# Simulation for regression based tests
+
+```{r}
+if (file.exists("../data/generated/trust_sim_results.csv")) {
+  trust_sim_results <- read_csv("../data/generated/trust_sim_results.csv", show_col_types = F)
+} else {
+  sim_data <- function(parms, runs = 50, rounds = 10) {
+    cl <- function(val, vmin = 0, vmax = 100) {
+      if (val > vmax) return(as.integer(vmax))
+      if (val < vmin) return(as.integer(vmin))
+      as.integer(round(val))
+    }
+    tr <- function(rd, exp, g, parms) {
+      tsent_start = ifelse(
+        exp == "ftrust",
+        parms$tsent_start + parms$tsent_start_teffect,
+        parms$tsent_start
+      )
+      tsent_grate = ifelse(
+        exp == "ftrust",
+        parms$tsent_grate + parms$tsent_grate_teffect,
+        parms$tsent_grate
+      )
+      tpct_returned_start = ifelse(
+        exp == "ftrust",
+        parms$tpct_returned_start + parms$tpct_returned_start_teffect,
+        parms$tpct_returned_start
+      )
+      tpct_returned_grate = ifelse(
+        exp == "ftrust",
+        parms$tpct_returned_grate + parms$tpct_returned_grate_teffect,
+        parms$tpct_returned_grate
+      )
+      
+      tibble(
+        experiment = factor(ifelse(
+          exp == "ftrust",
+          "Business Framing", "Neutral Framing"
+        ), c("Neutral Framing", "Business Framing")),
+        group_id = g,
+        round = rd,
+        sent_amount = cl(
+          tsent_start + (rd-1)*tsent_grate + rnorm(1, 0, parms$tsent_evar), 
+          0, 100
+        ),
+        sent_back_amount = cl(
+          3*(tpct_returned_start + (rd-1)*tpct_returned_grate + 
+               rnorm(1, 0, parms$tpct_returned_evar))*sent_amount ,
+          0, 3*sent_amount
+        ),
+        pct_returned = sent_back_amount/(3*sent_amount)
+      )
+    }
+    bind_rows(
+      lapply(
+        c("trust", "ftrust"), 
+        function(e) bind_rows(
+          lapply(
+            1:runs, 
+            function(g) bind_rows(lapply(1:rounds, tr, e, g, parms))
+          )
+        )
+      )
+    )
+  }
+  
+  run_trust_sim <- function(te) {
+    parms <- tibble(
+      tsent_start = mn_sent_start,
+      tsent_start_teffect = te$teffect_sent,
+      tsent_grate = coef(ols_sent_amount)[2],
+      tsent_grate_teffect = te$teffect_sent_grate,
+      tsent_evar = sd_sent,
+      tpct_returned_start = mn_pct_returned_start,
+      tpct_returned_start_teffect = te$teffect_pct_returned,
+      tpct_returned_grate = 0,
+      tpct_returned_grate_teffect = te$teffect_pct_returned_grate,
+      tpct_returned_evar = sd_pct_returned
+    )
+    smp <- sim_data(parms)
+    ci_trust_sent_fe <- confint(
+      feols(sent_amount ~ experiment | round, cluster = c("round", "group_id"), data = smp)
+    )
+    ci_trust_sent_round_fe <- confint(
+      feols(sent_amount ~ experiment*round, cluster = c("round", "group_id"), data = smp)
+    )
+    ci_trust_pct_returned_fe <- confint(feols(
+      pct_returned ~ experiment | round, cluster = c("round", "group_id"), 
+      data = smp %>% filter(sent_amount > 0)
+    ))
+    ci_trust_pct_returned_round_fe <- confint(feols(
+      pct_returned ~ experiment*round, cluster = c("round", "group_id"), 
+      data = smp %>% filter(sent_amount > 0)
+    ))
+    tibble(
+      sent_teffect_lb = pull(ci_trust_sent_fe[1]),
+      sent_teffect_ub = pull(ci_trust_sent_fe[2]),
+      sent_round_teffect_lb = ci_trust_sent_round_fe[4, 1],
+      sent_round_teffect_ub = ci_trust_sent_round_fe[4, 2],
+      pct_returned_teffect_lb = pull(ci_trust_pct_returned_fe[1]),
+      pct_returned_teffect_ub = pull(ci_trust_pct_returned_fe[2]),
+      pct_returned_round_teffect_lb = ci_trust_pct_returned_round_fe[4, 1],
+      pct_returned_round_teffect_ub = ci_trust_pct_returned_round_fe[4, 2],
+    )
+  }
+  
+  sim_power_trust <- function(plan) {
+    sim_results <- bind_rows(
+      lapply(
+        1:nrow(plan), 
+        function(x) {
+          message(
+            sprintf("Running trust sim, plan row %d of %d...", x, nrow(plan)), 
+            appendLF = F
+          )
+          rv <- bind_cols(plan[x,], run_trust_sim(plan[x,]))
+          message("")
+          rv
+        }
+      )
+    )
+  }
+  
+  plan <- bind_rows(
+    expand_grid(
+      n = 1:100,
+      teffect_sent = 1:5,
+      teffect_sent_grate = 0,
+      teffect_pct_returned = c(0.005, 0.01, 0.015, 0.02, 0.025),
+      teffect_pct_returned_grate = 0,
+    ),
+    expand_grid(
+      n = 1:100,
+      teffect_sent = 0,
+      teffect_sent_grate = c(0.5, 1, 1.5, 2, 2.5),
+      teffect_pct_returned = 0,
+      teffect_pct_returned_grate = c(0.01, 0.02, 0.03, 0.04, 0.05)/5,
+    )
+  )
+  
+  message(sprintf("Starting trust power simulations (%d runs): %s", nrow(plan), Sys.time()))  
+  trust_sim_results <- sim_power_trust(plan)
+  write_csv(trust_sim_results, "../data/generated/trust_sim_results.csv")
+  message(sprintf("Done: %s", Sys.time()))  
+}
+        
+trust_power <- trust_sim_results %>%
+  group_by(
+    teffect_sent, teffect_sent_grate, 
+    teffect_pct_returned, teffect_pct_returned_grate
+  ) %>%
+  summarise(
+    power_sent = mean(sent_teffect_lb > 0),
+    power_sent_round = mean(sent_round_teffect_lb > 0),
+    power_pct_returned = mean(pct_returned_teffect_lb > 0),
+    power_pct_returned_round = mean(pct_returned_round_teffect_lb > 0),
+    .groups = "drop"
+  )
+
+ggplot(
+  trust_power %>% filter(teffect_sent_grate == 0),
+  aes(x = teffect_sent, y = power_sent)
+) + geom_point() + geom_smooth() + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Sent Amount)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+ggplot(
+  trust_power %>% filter(teffect_sent_grate == 0),
+  aes(x = teffect_pct_returned, y = power_pct_returned)
+) + geom_point() + geom_smooth() + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (% Returned)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+ggplot(
+  trust_power %>% filter(teffect_sent == 0),
+  aes(x = teffect_sent_grate, y = power_sent_round)
+) + geom_point() + geom_smooth() +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Sent Amount Round Effect)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+
+ggplot(
+  trust_power %>% filter(teffect_sent == 0),
+  aes(x = teffect_pct_returned_grate, y = power_pct_returned_round)
+) + geom_point() + geom_smooth() + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (% Returned Round Effect)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+```
+

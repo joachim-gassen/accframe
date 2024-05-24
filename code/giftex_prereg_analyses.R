@@ -65,3 +65,54 @@ mod_effort_sensitivity_fe <- feols(
 summary(mod_effort_sensitivity_fe)
 # Test coefficient is the interaction 
 confint(mod_effort_sensitivity_fe)[3,]
+
+
+# Participant Level
+
+cost <- function(e) {
+  case_when(
+    e == 0.1 ~ 0,
+    e == 0.2 ~ 1,
+    e == 0.3 ~ 2,
+    e == 0.4 ~ 4,
+    e == 0.5 ~ 6,
+    e == 0.6 ~ 8,
+    e == 0.7 ~ 10,
+    e == 0.8 ~ 12,
+    e == 0.9 ~ 15,
+    e == 1.0 ~ 28,
+    TRUE ~ NA
+  )
+}
+
+part <- grounds %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(
+    payoff_1 = sum((100 - wage)*effort),
+    payoff_2 = sum(wage - cost(effort)),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(
+    c(payoff_1, payoff_2), values_to = "payoff", names_to = "player_id",
+    names_prefix = "payoff_", names_transform = as.integer
+  ) %>%
+  mutate(role = ifelse(player_id == 1, "Employer", "Employee"))
+
+feols(payoff ~ experiment*role, data = part)
+
+t.test(payoff ~ experiment, data = part)
+wilcox.test(payoff ~ experiment, data = part)
+
+t.test(payoff ~ experiment, data = part %>% filter(role == "Employer"))
+wilcox.test(payoff ~ experiment, data = part %>% filter(role == "Employer"))
+
+t.test(payoff ~ experiment, data = part %>% filter(role == "Employee"))
+wilcox.test(payoff ~ experiment, data = part %>% filter(role == "Employee"))
+
+dyads <- part %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(sum_payoff = sum(payoff),.groups = "drop")
+
+t.test(sum_payoff ~ experiment, data = dyads)
+wilcox.test(sum_payoff ~ experiment, data = dyads)
+

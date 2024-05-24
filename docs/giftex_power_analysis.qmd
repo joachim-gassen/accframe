@@ -1,0 +1,377 @@
+---
+title: "Power Analysis for Gift Exchange Experiment"
+format: pdf
+execute: 
+  warning: false
+  message: false
+---
+
+```{r}
+suppressMessages({
+  library(tidyverse)
+  library(fixest)
+  library(pwr)
+})
+
+set.seed(42)
+
+cost <- function(e) {
+  case_when(
+    e == 0.1 ~ 0,
+    e == 0.2 ~ 1,
+    e == 0.3 ~ 2,
+    e == 0.4 ~ 4,
+    e == 0.5 ~ 6,
+    e == 0.6 ~ 8,
+    e == 0.7 ~ 10,
+    e == 0.8 ~ 12,
+    e == 0.9 ~ 15,
+    e == 1.0 ~ 28,
+    TRUE ~ NA
+  )
+}
+
+
+grounds <- read_csv("../data/generated/gift_rounds.csv", show_col_types = FALSE) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "fgift",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing"))
+  )
+
+part <- grounds %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(
+    payoff_1 = sum((100 - wage)*effort),
+    payoff_2 = sum(wage - cost(effort)),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(
+    c(payoff_1, payoff_2), values_to = "payoff", names_to = "player_id",
+    names_prefix = "payoff_", names_transform = as.integer
+  )
+```
+
+
+# Descriptive statistics of pretest data to standardize the power tests
+
+```{r}
+mn_wage_start <- mean(grounds$wage[grounds$round == 1])
+sd_wage <- sd(grounds$wage)
+mn_effort_start <- mean(grounds$effort[grounds$round == 1])
+sd_effort <- sd(grounds$effort)
+
+sprintf(
+  "Mean wage start (SD all): %.2f (%.2f)", mn_wage_start, sd_wage
+)
+sprintf(
+  "Mean effort start (SD all) sent: %.2f (%.2f)", mn_effort_start, sd_effort
+)
+
+# Some pretest regressions to see how rounds affect our DVs:
+
+ols_wage <- lm(wage ~ round, data = grounds)
+summary(ols_wage)
+ols_effort <- lm(effort ~ round, data = grounds)
+summary(ols_effort)
+ols_effort_wage <- lm(effort ~ wage, data = grounds)
+summary(ols_effort_wage)
+summary(lm(effort ~ wage*experiment, data = grounds))
+summary(feols(
+  effort ~ wage*experiment | round, 
+  cluster = c("round", "group_id"),
+  data = grounds
+))
+
+fe_wage <- feols(
+  wage ~ experiment | round, cluster = c("round", "group_id"),
+  data = grounds
+)
+summary(fe_wage)
+fixef(fe_wage)$round
+# Clearly not exponential but decreasing positive trend for rounds. 
+# Sticking to a linear trend for the estimation.
+
+summary(lm(wage ~ round*experiment, data = grounds))
+fe_effort <- feols(
+  effort ~ experiment | round, cluster = c("round", "group_id"),
+  data = grounds
+)
+summary(fe_effort)
+fixef(fe_effort)$round
+# No round trend in pct_returned based on pretest data
+```
+
+# Equation-based Power Analysis based on Pretest Data
+
+## Round Based Analysis
+
+```{r}
+pwr.t.test(500, 0.1*mn_wage_start/sd_wage)
+pwr.t.test(d = 0.1*mn_wage_start/sd_wage, power = 0.8)
+pwr.t.test(500, 0.1*mn_effort_start/sd_effort)
+pwr.t.test(d = 0.1*mn_effort_start/sd_effort, power = 0.8)
+pr <- pwr.t.test(n = 500, power = 0.8)
+sprintf("MDE Wage: %.2f", pr$d * sd_wage)
+sprintf("MDE Effort: %.2f", pr$d * sd_effort)
+```
+
+## Participant and Dyad Based Analyis
+
+```{r}
+mn_payoff_part <- mean(part$payoff)
+sd_payoff_part <- sd(part$payoff)
+sprintf("Mean (SD) of part payoff: %.2f (%.2f)", mn_payoff_part, sd_payoff_part)
+pwr.t.test(100, (0.1*mn_payoff_part)/sd_payoff_part)
+pr <- pwr.t.test(n = 100, power = 0.8)
+sprintf(
+  "MDE Payoff part: %.2f (%.1f %% of mean)", pr$d * sd_payoff_part,
+  100*(pr$d * sd_payoff_part)/mn_payoff_part
+)
+dyads <- part %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(sum_payoff = sum(payoff),.groups = "drop")
+
+mn_payoff_dyads <- mean(dyads$sum_payoff)
+sd_payoff_dyads <- sd(dyads$sum_payoff)
+sprintf("Mean (SD) of dyad payoff: %.2f (%.2f)", mn_payoff_dyads, sd_payoff_dyads)
+pwr.t.test(50, (0.1*mn_payoff_dyads)/sd_payoff_dyads)
+pr <- pwr.t.test(n = 50, power = 0.8)
+sprintf(
+  "MDE Payoff dyads: %.2f (%.1f %% of mean)", pr$d * sd_payoff_dyads,
+  100*(pr$d * sd_payoff_dyads)/mn_payoff_dyads
+)
+```
+
+# Simulation for regression based tests
+
+```{r}
+if (file.exists("../data/generated/giftex_sim_results.csv")) {
+  giftex_sim_results <- read_csv("../data/generated/giftex_sim_results.csv", show_col_types = F)
+} else {
+  sim_data <- function(parms, runs = 50, rounds = 10) {
+    cl <- function(val, vmin = 0, vmax = 100) {
+      if (val > vmax) return(as.integer(vmax))
+      if (val < vmin) return(as.integer(vmin))
+      as.integer(round(val))
+    }
+    el <- function(x) {
+      steps <- seq(0.1, 1, by = 0.1)
+      steps[which.min(abs(steps - x))][1]
+    }
+    gr <- function(rd, exp, g, parms) {
+      wage_start = ifelse(
+        exp == "fgift",
+        parms$wage_start + parms$wage_start_teffect,
+        parms$wage_start
+      )
+      wage_grate = ifelse(
+        exp == "fgift",
+        parms$wage_grate + parms$wage_grate_teffect,
+        parms$wage_grate
+      )
+      effort_start = ifelse(
+        exp == "fgift",
+        parms$effort_start + parms$effort_start_teffect,
+        parms$effort_start
+      )
+      effort_grate = ifelse(
+        exp == "fgift",
+        parms$effort_grate + parms$effort_grate_teffect,
+        parms$effort_grate
+      )
+      effort_wage = ifelse(
+        exp == "fgift",
+        parms$effort_wage + parms$effort_wage_teffect,
+        parms$effort_wage
+      )
+
+      tibble(
+        experiment = factor(ifelse(
+          exp == "fgift",
+          "Business Framing", "Neutral Framing"
+        ), c("Neutral Framing", "Business Framing")),
+        group_id = g,
+        round = rd,
+        wage = cl(
+          wage_start + (rd-1)*wage_grate + rnorm(1, 0, parms$wage_evar), 
+          0, 100
+        ),
+        effort = el(
+          effort_start + effort_wage*wage + (rd-1)*effort_grate + 
+               rnorm(1, 0, parms$effort_evar)
+        )
+      )
+    }
+    bind_rows(
+      lapply(
+        c("gift", "fgift"), 
+        function(e) bind_rows(
+          lapply(
+            1:runs, 
+            function(g) bind_rows(lapply(1:rounds, gr, e, g, parms))
+          )
+        )
+      )
+    )
+  }
+  
+  run_giftex_sim <- function(te) {
+    parms <- tibble(
+      wage_start = mn_wage_start,
+      wage_start_teffect = te$teffect_wage,
+      wage_grate = coef(ols_wage)[2],
+      wage_grate_teffect = te$teffect_wage_grate,
+      wage_evar = sd_wage,
+      effort_start = mn_effort_start,
+      effort_start_teffect = te$teffect_effort,
+      effort_grate = coef(ols_effort)[2],
+      effort_grate_teffect = te$teffect_effort_grate,
+      effort_wage = coef(ols_effort_wage)[2],
+      effort_wage_teffect = te$teffect_effort_wage,
+      effort_evar = sd_effort
+    )
+    smp <- sim_data(parms)
+    ci_wage_fe <- confint(
+      feols(wage ~ experiment | round, cluster = c("round", "group_id"), data = smp)
+    )
+    ci_wage_round_fe <- confint(
+      feols(wage ~ experiment*round, cluster = c("round", "group_id"), data = smp)
+    )
+    ci_effort_fe <- confint(
+      feols(effort ~ experiment | round, cluster = c("round", "group_id"), data = smp)
+    )
+    ci_effort_round_fe <- confint(
+      feols(effort ~ experiment*round, cluster = c("round", "group_id"), data = smp)
+    )
+    ci_effort_wage_fe <- confint(
+      feols(effort ~ experiment*wage | round, cluster = c("round", "group_id"), data = smp)
+    )
+    tibble(
+      wage_teffect_lb = pull(ci_wage_fe[1]),
+      wage_teffect_ub = pull(ci_wage_fe[2]),
+      wage_round_teffect_lb = ci_wage_round_fe[4, 1],
+      wage_round_teffect_ub = ci_wage_round_fe[4, 2],
+      effort_teffect_lb = pull(ci_effort_fe[1]),
+      effort_teffect_ub = pull(ci_effort_fe[2]),
+      effort_round_teffect_lb = ci_effort_round_fe[4, 1],
+      effort_round_teffect_ub = ci_effort_round_fe[4, 2],
+      effort_wage_teffect_lb = ci_effort_wage_fe[4, 1],
+      effort_wage_teffect_ub = ci_effort_wage_fe[4, 2],
+    )
+  }
+  
+  sim_power_giftex <- function(plan) {
+    sim_results <- bind_rows(
+      lapply(
+        1:nrow(plan), 
+        function(x) {
+          message(
+            sprintf("Running giftex sim, plan row %d of %d...", x, nrow(plan)), 
+            appendLF = F
+          )
+          rv <- bind_cols(plan[x,], run_giftex_sim(plan[x,]))
+          message("")
+          rv
+        }
+      )
+    )
+  }
+  plan <- bind_rows(
+    expand_grid(
+      n = 1:100,
+      tibble(
+        teffect_wage = 1:5,
+        teffect_effort = c(0.02, 0.04, 0.06, 0.08, 0.1)
+      ),
+      teffect_wage_grate = 0,
+      teffect_effort_grate = 0,
+      teffect_effort_wage = 0,
+    ),
+    expand_grid(
+      n = 1:100,
+      tibble(
+        teffect_wage = 0,
+        teffect_wage_grate = c(0.5, 1, 1.5, 2, 2.5),
+        teffect_effort = 0,
+        teffect_effort_grate = c(0.002, 0.004, 0.006, 0.008, 0.01),
+        teffect_effort_wage = 0
+      )
+    ),
+    expand_grid(
+      n = 1:100,
+      teffect_wage = c(0, 5),
+      teffect_wage_grate = 0,
+      teffect_effort = 0,
+      teffect_effort_grate = 0,
+      teffect_effort_wage = c(0.0002, 0.0004, 0.0006, 0.0008, 0.001)
+    )
+  )
+  
+  message(sprintf("Starting giftex power simulations (%d runs): %s", nrow(plan), Sys.time()))  
+  giftex_sim_results <- sim_power_giftex(plan)
+  write_csv(giftex_sim_results, "../data/generated/giftex_sim_results.csv")
+  message(sprintf("Done: %s", Sys.time()))  
+}
+        
+giftex_power <- giftex_sim_results %>%
+  group_by(
+    teffect_wage, teffect_wage_grate, 
+    teffect_effort, teffect_effort_grate,
+    teffect_effort_wage
+  ) %>%
+  summarise(
+    power_wage = mean(wage_teffect_lb > 0),
+    power_wage_round = mean(wage_round_teffect_lb > 0),
+    power_effort = mean(effort_teffect_lb > 0),
+    power_effort_round = mean(effort_round_teffect_lb > 0),
+    power_effort_wage = mean(effort_round_teffect_lb > 0),
+    .groups = "drop"
+  )
+
+ggplot(
+  giftex_power %>% filter(teffect_wage != 0),
+  aes(x = teffect_wage, y = power_wage)
+) + geom_point() + geom_smooth(se = FALSE) + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Wage)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+ggplot(
+  giftex_power %>% filter(teffect_effort != 0),
+  aes(x = teffect_effort, y = power_effort)
+) + geom_point() + geom_smooth(se = FALSE) + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Effort)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+ggplot(
+  giftex_power %>% filter(teffect_wage_grate != 0),
+  aes(x = teffect_wage_grate, y = power_wage_round)
+) + geom_point() + geom_smooth(se = FALSE) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Wage Round Effect)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+ggplot(
+  giftex_power %>% filter(teffect_effort_grate != 0),
+  aes(x = teffect_effort_grate, y = power_effort_round)
+) + geom_point() + geom_smooth(se = FALSE) + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Effort Round Effect)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+ggplot(
+  giftex_power %>% filter(teffect_effort_wage != 0),
+  aes(
+    x = teffect_effort_wage, y = power_effort_wage, 
+    group = teffect_wage, color = teffect_wage
+  )
+) + geom_point() + geom_smooth() + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(title = "Power (Effort Wage Sensitivity)", x = "Treatment Effect", y = "") +
+  theme_classic() 
+
+```
+
