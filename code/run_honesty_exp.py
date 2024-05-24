@@ -2,8 +2,9 @@ import subprocess
 import time
 import os
 import shutil
-import dotenv
+import datetime
 import csv
+import dotenv
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +15,7 @@ OTREE_IS_RUNNING = False
 OTREE_STARTUP_WAIT = 3
 ROUNDS = 10
 PART_SESSION = 10
+PART_BY_COND = 100 # Needs to be a multiple of PART_SESSION
 
 dotenv.load_dotenv("secrets.env")
 
@@ -30,7 +32,7 @@ if not OTREE_IS_RUNNING:
     )
     time.sleep(OTREE_STARTUP_WAIT)
 
-for r in range(1):
+for r in range(PART_BY_COND//PART_SESSION):
     session_ta = ta[r*ROUNDS*PART_SESSION:(r+1)*ROUNDS*PART_SESSION]
     for i in range(PART_SESSION):
         for j in range(i*ROUNDS, (i+1)*ROUNDS):
@@ -51,4 +53,7 @@ for r in range(1):
     botex.run_bots_on_session(session_id = sdict['session_id'])
     time.sleep(5)
 
+botex_data_fname = f"honesty_botex_db_{datetime.date.today().isoformat()}.sqlite3"
+logging.info(f"Storing botex data as '{botex_data_fname}'.")
+shutil.copy(os.environ.get('BOTEX_DB'), f"data/exp_runs/{botex_data_fname}")
 logging.info(f"Done! Export data from oTree before stopping the server.")

@@ -9,7 +9,7 @@ We study how large language models (LLMs) react on business context framing in c
 
 This repository contains the code to run the LLM-based experiments outlined in the paper and also the experimental data collected from these runs. The 'botex' python package that facilitates the use of LLMs as oTree participants is [here](https://github.com/joachim-gassen/botex). 
 
-The oTree experiments conducted are in `otree` and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
+The oTree experiments conducted are implemented by using oTree and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
 
 If you are interested in reproducing these output documents your best bet would be to use [GitHub Codespaces](https://github.com/features/codespaces). These are the steps that you need to take:
 
@@ -21,12 +21,12 @@ If you are interested in reproducing these output documents your best bet would 
 
 ## Running the Experiments
 
-To replicate our experimental evidence, you need to follow these steps:
+To replicate our experiments, you need to follow these steps:
 
 1. Make sure that you have provided your OpenAI key in the `secrets.env` file.
 2. The code to run the experiments is in the files `run_{honesty|trust|giftex}_exp.py`. You can adjust the number of participants for each condition in these files.
 3. Prior to sourcing any of these files, make sure that you do not have a local oTree server running as the code will start a new one.
-4. Run `make cleandb` to remove the existing oTree and botex databases.
+4. Run `make cleandb` to remove the existing oTree and botex databases (backup your data first if need be).
 5. Source the respective code file to run the experiments. While it runs, you can monitor the progress in the console output and by accessing your local oTree instance at http://localhost:8000. After the experiment has finished, you can find the botex data in the `data/exp_runs` folder.
 7. Export the oTree data by selecting `Data/All Apps/Plain` in the oTree admin interface. Move the downloaded file to the `data/exp_runs` folder, following the naming convention `{honesty|trust|giftex}_otree_yyyy-mm-dd.csv`.
 8. After adjusting the raw data file names in the code. source the file `code/extract_{honesty|trust|giftex}_data.py` to extract the data from the botex and oTree databases. The extracted data will be stored in the `data/generated` folder.
