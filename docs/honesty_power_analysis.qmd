@@ -41,7 +41,7 @@ hpart <- hrounds %>%
 
 ```{r}
 pct_true <- mean(hrounds$pct_slack_claimed == 0, na.rm = TRUE)
-message(sprintf("%% Truthful reporting: %.2f %%", 100*pct_true))
+sprintf("%% Truthful reporting: %.2f %%", 100*pct_true)
 
 mn_pct_slack_claimed <- mean(hrounds$pct_slack_claimed, na.rm = T)
 sd_pct_slack_claimed <- sd(hrounds$pct_slack_claimed, na.rm = T)
@@ -55,10 +55,10 @@ mn_pct_slack_claimed_lying_start <- mean(
 sd_pct_slack_claimed_lying <- sd(
   hrounds$pct_slack_claimed[hrounds$pct_slack_claimed > 0], na.rm = T
 )
-print(sprintf(
+sprintf(
   "Mean %% Slack Claimed (SD): %.2f %% (%.2f %%)", 
   100*mn_pct_slack_claimed, 100*sd_pct_slack_claimed
-))
+)
 
 # Some pretest regressions to see how rounds affect our DV:
 table(hrounds$pct_slack_claimed == 0, hrounds$experiment)
@@ -81,15 +81,15 @@ fixef(fe_slack_claimed)$round
 
 ```{r}
 es <- ES.h(pct_true, pct_true - 0.05)
-pwr.2p.test(h = es, n = 500)
-pr <- pwr.2p.test(n = 500, power = 0.8)
+pwr.2p.test(h = es, n = 1000)
+pr <- pwr.2p.test(n = 1000, power = 0.8)
 phi_baseline_true_rate = 2*asin(sqrt(pct_true))
 phi_treated_true_rate = phi_baseline_true_rate - pr$h
 treatm_true_rate <- sin(phi_treated_true_rate/2)^2
 mde <- treatm_true_rate - pct_true
 sprintf("MDE Truthful Reporting: %.2f PP", 100*mde)
 
-ssize_lying = round((1 - pct_true)*500)
+ssize_lying = round((1 - pct_true)*1000)
 pwr.t.test(
   ssize_lying, (0.1*mn_pct_slack_claimed_lying)/sd_pct_slack_claimed_lying
 )
@@ -108,8 +108,8 @@ sd_pct_slack_claimed_part <- sd(hpart$pct_slack_claimed)
 sprintf(
   "Mean %% of total part slack claimed (SD): %.2f %% (%.2f %%)", 
   100*mn_pct_slack_claimed_part, 100*sd_pct_slack_claimed_part)
-pwr.t.test(50, (0.1*mn_pct_slack_claimed_part)/sd_pct_slack_claimed_part)
-pr <- pwr.t.test(n = 50, power = 0.8)
+pwr.t.test(100, (0.1*mn_pct_slack_claimed_part)/sd_pct_slack_claimed_part)
+pr <- pwr.t.test(n = 100, power = 0.8)
 sprintf(
   "MDE Part Slack claimed: %.2f %% (%.1f %% of mean)", 
   100*pr$d * sd_pct_slack_claimed_part,
@@ -128,7 +128,7 @@ if (file.exists("../data/generated/honesty_sim_results.csv")) {
   ta <- read_csv(
     "../data/generated/honesty_true_amounts.csv", show_col_types = F
   )
-  sim_data <- function(parms, runs = 50, rounds = 10) {
+  sim_data <- function(parms, runs = 100, rounds = 10) {
     cl <- function(val, vmin = 0, vmax = 1) {
       if (val > vmax) return(vmax)
       if (val < vmin) return(vmin)

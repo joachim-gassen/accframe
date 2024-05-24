@@ -1,0 +1,67 @@
+{{ block title }}A Quick Check{{ endblock }}
+{{ block content }}
+    <p>
+        Let's see whether you correctly understood how the payoffs are determined.
+    </p>
+    <p>
+        The setting was: 
+        "The firm sets a wage of 10 points and the manager chooses an effort level of 0.3."
+    </p>
+    <p>You answered</p>
+    <ul>
+        <li>The firm's payoff is {{ player.comprehension_check_pre1 }}.</li>
+        <li>The manager's payoff is {{ player.comprehension_check_pre2 }}.</li>
+    </ul>
+    {{ if both_correct }}
+        <p>
+            <strong>Great! You answered both questions correctly.</strong>
+        </p>
+        <p>
+            Below you can find the calculation of the payoffs for this 
+            setting and a copy of the instructions from the previous page 
+            for your reference. Press 'Next' when you are ready to start 
+            the experiment.
+        </p>
+    {{ else }}
+        <p>
+            <strong>
+                Unfortunately, you answered at least one question incorrectly.
+            </strong>
+        </p>
+        <p>
+            Please carefully inspect the calculations below to understand
+            where your mistake was. You can also review the instructions
+            from the previous page copied below for your reference. 
+            Press 'Next' when you are ready to start the experiment.
+        </p>
+    {{ endif }}
+    <p>
+        The payoffs of the participants in the setting below are
+        calculated as follows:
+    </p>
+    <ul>
+        <li>The initial endowment of the firm is 100 points. 
+            The manager has an initial endowment of zero.</li>
+        <li>The firm paid the manager a wage of 10 points, 
+            reducing its endowment from 100 to 90 points.</li>
+        <li>The manager chose an effort level of 0.3.</li>
+        <li>Following the table below this implies a cost of 2 points.</li>
+        <li>The manager's payoff is 10 points (the wage received) 
+            - 2 points (the effort cost) = <strong>8 points</strong>.</li>
+        <li>The firm's payoff is the endowment after 
+            paying the wage (100 - 10) = 90 points times 
+            the effort level chosen by the manager (0.3)
+            = <strong>27 points</strong>.</li>
+    </ul>
+    </p>
+    <div class="card bg-light m-3">
+        <div class="card-body">
+            <h3>
+                Instructions
+            </h3>
+                {{ include_sibling 'instructions.html' }} 
+            </div>
+    </div>
+    <p> {{ next_button }} <p></p>
+
+{{ endblock }}

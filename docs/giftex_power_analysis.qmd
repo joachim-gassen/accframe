@@ -35,7 +35,7 @@ cost <- function(e) {
 grounds <- read_csv("../data/generated/gift_rounds.csv", show_col_types = FALSE) %>%
   mutate(
     experiment = factor(ifelse(
-      experiment == "fgift",
+      experiment == "fgiftex",
       "Business Framing", "Neutral Framing"
     ), c("Neutral Framing", "Business Framing"))
   )
@@ -162,34 +162,34 @@ if (file.exists("../data/generated/giftex_sim_results.csv")) {
     }
     gr <- function(rd, exp, g, parms) {
       wage_start = ifelse(
-        exp == "fgift",
+        exp == "fgiftex",
         parms$wage_start + parms$wage_start_teffect,
         parms$wage_start
       )
       wage_grate = ifelse(
-        exp == "fgift",
+        exp == "fgiftex",
         parms$wage_grate + parms$wage_grate_teffect,
         parms$wage_grate
       )
       effort_start = ifelse(
-        exp == "fgift",
+        exp == "fgiftex",
         parms$effort_start + parms$effort_start_teffect,
         parms$effort_start
       )
       effort_grate = ifelse(
-        exp == "fgift",
+        exp == "fgiftex",
         parms$effort_grate + parms$effort_grate_teffect,
         parms$effort_grate
       )
       effort_wage = ifelse(
-        exp == "fgift",
+        exp == "fgiftex",
         parms$effort_wage + parms$effort_wage_teffect,
         parms$effort_wage
       )
 
       tibble(
         experiment = factor(ifelse(
-          exp == "fgift",
+          exp == "fgiftex",
           "Business Framing", "Neutral Framing"
         ), c("Neutral Framing", "Business Framing")),
         group_id = g,
@@ -206,7 +206,7 @@ if (file.exists("../data/generated/giftex_sim_results.csv")) {
     }
     bind_rows(
       lapply(
-        c("gift", "fgift"), 
+        c("giftex", "fgiftex"), 
         function(e) bind_rows(
           lapply(
             1:runs, 

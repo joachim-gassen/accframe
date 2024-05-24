@@ -106,14 +106,14 @@ hparticipants <- read_csv("../data/generated/honesty_participants.csv", show_col
 grounds <- read_csv("../data/generated/gift_rounds.csv", show_col_types = FALSE) %>%
 	mutate(
 		experiment = factor(ifelse(
-			experiment == "fgift",
+			experiment == "fgiftex",
 			"Business Framing", "Neutral Framing"
 		), c("Neutral Framing", "Business Framing")),
 	)
 gparticipants <- read_csv("../data/generated/gift_participants.csv", show_col_types = FALSE) %>%
 	mutate(
 		experiment = factor(ifelse(
-			experiment == "fgift",
+			experiment == "fgiftex",
 			"Business Framing", "Neutral Framing"
 		), c("Neutral Framing", "Business Framing")),
 	)
@@ -603,7 +603,7 @@ ggplot(vr, aes(label = word, size = count, color = experiment)) +
 
 ```
 
-## Gift: Descriptives
+## giftex: Descriptives
 
 ```{r DecDescStatsGift}
 datasummary((`Wage offered` = wage) + (`Effort Level`= effort) ~ experiment*(N + (`Mean`=Mean) + (`S.D.` = SD) + (`Median`=Median)), data = grounds )
@@ -617,7 +617,7 @@ Difference in wage offered (t-stat): `r star_stat(wt, neg = T)`
 Difference in effort level (t-stat): `r star_stat(et, neg = T)`
 
 
-## Gift: Association between Wage and Effort
+## giftex: Association between Wage and Effort
 
 ```{r FigGift, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 names(color_scale) <- unique(levels(hrounds$experiment))
@@ -635,7 +635,7 @@ ggplot(grounds, aes(x = wage, y = effort, color = experiment)) +
   scale_color_manual("", values = color_scale, labels = color_scale_labs)
 ```
 
-## Gift: Wage by Round
+## giftex: Wage by Round
 
 ```{r GiftWageRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 ggplot(grounds, aes(x = as.factor(round), y = wage, group = experiment, color = experiment)) +
@@ -657,7 +657,7 @@ ggplot(grounds, aes(x = as.factor(round), y = wage, group = experiment, color = 
 	)
 ```
 
-## Gift: Effort Level by Round
+## giftex: Effort Level by Round
 
 ```{r GiftEffortRoundFig, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 ggplot(grounds, aes(x = as.factor(round), y = effort, group = experiment, color = experiment)) +
@@ -679,7 +679,7 @@ ggplot(grounds, aes(x = as.factor(round), y = effort, group = experiment, color 
 	)
 ```
 
-## Gift: Verbal Response
+## giftex: Verbal Response
 
 ```{r ReasoningFigGift, fig.width=8, fig.height=3.5, fig.align="center", fig.showtext = TRUE}
 

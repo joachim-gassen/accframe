@@ -8,7 +8,7 @@ grounds <- read_csv(
 ) %>%
   mutate(
     experiment = factor(ifelse(
-      experiment == "fgift",
+      experiment == "fgiftex",
       "Business Framing", "Neutral Framing"
     ), c("Neutral Framing", "Business Framing")),
   )
@@ -18,7 +18,7 @@ gparticipants <- read_csv(
 ) %>%
   mutate(
     experiment = factor(ifelse(
-      experiment == "fgift",
+      experiment == "fgiftex",
       "Business Framing", "Neutral Framing"
     ), c("Neutral Framing", "Business Framing")),
   )

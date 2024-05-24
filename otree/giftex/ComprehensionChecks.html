@@ -1,0 +1,19 @@
+{{ block title }}A Quick Check{{ endblock }}
+{{ block content }}
+    <p>
+        Thank you for reading the instructions. Let's see whether
+        you understood how the payoffs are determined. 
+        Please answer the following questions.
+        You can use the table below for help.
+        This table shows the multipliers and their costs that Participant B can choose from.
+    </p>
+    <p>
+        Participant A sends 10 points and Participant B chooses a multiplier of 0.3. 
+    </p>
+    <p>{{ formfields }}</p>
+    <p>
+        {{ include_sibling 'multiplier_table.html' }} 
+    </p>
+    <p> {{ next_button }} <p></p>
+
+{{ endblock }}

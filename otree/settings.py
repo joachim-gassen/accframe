@@ -46,15 +46,15 @@ SESSION_CONFIGS = [
         num_demo_participants=1
     ),
     dict(
-        name='gift',
+        name='giftex',
         display_name="Neutral gift exchange game",
-        app_sequence=['gift'],
+        app_sequence=['giftex'],
         num_demo_participants=2
     ),
     dict(
-        name='fgift',
+        name='fgiftex',
         display_name="Framed gift exchange game",
-        app_sequence=['fgift'],
+        app_sequence=['fgiftex'],
         num_demo_participants=2
     )
 ]

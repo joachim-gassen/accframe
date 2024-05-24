@@ -1,0 +1,84 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds. 
+        </p>
+    {{ endif }}
+
+    {{ if player.id_in_group == 1 }}
+        <p>
+            {{ if C.NUM_ROUNDS > 1 }}
+                This round, you chose to send Participant B 
+                {{ group.wage }}.
+            {{ else }}
+                You chose to send Participant B {{ group.wage }}.
+            {{ endif }}
+            Participant B decided for a multiplier of {{ effort }},
+            inducing costs of {{ group.cost }}. 
+            Your payoff is (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        <p>
+            The payoff of Participant B is 
+            {{ group.wage }} - {{ group.cost }} = 
+            <strong>{{ p2_payoff }}</strong>.
+        </p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            <p>
+               In summary, you earned {{ p1_wealth }} and Participant B earned {{ p2_wealth }}.
+            </p>
+        {{ else }}
+            {{ if group.round_number == C.NUM_ROUNDS }}
+                <p>
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
+                    The total number of points Participant B earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
+                </p>
+            {{ else }}
+                <p>
+                    The total number of points you earned so far is {{ p1_wealth }}.
+                    The total number of points Participant B earned so far is {{ p2_wealth }}.
+                </p>
+            {{ endif }}
+        {{ endif }}
+
+    {{ else }}
+        <p>
+            {{ if C.NUM_ROUNDS > 1 }}This round, {{ endif }} 
+            Participant A sent you {{ group.wage }}.
+            You chose an multiplier of {{ effort }},
+            inducing costs of {{ group.cost }},
+            thus your payoff of this round is
+            {{ group.wage }} - {{ group.cost }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        <p>
+            The payoff of Participant A is 
+            (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ p1_payoff }}</strong>.
+        </p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            <p>
+                In summary, you earned {{ p2_wealth }} and Participant A earned {{ p1_wealth }}.
+            </p>
+        {{ else }}
+            {{ if group.round_number == C.NUM_ROUNDS }}
+                <p>
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
+                    The total number of points Participant A earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
+                </p>
+            {{ else }}
+                <p>
+                    The total number of points you earned so far is {{ p2_wealth }}.
+                    The total number of points Participant A earned so far is {{ p1_wealth }}.
+                </p>
+            {{ endif }}
+        {{ endif }}
+    {{ endif }}
+
+    <p>{{ next_button }}</p>
+
+{{ endblock }}

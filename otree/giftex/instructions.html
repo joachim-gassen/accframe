@@ -1,0 +1,55 @@
+<p> 
+    This is an experiment on decision-making.
+    You have been randomly and anonymously paired with another participant.
+    In the experiment, there are two roles: Participant A and Participant B.
+    The roles are randomly assigned to you and the other participant. 
+    You will learn whether your role is Participant A or Participant B prior to making any decision.
+</p>
+<p>
+    In the experiment, you and the other participant can earn points. 
+    Points will be exchanged for money at the end of the experiment.
+</p>
+<p>
+    {{ if C.NUM_ROUNDS > 1 }}
+        This experiment consists of {{ C.NUM_ROUNDS }} rounds.
+        Throughout the experiment, you will remain in the same role.
+        The points that you earn in each round are added up.
+        A round proceeds as follows:
+    {{ endif }}
+    Participant A starts with an endowment of 100 points. 
+    Participant B starts with an endowment of 0 points.
+    First, Participant A decides how many points they want to transfer to Participant B.
+    The amount transferred can be any integer between 0 and {{ C.WAGE_MAX }}.
+    Next, Participant B selects a multiplier from the table below. 
+    The multiplier selected by Participant B determines the payoff of Participant A.
+    Specifically, the payoff of Participant A is calculated as follows:
+</p>
+<p>
+    (100 - transfer to Participant B) * multiplier. 
+</p>
+<p>
+    Participant B can select multipliers between 0.1 and 1.0. 
+    Higher multipliers are more costly for Participant B. 
+</p>
+<p>
+    In summary, the payoffs are calculated as follows:
+</p>        
+<ul>
+    <li>Payoff Participant A = (100 - transfer to Participant B) * multiplier </li>
+    <li>Payoff Participant B = Transfer received from Participant A - cost of multiplier </li>
+</ul>
+<p>
+    Example:
+    <ul>
+        <li>
+            Suppose that Participant A chooses to transfer 40 points to Participant B 
+            and Participant B then chooses the multiplier 0.7, which costs 10 points. 
+            The payoff of Participant A then is (100 points - 40 points) * 0.7 = 42 points. 
+            The payoff of Participant B then is 40 points - 10 points = 30 points.
+        </li>
+    </ul>
+</p>
+<p>
+    {{ include_sibling 'multiplier_table.html' }} 
+</p>
+    

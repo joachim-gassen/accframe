@@ -1,0 +1,87 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+    {{ if C.NUM_ROUNDS > 1 }}
+        <p>
+            You are in round {{ group.round_number }} of 
+            {{ C.NUM_ROUNDS }} rounds. 
+        </p>
+    {{ endif }}
+
+    {{ if player.id_in_group == 1 }}
+        <p>
+            {{ if C.NUM_ROUNDS > 1 }}
+                This round, you chose to reward the manager a wage of 
+                {{ group.wage }}.
+            {{ else }}
+                You chose to reward the manager a wage of {{ group.wage }}.
+            {{ endif }}
+            The manager decided for an effort level of {{ effort }},
+            inducing costs of {{ group.cost }}. 
+            Your payoff is (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        <p>
+            The payoff of the manager is 
+            {{ group.wage }} - {{ group.cost }} = 
+            <strong>{{ p2_payoff }}</strong>.
+        </p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            <p>
+                In summary, you earned {{ p1_wealth }} and the manager earned {{ p2_wealth }}. 
+            </p>
+        {{ else }}
+            {{ if group.round_number == C.NUM_ROUNDS }}
+                <p>
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
+                    The total number of points the manager earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
+                </p>
+            {{ else }}
+                <p>
+                    The total number of points you earned so far is {{ p1_wealth }}.
+                    The total number of points the manager earned so far is {{ p2_wealth }}.
+                </p>
+            {{ endif }}
+        {{ endif }}
+    {{ else }}
+        <p>
+            {{ if C.NUM_ROUNDS > 1 }}
+                This round, the
+            {{ else }}
+                The
+            {{ endif }}
+            firm has rewarded you a wage of {{ group.wage }}.
+            You chose an effort level of {{ effort }},
+            inducing costs of {{ group.cost }},
+            thus your payoff of this round is
+            {{ group.wage }} - {{ group.cost }} = 
+            <strong>{{ player.payoff }}</strong>.
+        </p>
+        <p>
+            The payoff of the firm is 
+            (100 points - {{ group.wage }}) * {{ effort }} = 
+            <strong>{{ p1_payoff }}</strong>.
+        </p>
+        {{ if C.NUM_ROUNDS == 1 }}
+            <p>
+                In summary, you earned {{ p2_wealth }} and the firm earned {{ p1_wealth }}.
+            </p>
+        {{ else }}
+            {{ if group.round_number == C.NUM_ROUNDS }}
+                <p>
+                    This was the last round. 
+                    The total number of points you earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p2_wealth }}.
+                    The total number of points the firm earned in the {{ C.NUM_ROUNDS }} rounds combined is {{ p1_wealth }}.
+                </p>
+            {{ else }}
+                <p>
+                    The total number of points you earned so far is {{ p2_wealth }}.
+                    The total number of points the firm earned so far is {{ p1_wealth }}.
+                </p>
+            {{ endif }}
+        {{ endif }}
+    {{ endif }}
+
+    <p>{{ next_button }}</p>
+
+{{ endblock }}

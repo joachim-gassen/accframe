@@ -25,9 +25,9 @@ To replicate our experimental evidence, you need to follow these steps:
 
 1. Make sure that you have provided your OpenAI key in the `secrets.env` file.
 2. The code to run the experiments is in the files `run_{honesty|trust|giftex}_exp.py`. You can adjust the number of participants for each condition in these files.
-3. Prior to sourcing each of these files, make sure that you do not have a local oTree server running as the code will start a new one.
+3. Prior to sourcing any of these files, make sure that you do not have a local oTree server running as the code will start a new one.
 4. Run `make cleandb` to remove the existing oTree and botex databases.
-5. Source the respective code file to run the experiments. While it runs, you can monitor the progress in the console output and by accessing your local oTree instance at http://localhost:8000. After the experiments has finished, you can find the botex data in the `data/exp_runs` folder.
+5. Source the respective code file to run the experiments. While it runs, you can monitor the progress in the console output and by accessing your local oTree instance at http://localhost:8000. After the experiment has finished, you can find the botex data in the `data/exp_runs` folder.
 7. Export the oTree data by selecting `Data/All Apps/Plain` in the oTree admin interface. Move the downloaded file to the `data/exp_runs` folder, following the naming convention `{honesty|trust|giftex}_otree_yyyy-mm-dd.csv`.
-8. After adjusting the rwa data file names in the code. source the file `code/extract_{honesty|trust|giftex}_data.py` to extract the data from the botex and oTree databases. The extracted data will be stored in the `data/generated` folder.
+8. After adjusting the raw data file names in the code. source the file `code/extract_{honesty|trust|giftex}_data.py` to extract the data from the botex and oTree databases. The extracted data will be stored in the `data/generated` folder.
 9. You can now run the preregistered analyses by sourcing `code/{honesty|trust|giftex}_prereg_analysis.py`.  

@@ -1,0 +1,56 @@
+<p> 
+    This is an experiment on managers' compensation and effort.
+    You have been randomly and anonymously paired with another participant.
+    In the experiment, there are two roles: firm and manager.
+    The roles are randomly assigned to you and the other participant. 
+    You will learn whether your role is firm or manager prior to making any decision.
+</p>
+<p>
+    In the experiment, you and the other participant can earn points. 
+    Points will be exchanged for money at the end of the experiment.
+</p>
+<p>
+    {{ if C.NUM_ROUNDS > 1 }}
+        This experiment consists of {{ C.NUM_ROUNDS }} rounds.
+        Throughout the experiment, you will remain in the same role.
+        The points that you earn in each round are added up.
+        A round proceeds as follows:
+    {{ endif }}
+    The firm starts with an endowment of 100 points. 
+    The manager starts with an endowment of 0 points. 
+    First, the firm decides about the wage for the manager.
+    The wage can be any integer between 0 and {{ C.WAGE_MAX }}.
+    The wage is transferred from the firm to the manager.
+    Next, the manager selects an effort level from the table below. 
+    The effort level selected by the manager determines the payoff of the firm.
+    Specifically, the payoff of the firm is calculated as follows:
+</p>
+<p>
+    (100 - wage paid to manager) * effort level. 
+</p>
+<p>
+    The manager can select effort levels between 0.1 and 1.0. 
+    Higher effort levels are more costly for the manager. 
+</p>
+<p>
+    In summary, the payoffs are calculated as follows:
+</p>        
+<ul>
+    <li>Payoff firm = (100 - wage paid to manager) * effort level </li>
+    <li>Payoff manager = wage received from firm - cost of effort level </li>
+</ul>
+<p>
+    Example:
+    <ul>
+        <li>
+            Suppose that the firm chooses to award the manager a wage of 40 points 
+            and that the manager then chooses the effort level 0.7, which costs 10 points. 
+            The payoff of the firm then is (100 points - 40 points) * 0.7 = 42 points. 
+            The payoff of the manager then is 40 points - 10 points = 30 points.
+        </li>
+    </ul>
+</p>
+<p>
+    {{ include_sibling 'multiplier_table.html' }} 
+</p>
+    
