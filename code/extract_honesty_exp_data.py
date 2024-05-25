@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/honesty_botex_db_2024-05-23.sqlite3'
-OTREE_DATA = 'data/exp_runs/honesty_otree_2024-05-23.csv'
+BOTEX_DB = 'data/exp_runs/honesty_botex_db_2024-05-24.sqlite3'
+OTREE_DATA = 'data/exp_runs/honesty_otree_2024-05-24.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -125,11 +125,16 @@ def extract_rationales(participant_code):
                     start = resp_str.find('{', 0)
                     end = resp_str.rfind('}', start)
                     resp_str = resp_str[start:end+1]
-                    cont = json.loads(resp_str)
+                    cont = json.loads(resp_str, strict = False)
                     if 'questions' in cont:
                         for q in cont['questions']: 
                             if q['id'] == "id_reported_amount": 
-                                reason.append(q['reason'])
+                                # Manual fix to address problem in botex
+                                # data of honesty experiment run on 2024-05-24
+                                # See docs/exp_protocol.md for details
+                                if participant_code != "22w71lht" or len(q) == 3:
+                                    reason.append(q['reason'])
+                                else: logging.warning("Manual fix for participant 22w71lht for ill-formatted summary applied.")
                                 check_for_error = True
                 except:
                     logging.info(
