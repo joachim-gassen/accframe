@@ -47,3 +47,34 @@ The summary was included as a key in the question response dict. Fixed it by man
 - 09:14 The participant with incomplete reasoning data is conv[136] and the problematic message is idx 08. It is supposed to contain only a summary but it also includes a question_id key because of the botex code only requiring the relevant keys to be present but not checking for additional keys. Applied manual fix in import code.
 - 09:35 Tightened the botex code to be stricter when parsing bot responses (commit 606a578)
 - 09:28 OpenAI Costs for 2024-05-24 accframe: USD 81.93, current total cost: USD 92.03
+- 09:42 pushed honesty data to the repo
+- 09:43 Ran `make cleandb` to remove otree and botex databases
+- 09:43 Running trust experiment by sourcing `code/run_trust_exp.py`
+- 09:51 session 'enh4eivm' finished
+- 09:55 stopped close monitoring 
+- 10:25 sesssion 'o14bejoi' running (one dyad delayed)
+- 10:31 session 'o14bejoi' finished
+- 10:33 oTree stopped responding. 
+- 10:35 timeout exception in botex when scanning web page because otree is not responing. Aborted experiment
+- 10:42 Copied botex data to `data/exp_runs/trust_botex_db_2024-05-25_otree_crashed.sqlite3`. oTree data is empty.
+- 10:44 Ran `make cleandb` to remove otree and botex databases
+- 10:45 OpenAI Costs for 2024-05-25 accframe: USD 18.08
+- 10:46 Restarting trust experiment by sourcing `code/run_trust_exp.py`
+- 11:02 Session 'sayi5knu' started. All good.
+- 11:48 timeout exception in botex when scanning web page. oTree is not responding (again...)
+- 11:50 Copied botex data to `data/exp_runs/trust_botex_db_2024-05-25_otree_crashed_2.sqlite3`. oTree data is empty.
+- 11:55 Ran `make cleandb` to remove otree and botex databases
+- 11:56 OpenAI Costs for 2024-05-25 accframe: USD 44.84
+- 12:02 Staring oTree server in production mode on console with `export OTREE_PRODUCTION=1 && otree prodserver` to check for error messages during the next run
+- 12:02 Restarting trust experiment by sourcing `code/run_trust_exp.py`
+- 12:42 Session '7d2c24f4' started. All good.
+- 13:00 oTree wait page deadlock in session '7d2c24f4'
+- 13:42 Changed wait parsing in botex to timeouting and retrying after 10 seconds.
+- 13:42 Stored interim version of oTree and botex databases
+- 13:42 OpenAI Costs for 2024-05-25 accframe: USD 67.53
+- 13:43 Restarted trust experiment by sourcing `code/run_trust_exp.py` for 70 participants
+- 13:53 Session 'meqa97y3' started. All good.
+- 14:01 Session 'iy8m858d' started. All good.
+- 15:44 Trust experiment complete. Exported oTree data.
+- 16:02 Parsing data with code/extract_trust_exp_data.py (code needed some minor adjustments to deal with missing data)
+- 16:07 OpenAI Costs for 2024-05-25 accframe: USD 121.09

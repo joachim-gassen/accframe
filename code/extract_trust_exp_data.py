@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/trust_botex_db_2024-04-29.sqlite3'
-OTREE_DATA = 'data/exp_runs/trust_otree_2024-04-29.csv'
+BOTEX_DB = 'data/exp_runs/trust_botex_db_2024-05-25.sqlite3'
+OTREE_DATA = 'data/exp_runs/trust_otree_2024-05-25.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -29,9 +29,7 @@ otree_raw = pd.read_csv(OTREE_DATA, index_col= False)
 
 def extract_participant_data(otree_raw, exp):
     wide = otree_raw.loc[
-        (otree_raw['participant._current_app_name'] == exp) &
-        (otree_raw['participant._index_in_pages'] == 80) 
-        # Adjust this above to the last page of the experiment
+        (otree_raw['participant._current_app_name'] == exp) 
     ].reset_index()
     if wide.shape[0] == 0: return None
     long = pd.melt(
@@ -66,9 +64,9 @@ def extract_participant_data(otree_raw, exp):
     participants['group_id'] = participants['group_id'].astype(int)
     participants['role_in_group'] = participants['role_in_group'].astype(int)
     participants['payoff'] = participants['payoff'].astype(int)
-    participants['comprehension_check'] = participants['comprehension_check'].astype(int)
-    participants['manipulation_check'] = participants['manipulation_check'].astype(int)
-    participants['human_check'] = participants['human_check'].astype(int)   
+    participants['comprehension_check'] = pd.to_numeric(participants['comprehension_check'], errors='coerce').astype('Int64')
+    participants['manipulation_check'] = pd.to_numeric(participants['manipulation_check'], errors='coerce').astype('Int64')
+    participants['human_check'] = pd.to_numeric(participants['human_check'], errors='coerce').astype('Int64')  
 
     ordered_columns = [
         'experiment', 'session_code', 'participant_code', 'time_started', 
@@ -81,7 +79,7 @@ def extract_participant_data(otree_raw, exp):
 
 def extract_round_data(otree_raw, exp):
     wide = otree_raw.loc[
-        otree_raw[f'{exp}.10.player.feedback'].notna()
+        (otree_raw['participant._current_app_name'] == exp) 
     ].reset_index()
     if wide.shape[0] == 0: return None
     long = pd.melt(
@@ -115,7 +113,10 @@ def extract_round_data(otree_raw, exp):
 
 def extract_rationales(participant_code):
     reason = []        
-    c = pd.DataFrame(conversations)        
+    c = pd.DataFrame(conversations)
+    if not any(c[0] == participant_code):
+        logging.warning(f"participant {participant_code} not found in conversations")
+        return None               
     conv = json.loads(c.loc[c[0] == participant_code, 2].item())
     check_for_error = False
     for message in conv:
@@ -125,7 +126,7 @@ def extract_rationales(participant_code):
                     start = resp_str.find('{', 0)
                     end = resp_str.rfind('}', start)
                     resp_str = resp_str[start:end+1]
-                    cont = json.loads(resp_str)
+                    cont = json.loads(resp_str, strict=False)
                     if 'questions' in cont:
                         for q in cont['questions']: 
                             if q['id'] == "id_sent_amount" or q['id'] == "id_sent_back_amount": 
