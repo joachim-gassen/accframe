@@ -78,3 +78,18 @@ The summary was included as a key in the question response dict. Fixed it by man
 - 15:44 Trust experiment complete. Exported oTree data.
 - 16:02 Parsing data with code/extract_trust_exp_data.py (code needed some minor adjustments to deal with missing data)
 - 16:07 OpenAI Costs for 2024-05-25 accframe: USD 121.09
+- 16:14 Ran `make cleandb` to remove otree and botex databases
+- 16:15 Running gift exchange experiment by sourcing `code/run_giftex_exp.py` (otree in production mode)
+- 16:18 Haha! After a few minutes oTree become unresponsive. I think I know why. It writes to stdoout/sterr and the buffer is full. I will redirect the output to a file. Starting the process again after running `make cleandb`
+- 16:07 OpenAI Costs for 2024-05-25 accframe: USD 121.74
+- 16:20 Running gift exchange experiment by sourcing `code/run_giftex_exp.py` (otree in development mode and with logfile)
+- 17:51 Running session 'voreu3wn'. All good. Stopped close monitoring.
+- 18:20 Running session 'o8wvrcul'. All good.
+- 19:32 Running session 'uqd3koma'. All good.
+- 19:55 Running session 'x568zqb7'. All good.
+- 20:28 Running session '36ur7ggy'. All good.
+- 20:51 Running session 'l8knzj3u'. All good.
+- 21:06 Running session 'h17nvk1b'. All good.
+- 21:18 Running session 'h17nvk1b'. All good.
+- 21:22 Gift Exchange experiment complete. Exported oTree data.
+- 21:25 Parsing data with code/extract_giftex_exp_data.py
