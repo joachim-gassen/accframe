@@ -185,5 +185,5 @@ for s in participants.session_code.unique():
                 'effort_reason'
             ] = extract_rationales(p)
      
-participants.to_csv('data/generated/gift_participants.csv', index = False)
-rounds.to_csv('data/generated/gift_rounds.csv', index = False)
+participants.to_csv('data/generated/giftex_participants.csv', index = False)
+rounds.to_csv('data/generated/giftex_rounds.csv', index = False)

@@ -10,7 +10,8 @@ PYTHON := . venv/bin/activate; python
 
 OUTPUT := static/presentation.pdf static/appendix_trust_example.pdf \
 	static/eaadc24_talk.pdf static/honesty_power_analysis.pdf \
-	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf
+	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf \
+	static/results.pdf
 
 # Main targets
 
@@ -20,6 +21,7 @@ EAADC24_TALK := output/eaadc24_talk.pdf
 HONESTY_POWER := output/honesty_power_analysis.pdf
 TRUST_POWER := output/trust_power_analysis.pdf
 GIFTEX_POWER := output/giftex_power_analysis.pdf
+RESULTS := output/results.pdf
 
 # Setup targets
 
@@ -88,18 +90,18 @@ $(VENV): requirements.txt
 	touch $(VENV)
 
 $(HONESTY_EXP_DATA): $(VENV) code/extract_honesty_exp_data.py \
-	data/exp_runs/honesty_otree_2024-03-27.csv \
-	data/exp_runs/honesty_botex_db_2024-03-27.sqlite3
+	data/exp_runs/honesty_otree_2024-05-24.csv \
+	data/exp_runs/honesty_botex_db_2024-05-24.sqlite3
 	$(PYTHON) code/extract_honesty_exp_data.py
 
 $(TRUST_EXP_DATA): $(VENV) code/extract_trust_exp_data.py \
-	data/exp_runs/trust_otree_2024-03-19.csv \
-	data/exp_runs/trust_botex_db_2024-03-19.sqlite3
+	data/exp_runs/trust_otree_2024-05-25.csv \
+	data/exp_runs/trust_botex_db_2024-05-25.sqlite3
 	$(PYTHON) code/extract_trust_exp_data.py
 
 $(GIFTEX_EXP_DATA): $(VENV) code/extract_giftex_exp_data.py \
-	data/exp_runs/giftex_otree_2024-03-29.csv \
-	data/exp_runs/giftex_botex_db_2024-03-29.sqlite3
+	data/exp_runs/giftex_otree_2024-05-25.csv \
+	data/exp_runs/giftex_botex_db_2024-05-25.sqlite3
 	$(PYTHON) code/extract_giftex_exp_data.py
 
 $(EXP_RUN_APPENDIX): $(VENV) $(OTREE_TRUST) \
@@ -150,26 +152,34 @@ $(HONESTY_POWER): $(HONESTY_EXP_DATA) \
 	docs/_quarto.yml \
 	docs/honesty_power_analysis.qmd
 	quarto render docs/honesty_power_analysis.qmd --quiet
-	rm -rf output/honesty_power_analysis_filed
+	rm -rf output/honesty_power_analysis_files
 
 $(TRUST_POWER): $(TRUST_EXP_DATA) \
 	docs/_quarto.yml \
 	docs/trust_power_analysis.qmd
 	quarto render docs/trust_power_analysis.qmd --quiet
-	rm -rf output/trust_power_analysis_filed
+	rm -rf output/trust_power_analysis_files
 
-$(GIFTEX_POWER): $(GIFT_EXP_DATA) \
+$(GIFTEX_POWER): $(GIFTEX_EXP_DATA) \
 	docs/_quarto.yml \
 	docs/giftex_power_analysis.qmd
 	quarto render docs/giftex_power_analysis.qmd --quiet
-	rm -rf output/giftex_power_analysis_filed
+	rm -rf output/giftex_power_analysis_files
 
-$(OUTPUT): $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE) $(EAADC24_TALK)
+$(RESULTS): $(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+	docs/_quarto.yml \
+	docs/results.qmd
+	quarto render docs/results.qmd --quiet
+	rm -rf output/results_files
+
+$(OUTPUT): $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE) $(EAADC24_TALK) \
+	$(HONESTY_POWER) $(TRUST_POWER) $(GIFT_POWER) $(RESULTS)
 	cp $(PRESENTATION) static/
 	cp $(APPENDIX_TRUST_EXAMPLE) static/
 	cp $(EAADC24_TALK) static/
 	cp $(HONESTY_POWER) static/
 	cp $(TRUST_POWER) static/
 	cp $(GIFTEX_POWER) static/
+	cp $(RESULTS) static/
 
 	
