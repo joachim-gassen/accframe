@@ -37,21 +37,21 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
     comprehension_check = models.IntegerField(
-        label="What is the role of the multiplier in this game?",
+        label="What is the role of the multiplier in this experiment?",
         blank=False,
         choices=[
-            [1, 'It increases the private wealth of the sender'],
-            [2, 'It increases the private wealth of the receiver'],
-            [3, 'It increases the amount sent by the sender, ' + 
-            'potentially benefiting both the sender and the receiver'],
+            [1, 'It increases the private wealth of Participant A'],
+            [2, 'It increases the private wealth of Participant B'],
+            [3, 'It increases the amount sent by Participant A, ' + 
+            'potentially benefiting both Participant A and Participant B'],
         ],
     )
     manipulation_check = models.IntegerField(
         label="What was your role in this game?",
         blank=False,
         choices=[
-            [1, 'Sender'],
-            [2, 'Receiver'],
+            [1, 'Participant A'],
+            [2, 'Participant B'],
         ]
     )
     human_check = models.IntegerField(
