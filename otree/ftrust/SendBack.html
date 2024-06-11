@@ -2,11 +2,11 @@
 {{ block content }}
     {{ if group.round_number == 1 }}
     <p>
-        You have been assigned the role of the manager. 
+        You have been assigned the role of manager. 
         {{ if C.NUM_ROUNDS > 1 }}
             This will be your role for the entire experiment. 
         {{ endif }}
-        The role of the investor has been assigned to another participant.
+        The role of investor is assigned to the other participant.
     </p>
     {{ else }}
     <p>
@@ -20,9 +20,9 @@
             The investor
         {{ endif }}
         invested {{ group.sent_amount }}.
-        This amount was multiplied by 3 so you now have {{ tripled_amount }}.
+        This amount was multiplied by 3, so you now have {{ tripled_amount }}.
         
-        How many points do you want to send as a dividend to the investor?
+        How many points do you want to send to the investor as a dividend ?
     </p>
 
     {{ formfields }}
