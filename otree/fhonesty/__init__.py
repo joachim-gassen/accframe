@@ -34,9 +34,9 @@ class Player(BasePlayer):
         blank=False
     )
     comprehension_check1 = models.IntegerField(
-        label="Who knew the true cost structure?",
+        label="Who knew the actual costs?",
         blank=False,
-        choices = [[1, 'Only me'], [2, "Me and the firm's corporate headquarters"]]
+        choices = [[1, 'Only I'], [2, "Both I and the firm's corporate headquarters"]]
     )
     comprehension_check2 = models.IntegerField(
         label="Assuming that you only care about about your points at the end, what would have been the optimal strategy?",
