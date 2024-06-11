@@ -37,7 +37,7 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     wealth = models.CurrencyField(initial = cu(0))
     comprehension_check = models.IntegerField(
-        label="What is the role of the multiplier in this game?",
+        label="What is the role of the multiplier in this experiment?",
         blank=False,
         choices=[
             [1, 'It increases the private wealth of the investor'],
@@ -47,7 +47,7 @@ class Player(BasePlayer):
         ],
     )
     manipulation_check = models.IntegerField(
-        label="What was your role in this game?",
+        label="What was your role in this experiment?",
         blank=False,
         choices=[
             [1, 'Investor'],
