@@ -10,18 +10,18 @@
     {{ if player.id_in_group == 1 }}
         <p>
             {{ if C.NUM_ROUNDS > 1 }}
-                This round, you chose to reward the manager a wage of 
+                This round, you chose to give the manager a wage of 
                 {{ group.wage }}.
             {{ else }}
-                You chose to reward the manager a wage of {{ group.wage }}.
+                You chose to give the manager a wage of {{ group.wage }}.
             {{ endif }}
-            The manager decided for an effort level of {{ effort }},
-            inducing costs of {{ group.cost }}. 
-            Your payoff is (100 points - {{ group.wage }}) * {{ effort }} = 
+            The manager selected an effort level of {{ effort }},
+            costing {{ group.cost }}. 
+            Thus, your payoff in this round is (100 points - {{ group.wage }}) * {{ effort }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
         <p>
-            The payoff of the manager is 
+            The payoff of the manager in this round is 
             {{ group.wage }} - {{ group.cost }} = 
             <strong>{{ p2_payoff }}</strong>.
         </p>
@@ -50,15 +50,15 @@
             {{ else }}
                 The
             {{ endif }}
-            firm has rewarded you a wage of {{ group.wage }}.
-            You chose an effort level of {{ effort }},
-            inducing costs of {{ group.cost }},
-            thus your payoff of this round is
+            firm gave you a wage of {{ group.wage }}.
+            You selected an effort level of {{ effort }},
+            costing {{ group.cost }}.
+            Thus, your payoff in this round is
             {{ group.wage }} - {{ group.cost }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
         <p>
-            The payoff of the firm is 
+            The payoff of the firm in this round is 
             (100 points - {{ group.wage }}) * {{ effort }} = 
             <strong>{{ p1_payoff }}</strong>.
         </p>
