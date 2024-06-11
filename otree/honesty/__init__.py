@@ -34,19 +34,19 @@ class Player(BasePlayer):
         blank=False
     )
     comprehension_check1 = models.IntegerField(
-        label="Who was informed about the true amount?",
+        label="Who was informed about the actual number?",
         blank=False,
         choices = [
-            [1, 'Only me'],
-            [2, 'Me and Participant B']
+            [1, 'Only I'],
+            [2, 'Both I and Participant B']
         ]
     )
     comprehension_check2 = models.IntegerField(
-        label="Assuming that you only care about your points at the end, what would have been the optimal strategy?",
+        label="What would be the optimal strategy for someone who only cares about the number of points they earn in the experiment?",
         blank=False,
         choices=[
-            [1, 'Reporting 6000 points'],
-            [2, 'Reporting the true amount']
+            [1, 'Reporting 6000 points in each round'],
+            [2, 'Reporting the true amount in each round']
         ],
     )
     human_check = models.IntegerField(
