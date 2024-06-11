@@ -12,17 +12,17 @@
         {{ else }} 
             Your
         {{ endif }}
-        private forecasting system predicted that the true costs
+        private forecasting system predicted that the actual costs
         are {{ player.true_amount}} and 
         you chose to file a budget request of {{ player.reported_amount }}
         to the firm's corporate headquarters. Your payoff 
-        {{ if C.NUM_ROUNDS > 1 }} for this round {{ endif }}
+        {{ if C.NUM_ROUNDS > 1 }} in this round {{ endif }}
         thus is 
         250 points + {{ player.reported_amount }} - {{ player.true_amount }} =
         <strong>{{ player.pay }}</strong>.
     </p>
     <p>
-        The payoff of the firm is 
+        The payoff of the firm in this round is 
         6000 points -  {{ player.reported_amount }} = 
         <strong>{{ player.pay_other }}</strong>.
     </p>
