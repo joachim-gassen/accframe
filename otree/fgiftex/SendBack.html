@@ -6,7 +6,7 @@
         {{ if C.NUM_ROUNDS > 1 }}
             This will be your role for the entire experiment. 
         {{ endif }}
-        Another participant will be assigned the role of firm.
+        The other participant is assigned the role of firm.
     </p>
     {{ else }}
     <p>
@@ -19,17 +19,18 @@
         {{ else }}
             The firm
         {{ endif }}
-        has paid you a wage of {{ group.wage }}. 
-        You should now select an effort level.
+        paid you a wage of {{ group.wage }}. 
+        You must now select an effort level.
         The effort level you select will determine the payoff of the firm.
         Specifically, the payoff of the firm will be calculated as (100 - {{ group.wage }}) times the multiplier.
         Effort is costly to you. 
         In the table below you can look up the cost of each effort level that you can choose.
         Your payoff will be calculated as {{ group.wage }} minus the cost of the effort level you select.
+        In summary:
     </p>
     <ul>
-        <li>Your payoff = wage received from the firm - cost of effort level</li>
-        <li>Firm's payoff  = (100 - wage paid to you) * effort level</li>
+        <li>Your payoff = wage paid to you by the firm - cost of effort level selected by you</li>
+        <li>Firm's payoff  = (100 - wage paid to you by the firm) * effort level selected by you</li>
     </ul>    
     <p>
         {{ formfields }}
