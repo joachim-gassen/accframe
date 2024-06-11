@@ -111,8 +111,7 @@ modelsummary(
     "Round Fixed Effects" = mod_honesty_slack_claimed_fe, 
     "Interacted by Round" = mod_honesty_slack_claimed
   ),
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -295,8 +294,7 @@ modelsummary(
     "Round Fixed Effects" = mod_trust_sent_fe, 
     "Interacted by Round" = mod_trust_sent
   ),
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -331,8 +329,7 @@ modelsummary(
     "Round Fixed Effects" = mod_trust_pct_returned_fe, 
     "Interacted by Round" = mod_trust_pct_returned
   ),
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -357,8 +354,7 @@ modelsummary(
 mod_part <- feols(payoff ~ experiment*role, data = tparticipants)
 modelsummary(
   mod_part,
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -575,8 +571,7 @@ modelsummary(
     "Round Fixed Effects" = mod_wage_fe, 
     "Interacted by Round" = mod_wage
   ),
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -613,8 +608,7 @@ modelsummary(
     "Round Fixed Effects" = mod_effort_fe, 
     "Interacted by Round" = mod_effort
   ),
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -644,8 +638,7 @@ mod_effort_sensitivity_fe <- feols(
 
 modelsummary(
   mod_effort_sensitivity_fe,
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -671,8 +664,7 @@ mod_payoff_part <- feols(payoff ~ experiment*role, data = gpart)
 
 modelsummary(
   mod_payoff_part,
-  stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
-	estimate  = "{estimate}{stars}", # Avoids note at the bottom f table
+  statistic = c("conf.int", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
