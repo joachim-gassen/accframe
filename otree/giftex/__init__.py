@@ -42,7 +42,7 @@ class Group(BaseGroup):
     )
     effort = models.FloatField(
         doc="""Multiplier to affect payoff of other participant""",
-        label="Which multiplier do you choose to affect the payoff of Participant A? Please select one from the table below:",
+        label="Which multiplier do you select? Please choose one from the table below:",
     )
     cost = models.CurrencyField()
 
