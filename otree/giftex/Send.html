@@ -6,7 +6,7 @@
             {{ if C.NUM_ROUNDS > 1 }}
                 This will be your role for the entire experiment.
             {{ endif }}
-           Another participant will be assigned the role of Participant B.
+           The other participant is assigned the role of Participant B.
         </p>
     {{ else }}
     <p>
@@ -19,9 +19,9 @@
         {{ else }} 
             You 
         {{ endif }}
-        have received an initial endowment of 100 and have to decide on the number of points 
+        received an initial endowment of 100 points and have to decide on the number of points 
         that you will send to Participant B.
-        This amount can be any integer between 0 and {{ C.WAGE_MAX }}.
+        This amount can be any integer between 0 and {{ C.WAGE_MAX }} points.
         After observing the number of points they received, Participant B 
         will select a multiplier. 
         Multipliers are costly for Participant B.
@@ -30,10 +30,11 @@
         The multiplier that Participant B chooses determines your payoff. 
         Your payoff will be calculated as (your endowment - number of points sent to Participant B) times the multiplier selected by Participant B.
         The payoff of Participant B will be calculated as the number of points you sent to Participant B minus the cost of the multiplier selected by Participant B.
+        In summary:
     </p>
     <ul>
-        <li>Your payoff = (100 - number of points you sent to Participnt B) * multiplier selected by Participant B</li>
-        <li>Payoff Participant B = number of points you sent to Participant B * cost of multiplier selected by Participant B</li>
+        <li>Your payoff = (100 - number of points you send to Participant B) * multiplier selected by Participant B</li>
+        <li>Payoff Participant B = number of points you send to Participant B * cost of multiplier selected by Participant B</li>
     </ul>    
     {{ formfields }}
     <p>
