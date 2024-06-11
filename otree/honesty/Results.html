@@ -12,16 +12,16 @@
         {{ else }} 
             You
         {{ endif }}
-        received the information that the true amount
+        received the information that the actual number
         is {{ player.true_amount}} and chose to report {{ player.reported_amount }}
-        to participant B. Your payoff 
-        {{ if C.NUM_ROUNDS > 1 }} for this round {{ endif }}
+        to Participant B. Your payoff 
+        {{ if C.NUM_ROUNDS > 1 }} in this round {{ endif }}
         thus is 
         250 points + {{ player.reported_amount }} - {{ player.true_amount }} =
         <strong>{{ player.pay }}</strong>.
     </p>
     <p>
-        The payoff of participant B is 
+        The payoff of Participant B in this round is 
         6000 points -  {{ player.reported_amount }} = 
         <strong>{{ player.pay_other }}</strong>.
     </p>
