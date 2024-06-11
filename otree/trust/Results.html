@@ -15,11 +15,11 @@
                 You chose to send Participant B {{ group.sent_amount }}.
             {{ endif }}
                 Participant B returned {{ group.sent_back_amount }}. 
-                Your payoff thus is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
+                Thus, your payoff in this round is {{ C.ENDOWMENT }} - {{ group.sent_amount }} + 
                 {{ group.sent_back_amount }} = <strong>{{ player.payoff }}</strong>.
         </p>
         <p>
-            The payoff of Participant B is 
+            The payoff of Participant B in this round is 
             {{ C.MULTIPLIER }} * {{ group.sent_amount }} - {{ group.sent_back_amount }} = 
             <strong>{{ receiver_payoff }}</strong>.
         </p>
@@ -51,11 +51,11 @@
         {{ endif }}
             These points were multiplied by 3, so you received {{ tripled_amount }}.
             You chose to return {{ group.sent_back_amount }}.
-            Your payoff thus is {{ tripled_amount }} - {{ group.sent_back_amount }} = 
+            Thus, your payoff in this round is {{ tripled_amount }} - {{ group.sent_back_amount }} = 
             <strong>{{ player.payoff }}</strong>.
         </p>
         <p>
-            The payoff of Participant A is 
+            The payoff of Participant A in this round is 
             {{ C.ENDOWMENT }} - {{ group.sent_amount }} + {{ group.sent_back_amount }} = 
             <strong>{{ sender_payoff }}</strong>.
         </p>
