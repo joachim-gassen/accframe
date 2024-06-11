@@ -66,8 +66,8 @@ class Player(BasePlayer):
         label="What is the role of the effort level in this game?",
         blank=False,
         choices=[
-            [1, 'It is used to calculate the Payoff of the firm'],
-            [2, 'It is used to calculate the Payoff of the manager'],
+            [1, 'It is used to calculate the payoff of the firm'],
+            [2, 'It is used to calculate the payoff of the manager'],
             [3, 'It is used to calculate the payoff of both participants']
         ],
     )

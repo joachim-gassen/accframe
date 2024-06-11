@@ -38,7 +38,7 @@ class Player(BasePlayer):
         blank=False,
         choices = [
             [1, 'Only me'],
-            [2, 'Me and the computer of the organizers']
+            [2, 'Me and Participant B']
         ]
     )
     comprehension_check2 = models.IntegerField(

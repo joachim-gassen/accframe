@@ -31,6 +31,7 @@ class Group(BaseGroup):
         min=cu(0),
         max=sent_amount*C.MULTIPLIER,
         doc="""Dividend to be paid out to the investor""",
+        label="Please enter an amount:"
     )
 
 class Player(BasePlayer):

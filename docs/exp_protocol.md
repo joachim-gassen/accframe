@@ -80,7 +80,7 @@ The summary was included as a key in the question response dict. Fixed it by man
 - 16:07 OpenAI Costs for 2024-05-25 accframe: USD 121.09
 - 16:14 Ran `make cleandb` to remove otree and botex databases
 - 16:15 Running gift exchange experiment by sourcing `code/run_giftex_exp.py` (otree in production mode)
-- 16:18 Haha! After a few minutes oTree become unresponsive. I think I know why. It writes to stdoout/sterr and the buffer is full. I will redirect the output to a file. Starting the process again after running `make cleandb`
+- 16:18 Haha! After a few minutes oTree become unresponsive. I think I know why. It writes to stdout/sterr and the buffer is full. I will redirect the output to a file. Starting the process again after running `make cleandb`
 - 16:07 OpenAI Costs for 2024-05-25 accframe: USD 121.74
 - 16:20 Running gift exchange experiment by sourcing `code/run_giftex_exp.py` (otree in development mode and with logfile)
 - 17:51 Running session 'voreu3wn'. All good. Stopped close monitoring.
@@ -93,3 +93,7 @@ The summary was included as a key in the question response dict. Fixed it by man
 - 21:18 Running session 'h17nvk1b'. All good.
 - 21:22 Gift Exchange experiment complete. Exported oTree data.
 - 21:25 Parsing data with code/extract_giftex_exp_data.py
+
+2024-05-27
+
+08:51 OpenAI Costs for 2024-05-25 accframe: USD 233.19
