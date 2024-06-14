@@ -5,9 +5,9 @@
     </p>
     <p>
         The setting was: 
-        "The firm sets a wage of 10 points and the manager chooses an effort level of 0.3."
+        "The firm sets a wage of 10 points, and the manager chooses an effort level of 0.3."
     </p>
-    <p>You answered</p>
+    <p>You answered:</p>
     <ul>
         <li>The firm's payoff is {{ player.comprehension_check_pre1 }}.</li>
         <li>The manager's payoff is {{ player.comprehension_check_pre2 }}.</li>
@@ -45,7 +45,7 @@
         <li>The firm paid the manager a wage of 10 points, 
             reducing its endowment from 100 to 90 points.</li>
         <li>The manager chose an effort level of 0.3.</li>
-        <li>Following the table below this implies a cost of 2 points.</li>
+        <li>According to the table below, this implies a cost of 2 points.</li>
         <li>The manager's payoff is 10 points (the wage received) 
             - 2 points (the effort cost) = <strong>8 points</strong>.</li>
         <li>The firm's payoff is the endowment after 
@@ -53,7 +53,6 @@
             the effort level chosen by the manager (0.3)
             = <strong>27 points</strong>.</li>
     </ul>
-    </p>
     <div class="card bg-light m-3">
         <div class="card-body">
             <h3>
@@ -62,6 +61,6 @@
                 {{ include_sibling 'instructions.html' }} 
             </div>
     </div>
-    <p> {{ next_button }} <p></p>
+    <p> {{ next_button }} </p>
 
 {{ endblock }}
