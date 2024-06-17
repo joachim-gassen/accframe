@@ -12,7 +12,7 @@ hrounds <- read_csv(
       "Business Framing", "Neutral Framing"
     ), c("Neutral Framing", "Business Framing")),
     slack = reported_amount - true_amount,
-    pct_slack_claimed = (reported_amount - true_amount)/(6000 - true_amount)
+    honesty = 1 - (reported_amount - true_amount)/(6000 - true_amount)
   )
 
 hparticipants <- read_csv(
@@ -40,14 +40,14 @@ h1_test$conf.int
 # Round Level
 
 mod_honesty_slack_claimed_fe <- feols(
-  pct_slack_claimed ~ experiment | round, 
+  honesty ~ experiment | round, 
   cluster = c("round", "session_code^player_id"), 
   data = hrounds %>% filter(reported_amount != true_amount)
 )
 summary(mod_honesty_slack_claimed_fe)
 
 mod_honesty_slack_claimed <- feols(
-  pct_slack_claimed ~ experiment*round, 
+  honesty ~ experiment*round, 
   cluster = c("round", "session_code^player_id"), 
   data = hrounds %>% filter(reported_amount != true_amount)
 )
@@ -61,15 +61,15 @@ confint(mod_honesty_slack_claimed)[4,]
 hpart <- hrounds %>%
   group_by(experiment, session_code, player_id) %>%
   summarise(
-    pct_slack_claimed = sum(reported_amount - true_amount)/sum(6000 - true_amount),
+    honesty = 1 - sum(reported_amount - true_amount)/sum(6000 - true_amount),
     .groups = "drop"
   )
 
-h3_table <- table(hpart$pct_slack_claimed == 0, hpart$experiment)
+h3_table <- table(hpart$honesty == 1, hpart$experiment)
 h3_table
 h3_test <- prop.test(h3_table[2,], colSums(h3_table))
 h3_test
 h3_test$conf.int
                   
-t.test(pct_slack_claimed ~ experiment, data = hpart %>% filter(pct_slack_claimed > 0))
-wilcox.test(pct_slack_claimed ~ experiment, data = hpart %>% filter(pct_slack_claimed > 0))
+t.test(honesty ~ experiment, data = hpart %>% filter(honesty < 1))
+wilcox.test(honesty ~ experiment, data = hpart %>% filter(honesty < 1))
