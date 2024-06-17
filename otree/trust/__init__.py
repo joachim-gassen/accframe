@@ -47,7 +47,7 @@ class Player(BasePlayer):
         ],
     )
     manipulation_check = models.IntegerField(
-        label="What was your role in this game?",
+        label="What was your role in this experiment?",
         blank=False,
         choices=[
             [1, 'Participant A'],

@@ -63,7 +63,7 @@ class Player(BasePlayer):
         max=100
     )
     comprehension_check_post1 = models.IntegerField(
-        label="What is the role of the multiplier in this game?",
+        label="What is the role of the multiplier in this experiment?",
         blank=False,
         choices=[
             [1, 'It is used to calculate the payoff of Participant A'],

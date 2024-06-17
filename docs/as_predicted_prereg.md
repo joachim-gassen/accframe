@@ -1,16 +1,17 @@
-# ACCFRAME: Exploring Contextualization in Accounting Experiments using LLMs'
+# ACCFRAME: Exploring Contextualization in Accounting Experiments using LLMs
 
-(AsPredicted #176090)
+(AsPredicted #179630)
 
-Created:       05/22/2024 05:42 AM (PT)
+Created:       06/17/2024 03:02 AM (PT)
 
 Author(s)
+Fikir Worku Edossa (Humboldt-Universität zu Berlin) - fikir.worku.edossa@hu-berlin.de
 Joachim Gassen (Humboldt-Universität zu Berlin) - gassen@wiwi.hu-berlin.de
 Victor Maas (University of Amsterdam) - V.S.Maas@uva.nl
 
 
 1) Have any data been collected for this study already?
-No, no data have been collected for this study yet.
+It's complicated. We have already collected some data but explain in Question 8 why readers may consider this a valid pre-registration nevertheless.
 
 2) What's the main question being asked or hypothesis being tested in this study?
 Does contextualization affect the outcome of classic economic games used in the accounting literature when these games are played by LLM participants?
@@ -42,3 +43,14 @@ Based on our power analyses (included in the GitHub repository), we plan to run 
 8) Anything else you would like to pre-register? 
 (e.g., secondary analyses, variables collected for exploratory purposes, unusual analyses planned?)
 All participants will be "played" by using the current version of the 'botex' package and the gpt-4o-2024-05-13 model of OpenAI. We will use the standard temperature of the chat completion endpoint (1.0) and also all other parameters are at the standard level.
+
+PLEASE NOTE: This pre-registration is a rerun of a pre-registered experiment (https://aspredicted.org/J6H_Y3R) as we identified some inconsistencies in our three sets of experimental materials. To rule out that these have affected our findings, we will run the three experiments again using the updated materials. All materials, data and results from the experimental runs of our first pre-registration are available in our GitHub repository.
+
+9) Give a title for this AsPredicted pre-registration
+ACCFRAME: Exploring Contextualization in Accounting Experiments using LLMs
+
+10) Type of study
+Experiment
+
+11) Data Source
+Other: LLMs (see answer to Q8)
