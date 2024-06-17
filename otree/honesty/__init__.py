@@ -42,11 +42,11 @@ class Player(BasePlayer):
         ]
     )
     comprehension_check2 = models.IntegerField(
-        label="What would be the optimal strategy for someone who only cares about the number of points they earn in the experiment?",
+        label="What would be the optimal strategy for someone who only cares about the number of points they earn individually in the experiment?",
         blank=False,
         choices=[
             [1, 'Reporting 6000 points in each round'],
-            [2, 'Reporting the true amount in each round']
+            [2, 'Reporting the actual amount in each round']
         ],
     )
     human_check = models.IntegerField(

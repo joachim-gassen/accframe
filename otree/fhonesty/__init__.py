@@ -39,10 +39,10 @@ class Player(BasePlayer):
         choices = [[1, 'Only I'], [2, "Both I and the firm's corporate headquarters"]]
     )
     comprehension_check2 = models.IntegerField(
-        label="What would be the optimal strategy for someone who only cares about the number of points they earn in the experiment?",
+        label="What would be the optimal strategy for someone who only cares about the number of points they earn individually in the experiment?",
         blank=False,
         choices=[
-            [1, 'Filing a budget request for {C.MAX_POOL} in each round'],
+            [1, 'Filing a budget request for 6000 points in each round'],
             [2, 'Filing a budget request for the actual costs in each round']
         ],
     )
