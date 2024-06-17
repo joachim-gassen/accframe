@@ -25,10 +25,11 @@ ta = [row for row in reader]
 f.close()
 
 if not OTREE_IS_RUNNING:
+    log = open('data/generated/otree_log_honesty.txt','w') 
     os.environ["OTREE_PRODUCTION"] = "1"
     otree_proc = subprocess.Popen(
         ["otree", "devserver"], cwd="otree",
-        stderr=subprocess.PIPE, stdout=subprocess.PIPE
+        stderr=log, stdout=log
     )
     time.sleep(OTREE_STARTUP_WAIT)
 

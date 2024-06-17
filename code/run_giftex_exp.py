@@ -18,7 +18,7 @@ PART_BY_COND = 100 # Needs to be a multiple of PART_SESSION
 dotenv.load_dotenv("secrets.env")
 
 if not OTREE_IS_RUNNING:
-    log = open('data/generated/otree_log.txt','w') 
+    log = open('data/generated/otree_log_giftex.txt','w') 
     os.environ["OTREE_PRODUCTION"] = "1"
     otree_proc = subprocess.Popen(
         ["otree", "devserver"], cwd="otree",
