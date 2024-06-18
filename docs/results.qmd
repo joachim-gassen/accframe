@@ -26,7 +26,7 @@ hrounds <- read_csv(
     ), c("Neutral Framing", "Business Framing")),
     slack = reported_amount - true_amount,
     truthful = as.integer(reported_amount == true_amount),
-    pct_slack_claimed = (reported_amount - true_amount)/(6000 - true_amount)
+    honesty = 1 - (reported_amount - true_amount)/(6000 - true_amount)
   )
 
 hparticipants <- read_csv(
@@ -42,8 +42,8 @@ hparticipants <- read_csv(
 hpart <- hrounds %>%
   group_by(experiment, session_code, player_id) %>%
   summarise(
-    sum_pct_slack_claimed = sum(reported_amount - true_amount)/sum(6000 - true_amount),
-    truthful = as.integer(sum_pct_slack_claimed == 0),
+    sum_honesty = 1 - sum(reported_amount - true_amount)/sum(6000 - true_amount),
+    truthful = as.integer(sum_honesty == 1),
     .groups = "drop"
   ) %>% left_join(hparticipants, by = c("experiment", "session_code", "player_id")) %>%
   mutate(
@@ -59,13 +59,13 @@ color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")[c(2, 1)]
 ```{r}
 datasummary(
   (`% Truthful`= truthful) + 
-    (`% Slack Claimed`=pct_slack_claimed) ~ experiment*(N + Mean + SD), 
+    (`% Honest`=honesty) ~ experiment*(N + Mean + SD), 
   data = hrounds
 )
 
 chisq.test(hrounds$truthful, hrounds$experiment)
-t.test(pct_slack_claimed ~ experiment, data = hrounds %>% filter(pct_slack_claimed > 0))
-wilcox.test(pct_slack_claimed ~ experiment, data = hrounds %>% filter(pct_slack_claimed > 0))
+t.test(honesty ~ experiment, data = hrounds %>% filter(honesty < 1))
+wilcox.test(honesty ~ experiment, data = hrounds %>% filter(honesty < 1))
 
 ```
 
@@ -76,7 +76,7 @@ wilcox.test(pct_slack_claimed ~ experiment, data = hrounds %>% filter(pct_slack_
 ```{r}
 datasummary(
   (`% Always Truthful`= truthful) + 
-    (`% Total Slack Claimed`= sum_pct_slack_claimed) +
+    (`% Honest`= sum_honesty) +
     (`% Passed Comprehension Checks` = passed_cc) +
     (`% Classified as Human` = classified_as_human) ~ experiment*(N + Mean + SD), 
   data = hpart
@@ -85,8 +85,8 @@ datasummary(
 chisq.test(hpart$truthful, hpart$experiment)
 chisq.test(hpart$passed_cc, hpart$experiment)
 
-t.test(sum_pct_slack_claimed ~ experiment, data = hpart %>% filter(sum_pct_slack_claimed > 0))
-wilcox.test(sum_pct_slack_claimed ~ experiment, data = hpart %>% filter(sum_pct_slack_claimed > 0))
+t.test(sum_honesty ~ experiment, data = hpart %>% filter(sum_honesty < 1))
+wilcox.test(sum_honesty ~ experiment, data = hpart %>% filter(sum_honesty < 1))
 ```
 
 
@@ -96,12 +96,12 @@ wilcox.test(sum_pct_slack_claimed ~ experiment, data = hpart %>% filter(sum_pct_
 
 ```{r}
 mod_honesty_slack_claimed_fe <- feols(
-  pct_slack_claimed ~ experiment | round, 
+  honesty ~ experiment | round, 
   cluster = c("round", "session_code^player_id"), 
   data = hrounds %>% filter(reported_amount != true_amount)
 )
 mod_honesty_slack_claimed <- feols(
-  pct_slack_claimed ~ experiment*round, 
+  honesty ~ experiment*round, 
   cluster = c("round", "session_code^player_id"), 
   data = hrounds %>% filter(reported_amount != true_amount)
 )
@@ -156,21 +156,21 @@ ggplot(
 
 {{< pagebreak >}}
 
-## Figure 2: Average % Slack Claimed by Round and Condition
+## Figure 2: Average % Honest by Round and Condition
 
 ```{r, fig.width=8, fig.height=8, fig.align="center"}
 names(color_scale) <- unique(levels(hrounds$experiment))
 color_scale_labs <- c("Neutral", "Business Framing")
 df <- hrounds %>%
   group_by(round, experiment) %>%
-  filter(!is.na(pct_slack_claimed)) %>%
+  filter(!is.na(honesty)) %>%
   summarise(
-    mn_slack = mean(pct_slack_claimed),
-    lb = mn_slack - 1.96*sd(pct_slack_claimed)/sqrt(length(pct_slack_claimed)),
-    ub = mn_slack + 1.96*sd(pct_slack_claimed)/sqrt(length(pct_slack_claimed))
+    mn_honesty = mean(honesty),
+    lb = mn_honesty - 1.96*sd(honesty)/sqrt(length(honesty)),
+    ub = mn_honesty + 1.96*sd(honesty)/sqrt(length(honesty))
   )
 
-ggplot(df, aes(x = round, y = mn_slack, color = experiment)) +
+ggplot(df, aes(x = round, y = mn_honesty, color = experiment)) +
   geom_point() +
   geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) +
   labs(

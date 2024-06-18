@@ -4,7 +4,7 @@ suppressMessages({
 })
 
 grounds <- read_csv(
-  "data/generated/gift_rounds.csv", show_col_types = FALSE
+  "data/generated/giftex_rounds.csv", show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -14,7 +14,7 @@ grounds <- read_csv(
   )
 
 gparticipants <- read_csv(
-  "data/generated/gift_participants.csv", show_col_types = FALSE
+  "data/generated/giftex_participants.csv", show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(

@@ -73,3 +73,4 @@ h3_test$conf.int
                   
 t.test(honesty ~ experiment, data = hpart %>% filter(honesty < 1))
 wilcox.test(honesty ~ experiment, data = hpart %>% filter(honesty < 1))
+
