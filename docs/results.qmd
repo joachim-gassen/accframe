@@ -10,6 +10,8 @@ execute:
 ## Table 1: Honesty Experiment: Descriptive Statistics
 
 ```{r, Setup}
+LIMIT_GE_TO_PART_THAT_PASS_PRE_CC <- FALSE
+
 suppressPackageStartupMessages({
   library(tidyverse)
   library(fixest)
@@ -82,6 +84,7 @@ datasummary(
   data = hpart
 )
 
+table(hpart$comprehension_check1, hpart$comprehension_check2)
 chisq.test(hpart$truthful, hpart$experiment)
 chisq.test(hpart$passed_cc, hpart$experiment)
 
@@ -453,6 +456,21 @@ gparticipants <- read_csv(
       "Business Framing", "Neutral Framing"
     ), c("Neutral Framing", "Business Framing")),
   )
+
+if (LIMIT_GE_TO_PART_THAT_PASS_PRE_CC) {
+  gparticipants <- gparticipants %>% 
+    filter(comprehension_check_pre1 == 27 & comprehension_check_pre2 == 8)
+  
+  valid_dyads <- gparticipants %>% select(session_code, group_id) %>%
+    group_by(session_code, group_id) %>%
+    filter(n() == 2) %>%
+    ungroup() %>%
+    distinct()
+  
+  grounds <- inner_join(grounds, valid_dyads, by = c("session_code", "group_id")) 
+}
+  
+  
 ```
 
 ### Panel A: Round Level
@@ -527,7 +545,11 @@ datasummary(
      data = gpart
 )
 
-chisq.test(gpart$passed_cc_pre, gpart$experiment)
+table(gpart$comprehension_check_pre1 == 27, gpart$comprehension_check_pre2 == 8)
+table(gpart$comprehension_check_post1 == 3, gpart$comprehension_check_post2 == 1)
+table(gpart$comprehension_check_post1)
+
+# chisq.test(gpart$passed_cc_pre, gpart$experiment)
 chisq.test(gpart$passed_cc_post, gpart$experiment)
 
 t.test(payoff ~ experiment, data = gpart)
