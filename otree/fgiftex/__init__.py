@@ -63,12 +63,12 @@ class Player(BasePlayer):
         max=100
     )
     comprehension_check_post1 = models.IntegerField(
-        label="What is the role of the effort level in this experiment?",
+        label="What is the purpose of the effort level?",
         blank=False,
         choices=[
-            [1, 'It is used to calculate the payoff of the firm'],
-            [2, 'It is used to calculate the payoff of the manager'],
-            [3, 'It is used to calculate the payoff of both participants']
+            [1, 'It is used as a multiple for the payoff of the firm'],
+            [2, 'It is used as a multiple for the payoff of the manager'],
+            [3, 'It is used as a multiple for the payoff of both participants']
         ],
     )
     comprehension_check_post2 = models.IntegerField(

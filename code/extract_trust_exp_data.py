@@ -10,8 +10,12 @@ from dotenv import load_dotenv
 
 load_dotenv('secrets.env')
 
-BOTEX_DB = 'data/exp_runs/trust_botex_db_2024-06-18.sqlite3'
-OTREE_DATA = 'data/exp_runs/trust_otree_2024-06-18.csv'
+#DATA_VERSION = '2024-05-25'
+DATA_VERSION = '2024-06-18'
+#DATA_VERSION = '2024-07-03'
+
+BOTEX_DB = f'data/exp_runs/trust_botex_db_{DATA_VERSION}.sqlite3'
+OTREE_DATA = f'data/exp_runs/trust_otree_{DATA_VERSION}.csv'
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -183,5 +187,5 @@ for s in participants.session_code.unique():
                 'sent_back_reason'
             ] = extract_rationales(p)
      
-participants.to_csv('data/generated/trust_participants.csv', index = False)
-rounds.to_csv('data/generated/trust_rounds.csv', index = False)
+participants.to_csv(f'data/generated/trust_{DATA_VERSION}_participants.csv', index = False)
+rounds.to_csv(f'data/generated/trust_{DATA_VERSION}_rounds.csv', index = False)
