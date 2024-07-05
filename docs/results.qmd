@@ -1,6 +1,9 @@
 ---
 title: "accframe Results"
-format: pdf
+format:
+  pdf: 
+    output-file: "results_2024-06-18"
+    output-ext:  "pdf"
 execute: 
   warning: false
   message: false
@@ -10,6 +13,24 @@ execute:
 ## Table 1: Honesty Experiment: Descriptive Statistics
 
 ```{r, Setup}
+LIMIT_GE_TO_PART_THAT_PASS_PRE_CC <- FALSE
+
+#DVERSION_HONESTY <- "2024-05-24"
+DVERSION_HONESTY <- "2024-06-17"
+#DVERSION_HONESTY <- "2024-07-02"
+#DVERSION_HONESTY <- "merged"
+
+#DVERSION_TRUST <- "2024-05-25"
+DVERSION_TRUST <- "2024-06-18"
+#DVERSION_TRUST <- "2024-07-03"
+#DVERSION_TRUST <- "merged"
+
+#DVERSION_GIFTEX <- "2024-05-25"
+DVERSION_GIFTEX <- "2024-06-18"
+#DVERSION_GIFTEX <- "2024-07-02"
+#DVERSION_GIFTEX <- "merged"
+
+
 suppressPackageStartupMessages({
   library(tidyverse)
   library(fixest)
@@ -17,7 +38,8 @@ suppressPackageStartupMessages({
   library(ggbeeswarm)
 })
 hrounds <- read_csv(
-  "../data/generated/honesty_rounds.csv", show_col_types = FALSE
+  sprintf("../data/generated/honesty_%s_rounds.csv", DVERSION_HONESTY), 
+  show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -30,7 +52,8 @@ hrounds <- read_csv(
   )
 
 hparticipants <- read_csv(
-  "../data/generated/honesty_participants.csv", show_col_types = FALSE
+  sprintf("../data/generated/honesty_%s_participants.csv", DVERSION_HONESTY), 
+  show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -82,6 +105,7 @@ datasummary(
   data = hpart
 )
 
+table(hpart$comprehension_check1, hpart$comprehension_check2)
 chisq.test(hpart$truthful, hpart$experiment)
 chisq.test(hpart$passed_cc, hpart$experiment)
 
@@ -191,7 +215,8 @@ ggplot(df, aes(x = round, y = mn_honesty, color = experiment)) +
 
 ```{r}
 trounds <- read_csv(
-  "../data/generated/trust_rounds.csv", show_col_types = FALSE
+  sprintf("../data/generated/trust_%s_rounds.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -202,7 +227,8 @@ trounds <- read_csv(
   )
 
 tparticipants <- read_csv(
-  "../data/generated/trust_participants.csv", show_col_types = FALSE
+  sprintf("../data/generated/trust_%s_participants.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -251,11 +277,15 @@ datasummary(
      data = tparticipants
 )
 
-chisq.test(tparticipants$comprehension_check == 3, tparticipants$experiment)
-chisq.test(
-  tparticipants$manipulation_check == tparticipants$role_in_group, 
-  tparticipants$experiment
-)
+if (sd(tparticipants$comprehension_check, na.rm = T) > 0) {
+  chisq.test(tparticipants$comprehension_check == 3, tparticipants$experiment)
+}
+if (sd(tparticipants$manipulation_check == tparticipants$role_in_group, na.rm = T) > 0) {
+  chisq.test(
+    tparticipants$manipulation_check == tparticipants$role_in_group, 
+    tparticipants$experiment
+  )
+}
 
 t.test(payoff ~ experiment, data = tparticipants)
 wilcox.test(payoff ~ experiment, data = tparticipants)
@@ -432,7 +462,8 @@ cost <- function(e) {
 }
 
 grounds <- read_csv(
-  "../data/generated/giftex_rounds.csv", show_col_types = FALSE
+  sprintf("../data/generated/giftex_%s_rounds.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -445,7 +476,8 @@ grounds <- read_csv(
   )
 
 gparticipants <- read_csv(
-  "../data/generated/giftex_participants.csv", show_col_types = FALSE
+  sprintf("../data/generated/giftex_%s_participants.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
 ) %>%
   mutate(
     experiment = factor(ifelse(
@@ -453,6 +485,21 @@ gparticipants <- read_csv(
       "Business Framing", "Neutral Framing"
     ), c("Neutral Framing", "Business Framing")),
   )
+
+if (LIMIT_GE_TO_PART_THAT_PASS_PRE_CC) {
+  gparticipants <- gparticipants %>% 
+    filter(comprehension_check_pre1 == 27 & comprehension_check_pre2 == 8)
+  
+  valid_dyads <- gparticipants %>% select(session_code, group_id) %>%
+    group_by(session_code, group_id) %>%
+    filter(n() == 2) %>%
+    ungroup() %>%
+    distinct()
+  
+  grounds <- inner_join(grounds, valid_dyads, by = c("session_code", "group_id")) 
+}
+  
+  
 ```
 
 ### Panel A: Round Level
@@ -527,7 +574,11 @@ datasummary(
      data = gpart
 )
 
-chisq.test(gpart$passed_cc_pre, gpart$experiment)
+table(gpart$comprehension_check_pre1 == 27, gpart$comprehension_check_pre2 == 8)
+table(gpart$comprehension_check_post1 == 3, gpart$comprehension_check_post2 == 1)
+table(gpart$comprehension_check_post1)
+
+# chisq.test(gpart$passed_cc_pre, gpart$experiment)
 chisq.test(gpart$passed_cc_post, gpart$experiment)
 
 t.test(payoff ~ experiment, data = gpart)
