@@ -20,32 +20,17 @@ EXPERIMENT = [
     {
         "data": "data/generated/honesty_2024-06-17_rounds.csv", 
         "vars": ["reported_amount_reason"],
-        "experiments": ["honesty", "fhonesty"],
-        "statements": [
-            "I chose tp report my points to ensure that the other person also gets a fair payoff.", 
-            "I chose to maximize my payoff.", 
-            "I chose to report the honest and true amount."
-        ],
+        "framings": ["honesty", "fhonesty"]
     },
     {
         "data": "data/generated/trust_2024-06-18_rounds.csv",
         "vars": ["sent_reason", "sent_back_reason"],
-        "statements": [
-            "I care about other people", 
-            "I want to maximize my payoff", 
-            "I trust the other person", 
-            "I want to to be fair"
-        ]
+        "framings": ["trust", "ftrust"]
     },
     {
         "data": "data/generated/giftex_2024-06-18_rounds.csv",
         "vars": ["wage_reason", "effort_reason"],
-        "statements": [
-            "I care about other people", 
-            "I want to maximize my payoff", 
-            "I trust the other person", 
-            "I want to to be fair"
-        ]
+        "framings": ["giftex", "fgiftex"]
     },
 ]
 
@@ -56,17 +41,18 @@ def main():
     for exp in EXPERIMENT:
         df = pd.read_csv(exp["data"], na_values=["", " ", "NA", "N/A", "null"])
         llama_server = start_llama_cpp_server(**local_llm_cfg)
+
         # get embeddings based on the vars in the experiment
-        for var in exp["vars"]:
-            embeddings = get_local_llm_embedding(df[var], var)
-            df[var + "_embeddings"] = embeddings
-            centroids = get_local_llm_embedding_statements(exp["statements"])
-            df = compute_cluster_centroid_similarity_score(df, centroids, var)
-            df.to_csv(f"{exp['data'][:-4]}_with_statement_sim.csv", index=False)
-            representative_texts = cluster_embeddings(df, var)
-            representative_texts.to_csv(
-                f"{exp['data'][:-4]}_{var}_representative_texts.csv", index=False
-            )
+        for framing in exp["framings"]:
+            for var in exp["vars"]:
+                fdf = df[df.experiment == framing].copy()
+                embeddings = get_local_llm_embedding(fdf[var], var)
+                representative_rationales_idx = cluster_embeddings(embeddings)
+                representative_rationales = fdf.iloc[representative_rationales_idx]
+                representative_rationales.to_csv(
+                    f"{exp['data'][:-4]}_{framing}_{var}_representative_rationales.csv", index=False
+                )
+
         stop_llama_cpp_server(llama_server)
 
 
@@ -130,19 +116,6 @@ def stop_llama_cpp_server(process: subprocess.Popen):
     else:
         logging.warning("Server is not running.")
 
-def get_local_llm_embedding_statements(statements):
-
-    url = "http://localhost:8080/v1/embeddings"
-
-    payloads = {"input": statements, "encoding_format": "float"}
-    response = requests.post(url, json=payloads)
-
-    if response.status_code == 200:
-        embeddings = [e["embedding"] for e in response.json()["data"]]
-        return embeddings
-    else:
-        raise Exception("Failed to get embeddings from local LLM")
-
 def get_local_llm_embedding(texts, var):
 
     url = "http://localhost:8080/v1/embeddings"
@@ -162,23 +135,13 @@ def get_local_llm_embedding(texts, var):
         raise Exception("Failed to get embeddings from local LLM")
 
 
-def cluster_embeddings(df, var, n_clusters=NUM_CLUSTERS):
-    df = df.reset_index()
-    no_missing = df.copy().dropna()
-    embeddings = np.array(no_missing[var + "_embeddings"].tolist())
-
+def cluster_embeddings(embeddings, n_clusters=NUM_CLUSTERS):
+    embeddings = np.array(embeddings.to_list())
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     kmeans.fit(embeddings)
     centroids = kmeans.cluster_centers_
-
     closest, _ = pairwise_distances_argmin_min(centroids, embeddings)
-    representative_texts = pd.DataFrame(
-        {
-            f"{var}_cluster": range(n_clusters), 
-            f"{var}_representative_text": no_missing.iloc[closest][var],
-        }
-    )
-    return representative_texts
+    return closest
 
 
 import pandas as pd

@@ -36,6 +36,7 @@ suppressPackageStartupMessages({
   library(fixest)
   library(modelsummary)
   library(ggbeeswarm)
+  library(kableExtra)
 })
 hrounds <- read_csv(
   sprintf("../data/generated/honesty_%s_rounds.csv", DVERSION_HONESTY), 
@@ -104,6 +105,15 @@ datasummary(
     (`% Classified as Human` = classified_as_human) ~ experiment*(N + Mean + SD), 
   data = hpart
 )
+
+hpart %>%
+  group_by(experiment) %>%
+  summarise(
+    cc1_1 = mean(comprehension_check1 == 1),
+    cc1_2 = mean(comprehension_check1 == 2),
+    cc2_1 = mean(comprehension_check2 == 1),
+    cc2_2 = mean(comprehension_check2 == 2)
+  ) %>% kable() %>% kable_styling()
 
 table(hpart$comprehension_check1, hpart$comprehension_check2)
 chisq.test(hpart$truthful, hpart$experiment)
@@ -190,16 +200,16 @@ df <- hrounds %>%
   filter(!is.na(honesty)) %>%
   summarise(
     mn_honesty = mean(honesty),
-    lb = mn_honesty - 1.96*sd(honesty)/sqrt(length(honesty)),
-    ub = mn_honesty + 1.96*sd(honesty)/sqrt(length(honesty))
+    lb = mn_honesty - 1.96*sd(honesty)/sqrt(n()),
+    ub = mn_honesty + 1.96*sd(honesty)/sqrt(n())
   )
 
 ggplot(df, aes(x = round, y = mn_honesty, color = experiment)) +
   geom_point() +
   geom_errorbar(aes(ymin = lb, ymax = ub), width = 0) +
   labs(
-    x = "Round",
-    y = "",
+    x = "Period",
+    y = "%Honest",
     color = "Treatment"
   ) +
   scale_x_continuous(breaks = 1:10) +
@@ -276,6 +286,16 @@ datasummary(
     (`% Classified as Human` = as.integer(human_check == 1)) ~ experiment*(N + Mean + SD), 
      data = tparticipants
 )
+
+tparticipants %>%
+  group_by(experiment) %>%
+  summarise(
+    cc_1 = mean(comprehension_check == 1),
+    cc_2 = mean(comprehension_check == 2),
+    cc_3 = mean(comprehension_check == 3),
+    mc_t = mean(manipulation_check == role_in_group),
+    mc_f = mean(manipulation_check != role_in_group)
+  ) %>% kable() %>% kable_styling()
 
 if (sd(tparticipants$comprehension_check, na.rm = T) > 0) {
   chisq.test(tparticipants$comprehension_check == 3, tparticipants$experiment)
@@ -381,10 +401,15 @@ modelsummary(
 ## Table 6: Does Business Framing affect the Participants’ Payoffs?
 
 ```{r}
-mod_part <- feols(payoff ~ experiment*role, data = tparticipants)
+mod_part <- feols(
+  payoff ~ experiment*role, 
+  cluster = c( "session_code^group_id"),
+  data = tparticipants
+)
+
 modelsummary(
   mod_part,
-  statistic = c("conf.int", "({p.value})"),
+  statistic = c("std.error", "statistic", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -434,12 +459,41 @@ ggplot(trounds, aes(x = as.factor(round), y = sent_amount, group = experiment, c
   scale_y_continuous(limits = c(0, 100)) + 
 	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
 	scale_fill_manual("", values = color_scale, labels = color_scale_labs) +
-	theme_minimal() +
+	theme_classic() +
 	theme(
 	  legend.position = "bottom",
 		panel.grid.major.x  = element_blank(),
 		panel.grid.minor = element_blank()
 	)
+```
+
+## Figure 2B: Amount Sent by Round and Condition
+
+```{r, fig.width=8, fig.height=8, fig.align="center"}
+df <- trounds %>%
+  group_by(round, experiment) %>%
+  summarise(
+    mn_sent_amount = mean(sent_amount),
+    lb = mn_sent_amount - 1.96*sd(sent_amount)/sqrt(n()),
+    ub = mn_sent_amount + 1.96*sd(sent_amount)/sqrt(n())
+  )
+
+ggplot(df, aes(x = round, y = mn_sent_amount, color = experiment)) +
+  geom_point(position = position_dodge(width = 0.5)) +
+  geom_errorbar(
+    aes(ymin = lb, ymax = ub), width = 0,
+    position = position_dodge(width = 0.5)
+  ) +
+  labs(
+    x = "Period",
+    y = "Investment",
+    color = "Treatment"
+  ) +
+  scale_x_continuous(breaks = 1:10) +
+#  scale_y_continuous(limits = c(0,100)) +
+  theme_classic(base_size = 16) + 
+  scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+  theme(plot.title.position =  "plot", legend.position = "bottom")
 ```
 
 ## Table 7: Gift Exchange Experiment: Descriptive Statistics
@@ -573,6 +627,19 @@ datasummary(
     (`% Classified as Human` = as.integer(human_check == 1)) ~ experiment*(N + Mean + SD), 
      data = gpart
 )
+
+gpart %>%
+  group_by(experiment) %>%
+  summarise(
+    cpre_1_t = mean(comprehension_check_pre1 == 27),
+    cpre_2_t = mean(comprehension_check_pre2 == 8),
+    cpost1_1 = mean(comprehension_check_post1 == 1),
+    cpost1_2 = mean(comprehension_check_post1 == 2),
+    cpost1_3 = mean(comprehension_check_post1 == 3),
+    cpost2_1 = mean(comprehension_check_post2 == 1),
+    cpost2_2 = mean(comprehension_check_post2 == 2),
+    cpost2_3 = mean(comprehension_check_post2 == 3)
+  ) %>% kable() %>% kable_styling()
 
 table(gpart$comprehension_check_pre1 == 27, gpart$comprehension_check_pre2 == 8)
 table(gpart$comprehension_check_post1 == 3, gpart$comprehension_check_post2 == 1)
@@ -711,11 +778,16 @@ modelsummary(
 ## Table 11: Does Business Framing Affect the Participant’s Payoffs?
 
 ```{r}
-mod_payoff_part <- feols(payoff ~ experiment*role, data = gpart)
+mod_payoff_part <- feols(
+  payoff ~ experiment*role, data = gpart, 
+  cluster = c( "session_code^group_id")
+)
+
+get_estimates(mod_payoff_part)
 
 modelsummary(
   mod_payoff_part,
-  statistic = c("conf.int", "({p.value})"),
+  statistic = c("std.error", "statistic", "({p.value})"),
   gof_map = list(
 		list(raw = "adj.r.squared", clean = "Adjusted R2", fmt = 3),
 		list(
@@ -742,9 +814,10 @@ ggplot(
   grounds, 
   aes(x = wage, y = effort, color = experiment, group = experiment)
 ) + geom_jitter(size = 0.25) + 
-  geom_smooth(method = "lm") + theme_minimal() + 
+  geom_smooth(method = "lm") + 
 	scale_color_manual("", values = color_scale, labels = color_scale_labs) +
-  labs(color = "", x = "Wage Paid", y = "") +
+  labs(color = "", x = "Wage Paid", y = "Effort Level") +
+  theme_classic() + 
 	theme(
 	  legend.position = "bottom",
 		panel.grid.minor = element_blank()
