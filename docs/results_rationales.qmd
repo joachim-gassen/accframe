@@ -1,0 +1,435 @@
+---
+title: "accframe Rationales"
+format:
+  pdf: 
+    output-file: "results_rationales_2024-06-18"
+    output-ext:  "pdf"
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+## Table 1: Honesty Experiment
+
+```{r, Setup}
+#DVERSION_HONESTY <- "2024-05-24"
+DVERSION_HONESTY <- "2024-06-17"
+#DVERSION_HONESTY <- "2024-07-02"
+#DVERSION_HONESTY <- "merged"
+
+#DVERSION_TRUST <- "2024-05-25"
+DVERSION_TRUST <- "2024-06-18"
+#DVERSION_TRUST <- "2024-07-03"
+#DVERSION_TRUST <- "merged"
+
+#DVERSION_GIFTEX <- "2024-05-25"
+DVERSION_GIFTEX <- "2024-06-18"
+#DVERSION_GIFTEX <- "2024-07-02"
+#DVERSION_GIFTEX <- "merged"
+
+
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(fixest)
+  library(modelsummary)
+  library(ggbeeswarm)
+  library(kableExtra)
+})
+hrounds <- read_csv(
+  sprintf("../data/exp_runs/honesty_%s_rounds_classified.csv", DVERSION_HONESTY), 
+  show_col_types = FALSE
+) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "fhonesty",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing")),
+    reason_part = str_detect(tolower(reported_amount_reason), "participant"),
+    reason_firm = str_detect(tolower(reported_amount_reason), "firm"),
+    reason_other = reason_part + reason_firm,
+    reason_payoff = 1*str_detect(tolower(reported_amount_reason), "payoff"),
+  )
+
+hparticipants <- read_csv(
+  sprintf("../data/generated/honesty_%s_participants.csv", DVERSION_HONESTY), 
+  show_col_types = FALSE
+) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "fhonesty",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing"))
+  )
+
+hpart <- hrounds %>%
+  group_by(experiment, session_code, player_id) %>%
+  summarise(
+    mn_reason_other = mean(reason_other),
+    mn_reason_payoff = mean(reason_payoff),
+    mn_reason_self_payoff = mean(reason_self_payoff),
+    mn_reason_other_payoff = mean(reason_other_payoff),
+    mn_reason_truth = mean(reason_truth),
+    .groups = "drop"
+  ) %>% left_join(hparticipants, by = c("experiment", "session_code", "player_id")) 
+
+color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")[c(2, 1)]
+```
+
+### Panel A: Round Level
+
+```{r}
+datasummary(
+  (`% Reason Other`= reason_other) + 
+    (`% Reason Payoff`= reason_payoff) +
+    (`Payoff Maximizer` = reason_self_payoff) + 
+    (`Other Caring Preferences` = reason_other_payoff ) + 
+    (`Honesty Preference` = reason_truth ) ~ 
+    experiment*(N + Mean + SD), 
+  data = hrounds
+)
+
+chisq.test(hrounds$reason_other, hrounds$experiment)
+chisq.test(hrounds$reason_payoff, hrounds$experiment)
+t.test(reason_self_payoff ~ experiment, data = hrounds)
+t.test(reason_other_payoff ~ experiment, data = hrounds)
+t.test(reason_truth ~ experiment, data = hrounds)
+```
+
+{{< pagebreak >}}
+
+### Panel B: Participant Level
+
+```{r}
+datasummary(
+  (`Reason Other` = mn_reason_other) + 
+    (`Reason Payoff` = mn_reason_payoff) +
+    (`Payoff Maximizer` = mn_reason_self_payoff) + 
+    (`Other Caring Preferences` = mn_reason_other_payoff ) + 
+    (`Honesty Preference` = mn_reason_truth ) ~ experiment*(N + Mean + SD), 
+  data = hpart
+)
+
+t.test(mn_reason_other ~ experiment, data = hpart)
+wilcox.test(mn_reason_other ~ experiment, data = hpart)
+t.test(mn_reason_payoff ~ experiment, data = hpart)
+wilcox.test(mn_reason_payoff ~ experiment, data = hpart)
+
+t.test(mn_reason_self_payoff ~ experiment, data = hpart)
+wilcox.test(mn_reason_self_payoff ~ experiment, data = hpart)
+t.test(mn_reason_other_payoff ~ experiment, data = hpart)
+wilcox.test(mn_reason_other_payoff ~ experiment, data = hpart)
+t.test(mn_reason_truth ~ experiment, data = hpart)
+wilcox.test(mn_reason_truth ~ experiment, data = hpart)
+
+```
+
+{{< pagebreak >}}
+
+## Table 2: Trust Experiment
+
+```{r}
+trounds <- read_csv(
+  sprintf("../data/exp_runs/trust_%s_rounds_classified.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
+) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "ftrust",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing")),
+    reason_sent_part = str_detect(tolower(sent_reason), "participant"),
+    reason_sent_manager = str_detect(tolower(sent_reason), "manager"),
+    reason_sent_other = reason_sent_part + reason_sent_manager,
+    reason_sent_payoff = 1*str_detect(tolower(sent_reason), "payoff"),
+    reason_back_part = str_detect(tolower(sent_back_reason), "participant"),
+    reason_back_investor = str_detect(tolower(sent_back_reason), "investor"),
+    reason_back_other = reason_back_part + reason_back_investor,
+    reason_back_payoff = 1*str_detect(tolower(sent_back_reason), "payoff"),
+  )
+
+tparticipants <- read_csv(
+  sprintf("../data/generated/trust_%s_participants.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
+) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "ftrust",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing")),
+    role = ifelse(role_in_group == 1, "Sender", "Receiver")
+  )
+
+tdyads <- tparticipants %>%
+  left_join(trounds, by = c("experiment", "session_code", "group_id")) %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(
+    mn_reason_sent_other = mean(reason_sent_other),
+    mn_reason_sent_payoff = mean(reason_sent_payoff),
+    mn_reason_back_other = mean(reason_back_other),
+    mn_reason_back_payoff = mean(reason_back_payoff),
+    mn_reason_sent_self_payoff = mean(reason_sent_self_payoff),
+    mn_reason_sent_other_payoff = mean(reason_sent_other_payoff),
+    mn_reason_sent_fairness = mean(reason_sent_fairness),
+    mn_reason_sent_trust = mean(reason_sent_trust),
+    mn_reason_back_self_payoff = mean(reason_back_self_payoff),
+    mn_reason_back_other_payoff = mean(reason_back_other_payoff),
+    mn_reason_back_fairness = mean(reason_back_fairness),
+    mn_reason_back_trust = mean(reason_back_trust),
+    .groups = "drop"
+  )
+```
+
+### Panel A: Round Level
+
+```{r}
+datasummary(
+  (`% Reason Sent Other`= reason_sent_other) + 
+    (`% Reason Sent Payoff`= reason_sent_payoff) +
+    (`% Reason Sent Back Other`= reason_back_other) + 
+    (`% Reason Sent Back Payoff`= reason_back_payoff) +
+    (`Investor Payoff Maximizer` = reason_sent_self_payoff) + 
+    (`Investor Other Caring Preferences` = reason_sent_other_payoff ) + 
+    (`Investor Fairness Preference` = reason_sent_fairness ) + 
+    (`Investor Trust Preference` = reason_sent_trust ) + 
+    (`Manager Payoff Maximizer` = reason_back_self_payoff) + 
+    (`Manager Other Caring Preferences` = reason_back_other_payoff ) + 
+    (`Manager Fairness Preference` = reason_back_fairness ) + 
+    (`Manager Trust Preference` = reason_back_trust ) ~ experiment*(N + Mean + SD), 
+  data = trounds
+)
+
+trounds %>%
+  group_by(experiment) %>%
+  summarise(
+    mn_reason_sent_part = mean(reason_sent_part),
+    mn_reason_sent_manager = mean(reason_sent_manager),
+    mn_reason_back_part = mean(reason_back_part),
+    mn_reason_back_investor = mean(reason_back_investor)
+  ) %>% t() %>% kable() %>% kable_classic()
+
+chisq.test(trounds$reason_sent_other, trounds$experiment)
+chisq.test(trounds$reason_sent_payoff, trounds$experiment)
+chisq.test(trounds$reason_back_other, trounds$experiment)
+chisq.test(trounds$reason_back_payoff, trounds$experiment)
+t.test(reason_sent_self_payoff ~ experiment, data = trounds)
+t.test(reason_sent_other_payoff ~ experiment, data = trounds)
+t.test(reason_sent_fairness ~ experiment, data = trounds)
+t.test(reason_sent_trust ~ experiment, data = trounds)
+t.test(reason_back_self_payoff ~ experiment, data = trounds)
+t.test(reason_back_other_payoff ~ experiment, data = trounds)
+t.test(reason_back_fairness ~ experiment, data = trounds)
+t.test(reason_back_trust ~ experiment, data = trounds)
+
+```
+
+### Panel b: Dyad Level
+
+```{r}
+datasummary(
+  (`Reason Sent Other`= mn_reason_sent_other) + 
+    (`Reason Sent Payoff`= mn_reason_sent_payoff) +
+    (`Reason Sent Back Other`= mn_reason_back_other) + 
+    (`Reason Sent Back Payoff`= mn_reason_back_payoff) + 
+    (`Investor Payoff Maximizer` = mn_reason_sent_self_payoff) + 
+    (`Investor Other Caring Preferences` = mn_reason_sent_other_payoff ) + 
+    (`Investor Fairness Preference` = mn_reason_sent_fairness ) + 
+    (`Investor Trust Preference` = mn_reason_sent_trust ) + 
+    (`Manager Payoff Maximizer` = mn_reason_back_self_payoff) + 
+    (`Manager Other Caring Preferences` = mn_reason_back_other_payoff ) + 
+    (`Manager Fairness Preference` = mn_reason_back_fairness ) + 
+    (`Manager Trust Preference` = mn_reason_back_trust ) ~ experiment*(N + Mean + SD), 
+  data = tdyads
+)
+
+t.test(mn_reason_sent_other ~ experiment, data = tdyads)
+wilcox.test(mn_reason_sent_other ~ experiment, data = tdyads)
+t.test(mn_reason_sent_payoff ~ experiment, data = tdyads)
+wilcox.test(mn_reason_sent_payoff ~ experiment, data = tdyads)
+
+t.test(mn_reason_back_other ~ experiment, data = tdyads)
+wilcox.test(mn_reason_back_other ~ experiment, data = tdyads)
+t.test(mn_reason_back_payoff ~ experiment, data = tdyads)
+wilcox.test(mn_reason_back_payoff ~ experiment, data = tdyads)
+
+t.test(mn_reason_sent_self_payoff ~ experiment, data = tdyads)
+wilcox.test(mn_reason_sent_self_payoff ~ experiment, data = tdyads)
+t.test(mn_reason_sent_other_payoff ~ experiment, data = tdyads)
+wilcox.test(mn_reason_sent_other_payoff ~ experiment, data = tdyads)
+t.test(mn_reason_sent_fairness ~ experiment, data = tdyads)
+wilcox.test(mn_reason_sent_fairness ~ experiment, data = tdyads)
+t.test(mn_reason_sent_trust ~ experiment, data = tdyads)
+wilcox.test(mn_reason_sent_trust ~ experiment, data = tdyads)
+
+t.test(mn_reason_back_self_payoff ~ experiment, data = tdyads)
+wilcox.test(mn_reason_back_self_payoff ~ experiment, data = tdyads)
+t.test(mn_reason_back_other_payoff ~ experiment, data = tdyads)
+wilcox.test(mn_reason_back_other_payoff ~ experiment, data = tdyads)
+t.test(mn_reason_back_fairness ~ experiment, data = tdyads)
+wilcox.test(mn_reason_back_fairness ~ experiment, data = tdyads)
+t.test(mn_reason_back_trust ~ experiment, data = tdyads)
+wilcox.test(mn_reason_back_trust ~ experiment, data = tdyads)
+
+```
+
+
+{{< pagebreak >}}
+
+## Table 3: Gift Exchange Experiment
+
+```{r}
+cost <- function(e) {
+  case_when(
+    e == 0.1 ~ 0,
+    e == 0.2 ~ 1,
+    e == 0.3 ~ 2,
+    e == 0.4 ~ 4,
+    e == 0.5 ~ 6,
+    e == 0.6 ~ 8,
+    e == 0.7 ~ 10,
+    e == 0.8 ~ 12,
+    e == 0.9 ~ 15,
+    e == 1.0 ~ 28,
+    TRUE ~ NA
+  )
+}
+
+grounds <- read_csv(
+  sprintf("../data/exp_runs/giftex_%s_rounds_classified.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
+) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "fgiftex",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing")),
+    reason_wage_part = str_detect(tolower(wage_reason), "participant"),
+    reason_wage_manager = str_detect(tolower(wage_reason), "manager"),
+    reason_wage_other = reason_wage_part + reason_wage_manager,
+    reason_wage_payoff = 1*str_detect(tolower(wage_reason), "payoff"),
+    reason_effort_part = str_detect(tolower(effort_reason), "participant"),
+    reason_effort_firm = str_detect(tolower(effort_reason), "firm"),
+    reason_effort_other = reason_effort_part + reason_effort_firm,
+    reason_effort_payoff = 1*str_detect(tolower(effort_reason), "payoff"),
+)
+gparticipants <- read_csv(
+  sprintf("../data/generated/giftex_%s_participants.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
+) %>%
+  mutate(
+    experiment = factor(ifelse(
+      experiment == "fgiftex",
+      "Business Framing", "Neutral Framing"
+    ), c("Neutral Framing", "Business Framing")),
+  )
+
+gdyads <- gparticipants %>%
+  left_join(grounds, by = c("experiment", "session_code", "group_id")) %>%
+  group_by(experiment, session_code, group_id) %>%
+  summarise(
+    mn_reason_wage_other = mean(reason_wage_other),
+    mn_reason_wage_payoff = mean(reason_wage_payoff),
+    mn_reason_effort_other = mean(reason_effort_other),
+    mn_reason_effort_payoff = mean(reason_effort_payoff),
+    mn_reason_wage_self_payoff = mean(reason_wage_self_payoff),
+    mn_reason_wage_other_payoff = mean(reason_wage_other_payoff),
+    mn_reason_wage_fairness = mean(reason_wage_fairness),
+    mn_reason_wage_recip = mean(reason_wage_recip),
+    mn_reason_effort_self_payoff = mean(reason_effort_self_payoff),
+    mn_reason_effort_other_payoff = mean(reason_effort_other_payoff),
+    mn_reason_effort_fairness = mean(reason_effort_fairness),
+    mn_reason_effort_recip = mean(reason_effort_recip),
+    .groups = "drop"
+  )
+```
+
+
+### Panel A: Round Level
+
+```{r}
+datasummary(
+  (`% Reason Wage Other`= reason_wage_other) + 
+    (`% Reason Wage Payoff`= reason_wage_payoff) +
+    (`% Reason Effort Other`= reason_effort_other) + 
+    (`% Reason Effort Payoff`= reason_effort_payoff) +
+    (`Firm Payoff Maximizer` = reason_wage_self_payoff) + 
+    (`Firm Other Caring Preferences` = reason_wage_other_payoff ) + 
+    (`Firm Fairness Preference` = reason_wage_fairness ) + 
+    (`Firm Reciprocate Preference` = reason_wage_recip ) + 
+    (`Manager Payoff Maximizer` = reason_effort_self_payoff) + 
+    (`Manager Other Caring Preferences` = reason_effort_other_payoff ) + 
+    (`Manager Fairness Preference` = reason_effort_fairness ) + 
+    (`Manager Reciprocate Preference` = reason_effort_recip ) ~ experiment*(N + Mean + SD), 
+  data = grounds
+)
+
+grounds %>%
+  group_by(experiment) %>%
+  summarise(
+    mn_reason_wage_part = mean(reason_wage_part),
+    mn_reason_wage_manager = mean(reason_wage_manager),
+    mn_reason_effort_part = mean(reason_effort_part),
+    mn_reason_effort_firm = mean(reason_effort_firm)
+  ) %>% t() %>% kable() %>% kable_classic()
+
+chisq.test(grounds$reason_wage_other, grounds$experiment)
+chisq.test(grounds$reason_wage_payoff, grounds$experiment)
+chisq.test(grounds$reason_effort_other, grounds$experiment)
+chisq.test(grounds$reason_effort_payoff, grounds$experiment)
+t.test(reason_wage_self_payoff ~ experiment, data = grounds)
+t.test(reason_wage_other_payoff ~ experiment, data = grounds)
+t.test(reason_wage_fairness ~ experiment, data = grounds)
+t.test(reason_wage_recip ~ experiment, data = grounds)
+t.test(reason_effort_self_payoff ~ experiment, data = grounds)
+t.test(reason_effort_other_payoff ~ experiment, data = grounds)
+t.test(reason_effort_fairness ~ experiment, data = grounds)
+t.test(reason_effort_recip ~ experiment, data = grounds)
+```
+
+### Panel b: Dyad Level
+
+```{r}
+datasummary(
+  (`Reason Wage Other`= mn_reason_wage_other) + 
+    (`Reason Wage Payoff`= mn_reason_wage_payoff) +
+    (`Reason Effort Other`= mn_reason_effort_other) + 
+    (`Reason Effort Payoff`= mn_reason_effort_payoff) +
+    (`Firm Payoff Maximizer` = mn_reason_wage_self_payoff) + 
+    (`Firm Other Caring Preferences` = mn_reason_wage_other_payoff ) + 
+    (`Firm Fairness Preference` = mn_reason_wage_fairness ) + 
+    (`Firm Reciprocate Preference` = mn_reason_wage_recip ) + 
+    (`Manager Payoff Maximizer` = mn_reason_effort_self_payoff) + 
+    (`Manager Other Caring Preferences` = mn_reason_effort_other_payoff ) + 
+    (`Manager Fairness Preference` = mn_reason_effort_fairness ) + 
+    (`Manager Reciprocate Preference` = mn_reason_effort_recip ) ~ experiment*(N + Mean + SD), 
+  data = gdyads
+)
+
+t.test(mn_reason_wage_other ~ experiment, data = gdyads)
+wilcox.test(mn_reason_wage_other ~ experiment, data = gdyads)
+t.test(mn_reason_wage_payoff ~ experiment, data = gdyads)
+wilcox.test(mn_reason_wage_payoff ~ experiment, data = gdyads)
+
+t.test(mn_reason_effort_other ~ experiment, data = gdyads)
+wilcox.test(mn_reason_effort_other ~ experiment, data = gdyads)
+t.test(mn_reason_effort_payoff ~ experiment, data = gdyads)
+wilcox.test(mn_reason_effort_payoff ~ experiment, data = gdyads)
+
+t.test(mn_reason_wage_self_payoff ~ experiment, data = gdyads)
+wilcox.test(mn_reason_wage_self_payoff ~ experiment, data = gdyads)
+t.test(mn_reason_wage_other_payoff ~ experiment, data = gdyads)
+wilcox.test(mn_reason_wage_other_payoff ~ experiment, data = gdyads)
+t.test(mn_reason_wage_fairness ~ experiment, data = gdyads)
+wilcox.test(mn_reason_wage_fairness ~ experiment, data = gdyads)
+t.test(mn_reason_wage_recip ~ experiment, data = gdyads)
+wilcox.test(mn_reason_wage_recip ~ experiment, data = gdyads)
+
+t.test(mn_reason_effort_self_payoff ~ experiment, data = gdyads)
+wilcox.test(mn_reason_effort_self_payoff ~ experiment, data = gdyads)
+t.test(mn_reason_effort_other_payoff ~ experiment, data = gdyads)
+wilcox.test(mn_reason_effort_other_payoff ~ experiment, data = gdyads)
+t.test(mn_reason_effort_fairness ~ experiment, data = gdyads)
+wilcox.test(mn_reason_effort_fairness ~ experiment, data = gdyads)
+t.test(mn_reason_effort_recip ~ experiment, data = gdyads)
+wilcox.test(mn_reason_effort_recip ~ experiment, data = gdyads)
+```

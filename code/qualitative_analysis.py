@@ -11,20 +11,41 @@ import time
 logging.basicConfig(level=logging.INFO)
 
 local_llm_cfg = {
-    "path_to_compiled_llama_server_executable": "/mnt/file_ssd_2tb/fikir/projects/chat_backend/29_06_2024/llama.cpp/llama-server",
-    "local_model_path": "/mnt/file_ssd_2tb/fikir/projects/chat_backend/models/mistral/7b_instruct/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf",
+    "path_to_compiled_llama_server_executable": "../botex/llama.cpp/server",
+    "local_model_path": "../botex/models/Mistral-7B-Instruct-v0.3.Q4_K_M.gguf",
     "num_layers_to_offload_to_gpu": 99,
 }
 
 EXPERIMENT = [
-    {"data": "data/generated/honesty_rounds.csv", "vars": ["reported_amount_reason"]},
     {
-        "data": "data/generated/trust_rounds.csv",
-        "vars": ["sent_reason", "sent_back_reason"],
+        "data": "data/generated/honesty_2024-06-17_rounds.csv", 
+        "vars": ["reported_amount_reason"],
+        "experiments": ["honesty", "fhonesty"],
+        "statements": [
+            "I chose tp report my points to ensure that the other person also gets a fair payoff.", 
+            "I chose to maximize my payoff.", 
+            "I chose to report the honest and true amount."
+        ],
     },
     {
-        "data": "data/generated/giftex_rounds.csv",
+        "data": "data/generated/trust_2024-06-18_rounds.csv",
+        "vars": ["sent_reason", "sent_back_reason"],
+        "statements": [
+            "I care about other people", 
+            "I want to maximize my payoff", 
+            "I trust the other person", 
+            "I want to to be fair"
+        ]
+    },
+    {
+        "data": "data/generated/giftex_2024-06-18_rounds.csv",
         "vars": ["wage_reason", "effort_reason"],
+        "statements": [
+            "I care about other people", 
+            "I want to maximize my payoff", 
+            "I trust the other person", 
+            "I want to to be fair"
+        ]
     },
 ]
 
@@ -39,8 +60,10 @@ def main():
         for var in exp["vars"]:
             embeddings = get_local_llm_embedding(df[var], var)
             df[var + "_embeddings"] = embeddings
-            df, representative_texts = cluster_embeddings(df, var)
-            df.to_csv(f"{exp['data'][:-4]}_with_clusters.csv", index=False)
+            centroids = get_local_llm_embedding_statements(exp["statements"])
+            df = compute_cluster_centroid_similarity_score(df, centroids, var)
+            df.to_csv(f"{exp['data'][:-4]}_with_statement_sim.csv", index=False)
+            representative_texts = cluster_embeddings(df, var)
             representative_texts.to_csv(
                 f"{exp['data'][:-4]}_{var}_representative_texts.csv", index=False
             )
@@ -83,7 +106,7 @@ def wait_for_server(timeout=10):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
-            response = requests.get("http://localhost:8080//health")
+            response = requests.get("http://localhost:8080/health")
             if response.status_code == 200:
                 return True
         except requests.ConnectionError:
@@ -107,6 +130,18 @@ def stop_llama_cpp_server(process: subprocess.Popen):
     else:
         logging.warning("Server is not running.")
 
+def get_local_llm_embedding_statements(statements):
+
+    url = "http://localhost:8080/v1/embeddings"
+
+    payloads = {"input": statements, "encoding_format": "float"}
+    response = requests.post(url, json=payloads)
+
+    if response.status_code == 200:
+        embeddings = [e["embedding"] for e in response.json()["data"]]
+        return embeddings
+    else:
+        raise Exception("Failed to get embeddings from local LLM")
 
 def get_local_llm_embedding(texts, var):
 
@@ -134,27 +169,16 @@ def cluster_embeddings(df, var, n_clusters=NUM_CLUSTERS):
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     kmeans.fit(embeddings)
-    no_missing[var + "_cluster"] = kmeans.labels_
-
     centroids = kmeans.cluster_centers_
 
     closest, _ = pairwise_distances_argmin_min(centroids, embeddings)
     representative_texts = pd.DataFrame(
         {
-            f"{var}_cluster": range(n_clusters),
+            f"{var}_cluster": range(n_clusters), 
             f"{var}_representative_text": no_missing.iloc[closest][var],
         }
     )
-
-    no_missing = compute_cluster_centroid_similarity_score(no_missing, centroids, var)
-
-    keep = ["index", f"{var}_cluster"] + [
-        c for c in no_missing.columns if c.startswith(f"{var}_similarity")
-    ]
-    df = df.merge(no_missing[keep], on="index", how="left")
-    df = df.drop(columns=["index"])
-
-    return df, representative_texts
+    return representative_texts
 
 
 import pandas as pd
@@ -166,7 +190,8 @@ def compute_cluster_centroid_similarity_score(df, centroids, var):
     df[var + "_embeddings"] = df[var + "_embeddings"].apply(np.array)
 
     for i, centroid in enumerate(centroids):
-        df[f"{var}_similarity_score_cluster_{i}"] = df[var + "_embeddings"].apply(
+        centroid = np.array(centroid)
+        df[f"{var}_similarity_score_statement_{i + 1}"] = df[var + "_embeddings"].apply(
             lambda x: cosine_similarity(x.reshape(1, -1), centroid.reshape(1, -1))[0][0]
         )
     return df
