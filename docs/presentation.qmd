@@ -53,7 +53,26 @@ suppressMessages({
 
 options(modelsummary_format_numeric_latex = "plain")
 
-trounds <- read_csv("../data/generated/trust_rounds.csv", show_col_types = FALSE) %>%
+#DVERSION_HONESTY <- "2024-05-24"
+DVERSION_HONESTY <- "2024-06-17"
+#DVERSION_HONESTY <- "2024-07-02"
+#DVERSION_HONESTY <- "merged"
+
+#DVERSION_TRUST <- "2024-05-25"
+DVERSION_TRUST <- "2024-06-18"
+#DVERSION_TRUST <- "2024-07-03"
+#DVERSION_TRUST <- "merged"
+
+#DVERSION_GIFTEX <- "2024-05-25"
+DVERSION_GIFTEX <- "2024-06-18"
+#DVERSION_GIFTEX <- "2024-07-02"
+#DVERSION_GIFTEX <- "merged"
+
+
+trounds <- read_csv(
+  sprintf("../data/generated/trust_%s_rounds.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
+) %>%
 	mutate(
 		experiment = factor(ifelse(
 			experiment == "ftrust",
@@ -61,7 +80,10 @@ trounds <- read_csv("../data/generated/trust_rounds.csv", show_col_types = FALSE
 		), c("Neutral Framing", "Investor/Management Framing")),
 		pct_returned = sent_back_amount/(3*sent_amount)
 	)
-tparticipants <- read_csv("../data/generated/trust_participants.csv", show_col_types = FALSE) %>%
+tparticipants <- read_csv(
+  sprintf("../data/generated/trust_%s_participants.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
+)  %>%
 	mutate(
 		experiment = factor(ifelse(
 			experiment == "ftrust",
@@ -86,7 +108,10 @@ dparticipants <- read_csv("../data/generated/deception_participants.csv", show_c
 		), c("Neutral Framing", "Accountant/HQ Framing")),
 	)
 
-hrounds <- read_csv("../data/generated/honesty_rounds.csv", show_col_types = FALSE) %>%
+hrounds <- read_csv(
+  sprintf("../data/generated/honesty_%s_rounds.csv", DVERSION_HONESTY), 
+  show_col_types = FALSE
+)  %>%
 	mutate(
 		experiment = factor(ifelse(
 			experiment == "fhonesty",
@@ -95,7 +120,10 @@ hrounds <- read_csv("../data/generated/honesty_rounds.csv", show_col_types = FAL
 		slack = reported_amount - true_amount,
 		pct_slack_claimed = (reported_amount - true_amount)/(6000 - true_amount)
 	)
-hparticipants <- read_csv("../data/generated/honesty_participants.csv", show_col_types = FALSE) %>%
+hparticipants <- read_csv(
+  sprintf("../data/generated/honesty_%s_participants.csv", DVERSION_HONESTY), 
+  show_col_types = FALSE
+)  %>%
 	mutate(
 		experiment = factor(ifelse(
 			experiment == "fhonesty",
@@ -103,14 +131,20 @@ hparticipants <- read_csv("../data/generated/honesty_participants.csv", show_col
 		), c("Neutral Framing", "Business Framing")),
 	)
 
-grounds <- read_csv("../data/generated/gift_rounds.csv", show_col_types = FALSE) %>%
+grounds <- read_csv(
+  sprintf("../data/generated/giftex_%s_rounds.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
+) %>%
 	mutate(
 		experiment = factor(ifelse(
 			experiment == "fgiftex",
 			"Business Framing", "Neutral Framing"
 		), c("Neutral Framing", "Business Framing")),
 	)
-gparticipants <- read_csv("../data/generated/gift_participants.csv", show_col_types = FALSE) %>%
+gparticipants <- read_csv(
+  sprintf("../data/generated/giftex_%s_participants.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
+) %>%
 	mutate(
 		experiment = factor(ifelse(
 			experiment == "fgiftex",

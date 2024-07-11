@@ -13,6 +13,8 @@ suppressMessages({
   library(pwr)
 })
 
+DVERSION_GIFTEX <- "2024-04-30"
+
 set.seed(42)
 
 cost <- function(e) {
@@ -32,7 +34,10 @@ cost <- function(e) {
 }
 
 
-grounds <- read_csv("../data/generated/gift_rounds.csv", show_col_types = FALSE) %>%
+grounds <- read_csv(
+  sprintf("../data/generated/giftex_%s_rounds.csv", DVERSION_GIFTEX), 
+  show_col_types = FALSE
+) %>%
   mutate(
     experiment = factor(ifelse(
       experiment == "fgiftex",

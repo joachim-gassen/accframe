@@ -13,10 +13,12 @@ suppressMessages({
   library(pwr)
 })
 
+DVERSION_HONESTY <- "2024-03-27"
+
 set.seed(42)
 
 hrounds <- read_csv(
-  "../data/generated/honesty_rounds.csv", 
+  sprintf("../data/generated/honesty_%s_rounds.csv", DVERSION_HONESTY), 
   show_col_types = FALSE
 ) %>%
   mutate(

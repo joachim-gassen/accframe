@@ -10,9 +10,14 @@ suppressMessages({
   library(pwr)
 })
 
+DVERSION_TRUST <- "2024-04-29"
+
 set.seed(42)
 
-trounds <- read_csv("../data/generated/trust_rounds.csv", show_col_types = FALSE) %>%
+trounds <- read_csv(
+  sprintf("../data/generated/trust_%s_rounds.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
+) %>%
   mutate(
     experiment = factor(ifelse(
       experiment == "ftrust",
@@ -20,7 +25,10 @@ trounds <- read_csv("../data/generated/trust_rounds.csv", show_col_types = FALSE
     ), c("Neutral Framing", "Business Framing")),
     pct_returned = sent_back_amount/(3*sent_amount)
   )
-tparticipants <- read_csv("../data/generated/trust_participants.csv", show_col_types = FALSE) %>%
+tparticipants <- read_csv(
+  sprintf("../data/generated/trust_%s_participants.csv", DVERSION_TRUST), 
+  show_col_types = FALSE
+) %>%
   mutate(
     experiment = factor(ifelse(
       experiment == "ftrust",
