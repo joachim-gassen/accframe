@@ -11,13 +11,6 @@ This repository contains the code to run the LLM-based experiments outlined in t
 
 The oTree experiments conducted are implemented by using oTree and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
 
-If you are interested in reproducing these output documents your best bet would be to use [GitHub Codespaces](https://github.com/features/codespaces). These are the steps that you need to take:
-
-1. Create a GitHub codespace on main.
-2. Run `git clone https://github.com/joachim-gassen/botex ../botex` in the terminal to clone the botex repo locally. 
-3. Copy `_secrets.env` to `secrets.env` and add your OpenAI key 
-4. Run `make all` to create the output. Rendering the appendix also requires running a one-round two players trust game involving two bots. You can observe this process by monitoring the console logging during the make process.
-
 
 ## Running the Experiments
 

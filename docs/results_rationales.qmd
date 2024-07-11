@@ -1,12 +1,6 @@
 ---
 title: "accframe Rationales"
-format:
-  docx:
-    output-file: "results_rationales_2024-06-18"
-    output-ext:  "docx"
-  pdf: 
-    output-file: "results_rationales_2024-06-18"
-    output-ext:  "pdf"
+format: pdf 
 execute: 
   warning: false
   message: false

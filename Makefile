@@ -8,20 +8,20 @@ PYTHON := . venv/bin/activate; python
 
 # Static Output
 
-OUTPUT := static/presentation.pdf static/appendix_trust_example.pdf \
-	static/eaadc24_talk.pdf static/honesty_power_analysis.pdf \
+OUTPUT := static/honesty_power_analysis.pdf \
 	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf \
-	static/results.pdf
+	static/results_main.pdf static/results_rationales.pdf
 
 # Main targets
 
-PRESENTATION := output/presentation.pdf
-APPENDIX_TRUST_EXAMPLE := output/appendix_trust_example.pdf
-EAADC24_TALK := output/eaadc24_talk.pdf
 HONESTY_POWER := output/honesty_power_analysis.pdf
 TRUST_POWER := output/trust_power_analysis.pdf
 GIFTEX_POWER := output/giftex_power_analysis.pdf
-RESULTS := output/results.pdf
+RESULTS_MAIN := output/results_main.pdf
+RESULTS_RATIONALES := output/results_rationales.pdf
+
+MAIN_TARGETS := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
+	$(RESULTS_MAIN) $(RESULTS_RATIONALES)
 
 # Setup targets
 
@@ -29,21 +29,41 @@ VENV := venv/touchfile
 
 # Data Targets
 
-HONESTY_EXP_DATA := data/generated/honesty_participants.csv \
-	data/generated/honesty_rounds.csv
-TRUST_EXP_DATA := data/generated/trust_participants.csv \
-	data/generated/trust_rounds.csv
-GIFTEX_EXP_DATA := data/generated/giftex_participants.csv \
-	data/generated/giftex_rounds.csv
-DECEPTION_EXP_DATA := data/generated/deception_participants.csv \
-	data/generated/deception_rounds.csv
-EAADC24_EXP_DATA := data/generated/eaadc24_participants.csv \
-	data/generated/eaadc24_rounds.csv
+# True amounts for honesty experiment
+HONESTY_TRUE_AMOUNTS := data/generated/honesty_true_amounts.csv
 
-# Experiment targets
+# Pre-Tests for Power analysis
+PTVERSION_HONESTY = 2024-03-27
+PTVERSION_GIFTEX = 2024-04-30
+PTVERSION_TRUST = 2024-04-29
 
-EXP_RUN_APPENDIX := data/exp_runs/app_example.sqlite3
+HONESTY_PT_DATA := data/generated/honesty_$(PTVERSION_HONESTY)_participants.csv \
+	data/generated/honesty_$(PTVERSION_HONESTY)_rounds.csv
+GIFTEX_PT_DATA := data/generated/giftex_$(PTVERSION_GIFTEX)_participants.csv \
+	data/generated/giftex_$(PTVERSION_GIFTEX)_rounds.csv
+TRUST_PT_DATA := data/generated/trust_$(PTVERSION_TRUST)_participants.csv \
+	data/generated/trust_$(PTVERSION_TRUST)_rounds.csv
 
+# Main Experiment Data
+DVERSION_HONESTY = 2024-06-17
+DVERSION_GIFTEX = 2024-06-18
+DVERSION_TRUST = 2024-06-18
+
+HONESTY_EXP_DATA := data/generated/honesty_$(DVERSION_HONESTY)_participants.csv \
+	data/generated/honesty_$(DVERSION_HONESTY)_rounds.csv
+GIFTEX_EXP_DATA := data/generated/giftex_$(DVERSION_GIFTEX)_participants.csv \
+	data/generated/giftex_$(DVERSION_GIFTEX)_rounds.csv
+TRUST_EXP_DATA := data/generated/trust_$(DVERSION_TRUST)_participants.csv \
+	data/generated/trust_$(DVERSION_TRUST)_rounds.csv
+
+HONESTY_RATIONALES_DATA := data/exp_runs/honesty_$(DVERSION_HONESTY)_rounds_classified.csv
+GIFTEX_RATIONALES_DATA := data/exp_runs/giftex_$(DVERSION_GIFTEX)_rounds_classified.csv
+TRUST_RATIONALES_DATA := data/exp_runs/trust_$(DVERSION_TRUST)_rounds_classified.csv
+
+DATA_TARGETS := $(GIFTEX_TRUE_AMOUNTS) \
+	$(HONESTY_PT_DATA) $(TRUST_PT_DATA) $(GIFTEX_PT_DATA) \
+	$(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+	$(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) $(TRUST_RATIONALES_DATA)
 
 # All Targets besides experiment targets
 
@@ -60,24 +80,13 @@ cleandb:
 all: $(OUTPUT)
 
 clean:
-	rm -f $(ALL_TARGETS)
+	rm -f $(MAIN_TARGETS) $(OUTPUT)
 
 distclean: clean
 	rm -rf venv
 	rm -rf output/*
 	rm -rf data/generated/*
-	rm -rf $(EXP_RUN_APPENDIX)
-
-# oTree Dependencies
-
-$(OTREE_TRUST): otree/trust/__init__.py \
-	otree/trust/instructions.html \
-	otree/trust/Introduction.html \
-	otree/trust/Send.html \
-	otree/trust/SendBack.html \
-	otree/trust/Results.html \
-	otree/trust/Thanks.html
-	
+ 
 
 # Recipes
 
@@ -89,97 +98,88 @@ $(VENV): requirements.txt
 	pip install -e ../botex
 	touch $(VENV)
 
-$(HONESTY_EXP_DATA): $(VENV) code/extract_honesty_exp_data.py \
-	data/exp_runs/honesty_otree_2024-05-24.csv \
-	data/exp_runs/honesty_botex_db_2024-05-24.sqlite3
-	$(PYTHON) code/extract_honesty_exp_data.py
+$(HONESTY_TRUE_AMOUNTS): $(VENV) code/honesty_gen_true_amounts.R
+	$(RSCRIPT) code/honesty_gen_true_amounts.R
 
-$(TRUST_EXP_DATA): $(VENV) code/extract_trust_exp_data.py \
-	data/exp_runs/trust_otree_2024-05-25.csv \
-	data/exp_runs/trust_botex_db_2024-05-25.sqlite3
-	$(PYTHON) code/extract_trust_exp_data.py
+$(HONESTY_PT_DATA): $(VENV) code/honesty_extract_exp_data.py \
+	data/exp_runs/honesty_otree_$(PTVERSION_HONESTY).csv \
+	data/exp_runs/honesty_botex_db_$(PTVERSION_HONESTY).sqlite3
+	$(PYTHON) code/honesty_extract_exp_data.py $(PTVERSION_HONESTY)
 
-$(GIFTEX_EXP_DATA): $(VENV) code/extract_giftex_exp_data.py \
-	data/exp_runs/giftex_otree_2024-05-25.csv \
-	data/exp_runs/giftex_botex_db_2024-05-25.sqlite3
-	$(PYTHON) code/extract_giftex_exp_data.py
+$(GIFTEX_PT_DATA): $(VENV) code/giftex_extract_exp_data.py \
+	data/exp_runs/giftex_otree_$(PTVERSION_GIFTEX).csv \
+	data/exp_runs/giftex_botex_db_$(PTVERSION_GIFTEX).sqlite3
+	$(PYTHON) code/giftex_extract_exp_data.py $(PTVERSION_GIFTEX)
 
-$(EXP_RUN_APPENDIX): $(VENV) $(OTREE_TRUST) \
-	code/run_appendix_trust_example.py
-	$(PYTHON) code/run_appendix_trust_example.py
-	
-$(DECEPTION_EXP_DATA): $(VENV) code/extract_deception_exp_data.py \
-	data/exp_runs/deception_otree_1_2024-03-24.csv \
-	data/exp_runs/deception_otree_2_2024-03-24.csv \
-	data/exp_runs/deception_otree_3_2024-03-24.csv \
-	data/exp_runs/deception_botex_db_2024-03-24.sqlite3
-	$(PYTHON) code/extract_deception_exp_data.py
+$(TRUST_PT_DATA): $(VENV) code/trust_extract_exp_data.py \
+	data/exp_runs/trust_otree_$(PTVERSION_TRUST).csv \
+	data/exp_runs/trust_botex_db_$(PTVERSION_TRUST).sqlite3
+	$(PYTHON) code/trust_extract_exp_data.py $(PTVERSION_TRUST)
 
-$(EAADC24_EXP_DATA): $(VENV) code/extract_mftrust_exp_data.py \
-	data/exp_runs/eaadc24_otree_2024-05-12.csv \
-	data/exp_runs/eaadc24_botex_db_2024-05-12.sqlite3
-	$(PYTHON) code/extract_mftrust_exp_data.py
+$(HONESTY_EXP_DATA): $(VENV) code/honesty_extract_exp_data.py \
+	data/exp_runs/honesty_otree_$(DVERSION_HONESTY).csv \
+	data/exp_runs/honesty_botex_db_$(DVERSION_HONESTY).sqlite3
+	$(PYTHON) code/honesty_extract_exp_data.py
 
-$(PRESENTATION): $(TRUST_EXP_DATA) $(DECEPTION_EXP_DATA) \
-	$(HONESTY_EXP_DATA) $(GIFTEX_EXP_DATA) \
-	docs/materials/beamer_theme_trr266_16x9.sty \
-	docs/materials/trr266_logo.eps \
-	docs/materials/trust_otree_inst.jpeg \
-	docs/materials/ftrust_otree_inst.jpeg \
-	docs/_quarto.yml \
-	docs/presentation.qmd
-	quarto render docs/presentation.qmd --quiet
-	rm -rf output/presentation_files
-	
-$(APPENDIX_TRUST_EXAMPLE): $(EXP_RUN_APPENDIX) \
-	docs/appendix_trust_example.qmd
-	quarto render docs/appendix_trust_example.qmd --quiet
-	rm -rf output/appendix_trust_example_files
+$(GIFTEX_EXP_DATA): $(VENV) code/giftex_extract_exp_data.py \
+	data/exp_runs/giftex_otree_$(DVERSION_GIFTEX).csv \
+	data/exp_runs/giftex_botex_db_$(DVERSION_GIFTEX).sqlite3
+	$(PYTHON) code/giftex_extract_exp_data.py
 
-$(EAADC24_TALK): $(EAADC24_EXP_DATA) \
-	docs/materials/beamer_theme_trr266_16x9.sty \
-	docs/materials/trr266_logo.eps \
-	docs/materials/eaadc24_otree_inst.jpeg \
-	docs/materials/eaadc24_qrcode.jpeg \
-	docs/materials/mei_xie_yuan_jackson_pnas_2024.jpeg \
-	docs/materials/manning_zhu_horton_arxiv_2024.jpeg \
-	docs/_quarto.yml \
-	docs/eaadc24_talk.qmd
-	quarto render docs/eaadc24_talk.qmd --quiet
-	rm -rf output/eaadc24_talk_files
+$(TRUST_EXP_DATA): $(VENV) code/trust_extract_exp_data.py \
+	data/exp_runs/trust_otree_$(DVERSION_TRUST).csv \
+	data/exp_runs/trust_botex_db_$(DVERSION_TRUST).sqlite3
+	$(PYTHON) code/trust_extract_exp_data.py
 
-$(HONESTY_POWER): $(HONESTY_EXP_DATA) \
+$(HONESTY_RATIONALES_DATA): $(VENV) code/honesty_classify_rationales.py \
+	$(HONESTY_EXP_DATA)
+	$(PYTHON) code/honesty_classify_rationales.py
+
+$(GIFTEX_RATIONALES_DATA): $(VENV) code/giftex_classify_rationales.py \
+	$(GIFTEX_EXP_DATA)
+	$(PYTHON) code/giftex_classify_rationales.py
+
+$(TRUST_RATIONALES_DATA): $(VENV) code/trust_classify_rationales.py \
+	$(TRUST_EXP_DATA)
+	$(PYTHON) code/trust_classify_rationales.py
+
+$(HONESTY_POWER): $(HONESTY_PT_DATA) $(HONESTY_TRUE_AMOUNTS) \
 	docs/_quarto.yml \
 	docs/honesty_power_analysis.qmd
 	quarto render docs/honesty_power_analysis.qmd --quiet
 	rm -rf output/honesty_power_analysis_files
 
-$(TRUST_POWER): $(TRUST_EXP_DATA) \
-	docs/_quarto.yml \
-	docs/trust_power_analysis.qmd
-	quarto render docs/trust_power_analysis.qmd --quiet
-	rm -rf output/trust_power_analysis_files
-
-$(GIFTEX_POWER): $(GIFTEX_EXP_DATA) \
+$(GIFTEX_POWER): $(GIFTEX_PT_DATA) \
 	docs/_quarto.yml \
 	docs/giftex_power_analysis.qmd
 	quarto render docs/giftex_power_analysis.qmd --quiet
 	rm -rf output/giftex_power_analysis_files
 
-$(RESULTS): $(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+$(TRUST_POWER): $(TRUST_PT_DATA) \
 	docs/_quarto.yml \
-	docs/results.qmd
-	quarto render docs/results.qmd --quiet
-	rm -rf output/results_files
+	docs/trust_power_analysis.qmd
+	quarto render docs/trust_power_analysis.qmd --quiet
+	rm -rf output/trust_power_analysis_files
 
-$(OUTPUT): $(PRESENTATION) $(APPENDIX_TRUST_EXAMPLE) $(EAADC24_TALK) \
-	$(HONESTY_POWER) $(TRUST_POWER) $(GIFT_POWER) $(RESULTS)
-	cp $(PRESENTATION) static/
-	cp $(APPENDIX_TRUST_EXAMPLE) static/
-	cp $(EAADC24_TALK) static/
+$(RESULTS_MAIN): $(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+	docs/_quarto.yml \
+	docs/results_main.qmd
+	quarto render docs/results_main.qmd --quiet
+	rm -rf output/results_main_files
+
+$(RESULTS_RATIONALES): $(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) \
+	$(TRUST_RATIONALES_DATA)  \
+	docs/_quarto.yml \
+	docs/results_rationales.qmd
+	quarto render docs/results_rationales.qmd --quiet
+	rm -rf output/results_rationales_files
+
+$(OUTPUT): $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
+	$(RESULTS_MAIN) $(RESULTS_RATIONALES)
 	cp $(HONESTY_POWER) static/
 	cp $(TRUST_POWER) static/
 	cp $(GIFTEX_POWER) static/
-	cp $(RESULTS) static/
+	cp $(RESULTS_MAIN) static/
+	cp $(RESULTS_RATIONALES) static/
 
 	

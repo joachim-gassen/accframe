@@ -16,24 +16,6 @@ SESSION_CONFIGS = [
         num_demo_participants=2,
     ),
     dict(
-        name='mftrust',
-        display_name="Framed Trust Game with Message Option",
-        app_sequence=['mftrust'],
-        num_demo_participants=2,
-    ),
-    dict(
-        name='deception',
-        display_name="Deception Game",
-        app_sequence=['deception'],
-        num_demo_participants=2,
-    ),
-    dict(
-        name='fdeception',
-        display_name="Framed Deception Game",
-        app_sequence=['fdeception'],
-        num_demo_participants=2,
-    ),
-    dict(
         name='honesty',
         display_name="Honesty game (neutral version of Evans et al., 2001)",
         app_sequence=['honesty'],
