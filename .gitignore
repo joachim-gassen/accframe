@@ -18,3 +18,4 @@ otree/honesty/true_amounts.csv
 otree/fhonesty/true_amounts.csv
 *.log
 *_bup
+*.html

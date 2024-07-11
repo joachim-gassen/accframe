@@ -1,5 +1,9 @@
 # accframe: Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments
 
+This is the code and data repository to the paper:
+
+> Fikir Worku Edossa, Joachim Gassen, and Victor S. Maas (2024): Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments. [SSRN Working Paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
+
 ## Idea
 
 We study how large language models (LLMs) react on business context framing in classic economics-based accounting experiments. Similar to other applied fields, experiments in the area of accounting, while building on economic or psychological theories, regularly feature context framing, often without hypothesizing or even discussing its effects on the experimental findings. As an emerging literature indicates that LLMs show behavior in experimental settings that is similar to humans while being sensitive to framing, we use these models to assess the context framing effects in seminal economics-based accounting studies. 
@@ -7,7 +11,7 @@ We study how large language models (LLMs) react on business context framing in c
 
 ## Setup
 
-This repository contains the code to run the LLM-based experiments outlined in the paper and also the experimental data collected from these runs. The 'botex' python package that facilitates the use of LLMs as oTree participants is [here](https://github.com/joachim-gassen/botex). 
+This repository contains the code to run the LLM-based experiments outlined in the paper and also the experimental data collected from these runs. The 'botex' python package that facilitates the use of LLMs as oTree participants is [here](https://github.com/joachim-gassen/botex). A walk-through for the package, documenting how you can use it on your own oTree exercises, is available [here](https://github.com/botex_experiments/).
 
 The oTree experiments conducted are implemented by using oTree and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
 
