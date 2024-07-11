@@ -1,4 +1,4 @@
-# accframe: Exploring the Effects of Contextualization in Economics-Based Accounting Experiments with Large Language Models
+# accframe: Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments
 
 ## Idea
 
