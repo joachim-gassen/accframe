@@ -17,6 +17,9 @@ ROUNDS = 10
 PART_SESSION = 10
 PART_BY_COND = 100 # Needs to be a multiple of PART_SESSION
 
+# set the model to 'gpt-4o-2024-05-13' to reproduce the results in the paper
+MODEL = 'gpt-4o-2024-05-13'
+
 dotenv.load_dotenv("secrets.env")
 
 f = open('data/generated/honesty_true_amounts.csv')
@@ -47,11 +50,13 @@ for r in range(PART_BY_COND//PART_SESSION):
     sdict = botex.init_otree_session(
         config_name = "honesty", npart = PART_SESSION
     )
-    botex.run_bots_on_session(session_id = sdict['session_id'])
+    botex.run_bots_on_session(session_id = sdict['session_id'],  model=MODEL)
     time.sleep(5)
 
-    sdict = botex.init_otree_session(config_name = "fhonesty", npart = 10)
-    botex.run_bots_on_session(session_id = sdict['session_id'])
+    sdict = botex.init_otree_session(
+        config_name = "fhonesty", npart = PART_SESSION
+    )
+    botex.run_bots_on_session(session_id = sdict['session_id'],  model=MODEL)
     time.sleep(5)
 
 botex_data_fname = f"honesty_botex_db_{datetime.date.today().isoformat()}.sqlite3"

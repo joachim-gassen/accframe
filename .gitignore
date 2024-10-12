@@ -1,4 +1,4 @@
-venv
+venv*
 .venv
 staticfiles
 .idea
@@ -19,3 +19,4 @@ otree/fhonesty/true_amounts.csv
 *.log
 *_bup
 *.html
+README_files

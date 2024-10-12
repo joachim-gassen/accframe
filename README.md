@@ -20,11 +20,26 @@ The oTree experiments conducted are implemented by using oTree and the raw data 
 
 To replicate our experiments, you need to follow these steps:
 
-1. Make sure that you have provided your OpenAI key in the `secrets.env` file.
-2. The code to run the experiments is in the files `run_{honesty|trust|giftex}_exp.py`. You can adjust the number of participants for each condition in these files.
-3. Prior to sourcing any of these files, make sure that you do not have a local oTree server running as the code will start a new one.
-4. Run `make cleandb` to remove the existing oTree and botex databases (backup your data first if need be).
-5. Source the respective code file to run the experiments. While it runs, you can monitor the progress in the console output and by accessing your local oTree instance at http://localhost:8000. After the experiment has finished, you can find the botex data in the `data/exp_runs` folder.
+1. Set up a virtual environment and install the required packages with something like 
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+# If you want to reproduce our results, 
+# you need to install the 0.1.0 version of the botex package
+pip install -v "botex==0.1.0"
+# otherwise, you can install the botex package from its repository
+pip install git+https://github.com/joachim-gassen/botex.git
+# if you have cloned the botex repository, you can also install it locally
+pip install -e ../botex
+# You might run into some dependency issues as oTree has some older dependencies.
+# It seems to work regardless, though.
+```
+2. Make sure that you have provided your OpenAI key in the `secrets.env` file.
+3. The code to run the experiments is in the files `run_{honesty|trust|giftex}_exp.py`. You can adjust the number of participants for each condition in these files.
+4. Prior to sourcing any of these files, make sure that you do not have a local oTree server running as the code will start a new one.
+5. Run `make cleandb` to remove the existing oTree and botex databases (backup your data first if need be).
+6. Source the respective code file to run the experiments. While it runs, you can monitor the progress in the console output and by accessing your local oTree instance at http://localhost:8000. After the experiment has finished, you can find the botex data in the `data/exp_runs` folder.
 7. Export the oTree data by selecting `Data/All Apps/Plain` in the oTree admin interface. Move the downloaded file to the `data/exp_runs` folder, following the naming convention `{honesty|trust|giftex}_otree_yyyy-mm-dd.csv`.
 8. After adjusting the raw data file names in the code. source the file `code/extract_{honesty|trust|giftex}_data.py` to extract the data from the botex and oTree databases. The extracted data will be stored in the `data/generated` folder.
 9. You can now run the preregistered analyses by sourcing `code/{honesty|trust|giftex}_prereg_analysis.py`.  

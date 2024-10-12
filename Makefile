@@ -4,7 +4,7 @@
 # Commands
 
 RSCRIPT := Rscript --encoding=UTF-8
-PYTHON := . venv/bin/activate; python
+PYTHON := python
 
 # Static Output
 
@@ -23,9 +23,6 @@ RESULTS_RATIONALES := output/results_rationales.pdf
 MAIN_TARGETS := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
 	$(RESULTS_MAIN) $(RESULTS_RATIONALES)
 
-# Setup targets
-
-VENV := venv/touchfile
 
 # Data Targets
 
@@ -83,20 +80,11 @@ clean:
 	rm -f $(MAIN_TARGETS) $(OUTPUT)
 
 distclean: clean
-	rm -rf venv
 	rm -rf output/*
 	rm -rf data/generated/*
  
 
 # Recipes
-
-$(VENV): requirements.txt 
-	python3 -m venv venv
-	. venv/bin/activate 
-	pip install -r requirements.txt
-	pip install --no-deps otree 
-	pip install -e ../botex
-	touch $(VENV)
 
 $(HONESTY_TRUE_AMOUNTS): $(VENV) code/honesty_gen_true_amounts.R
 	$(RSCRIPT) code/honesty_gen_true_amounts.R
