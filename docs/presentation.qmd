@@ -1,0 +1,603 @@
+---
+title: |
+  | Using Large Language Models to Explore Contextualization Effects 
+  | in Economics-Based Accounting Experiments
+subtitle: Universität Tübingen - Business Research Seminar # we use this for the venue
+author: Fikir Edossa, Joachim Gassen, and Victor S. Maas
+institute: "HU Berlin and University of Amsterdam"
+date: today
+date-format: "MMMM D, YYYY"
+format: 
+  beamer:
+    latex_engine: xelatex # pdflatex creates rastered fonts
+    slide_level: 3
+    
+classoption: "aspectratio=169"
+
+header-includes:
+- \usepackage{booktabs} 
+- \usepackage{tabularx}
+- \usepackage{multirow,makecell}
+- \usepackage{array}
+- \renewcommand\tabularxcolumn[1]{m{#1}}
+- \usepackage{makecell}
+- \usepackage{colortbl}
+- \usepackage{adjustbox}
+- \usepackage{tikz}
+- \usepackage{siunitx}
+- \usepackage{tabu}
+- \usetikzlibrary{arrows,arrows.meta,calc,shapes,positioning,matrix}
+- \usepackage{tikzsymbols}
+- \input{materials/beamer_theme_trr266_16x9.sty}
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_knit$set(root.dir = "..")
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+```
+
+```{r ImportObjects}
+source("code/utils.R")
+for (exp in EXPERIMENTS) {
+  get(glue("{exp}_read_exp_data"))()
+  source(glue("code/{exp}_create_result_objects.R"))
+} 
+```
+
+
+## Summary
+- Large Language Models (LLM) such as GPT-4 have the potential to revolutionize social science
+- One way LLMs benefit researchers is by improving the design of surveys and experiments
+- We 
+  - focus on an important design issue in economics-based accounting experiments: contextualization
+  - introduce the software tool \texttt{botex} that enables researchers to use LLM as participants in their survey or experiment
+  - show how \texttt{botex} can be helpful by identifying effects of contextualization
+
+
+## Designing Surveys and Experiments
+- "The devil is in the details."
+- Difficult to anticipate how participants will interpret questions, instructions, etc.
+- "Would it matter if we ...?"
+- Pre-tests and pilots are crucial but difficult to organize and expensive.
+- Pre-tests and pilots with LLM participants are now a viable alternative.
+
+
+## Economics-based Accounting Experiments
+- Two traditions (e.g., Kachelmeier & King 2002):
+  - Psychology-based experiments.
+  - Economics-based experiments.
+- Third stream has emerged (and largely replaced pure economics-based experiments): Behavioral economics-based experiments
+- This stream combines elements of both traditions: Tests hypotheses derived from psychology theory using stylized games with real monetary payoffs.
+
+
+## Contextualization (1/3)
+- Psychology-based experiments are contextualized:
+  - Rich description of the setting
+  - Participants are asked to imagine things
+  - Participants assume a specific role (e.g., ‘Manager’ or ‘Employee’)
+- Pure economics-based experiments are not contextualized:
+  - Setting only described in terms of action choices and rules for payoff determination
+  - Participants do not need to imagine anything – full disclosure and no deception of any kind
+  - Roles have a neutral label (e.g., ‘Player A’ or ‘Player B’)
+
+
+## Contextualization (2/3)
+- Behavioral economics experiments vary in contextualization.
+- Much variation in contextualization across experiments
+- Discussion in literature about the costs and benefits:
+  - "Experimental realism" vs. "mundane realism”
+  - Framing of instructions, name of the game, labels of roles/actions.
+- Empirical evidence is mixed
+
+
+## Contextualization (3/3)
+- Hayes and Kachelmeier (1998) suggest context affects:
+  - Information provision.
+  - Salience of specific cues.
+  - Motivation and awareness.
+  - Activation of cognitive mechanisms and social norms.
+
+
+## Contextualization: Example
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+ 
+    \begin{tikzpicture}
+    
+    % Table borders
+    \draw[thick] (1,0) rectangle (6,2);
+    \draw[thick] (1,1) -- (6,1); % Horizontal line (Player A division)
+    \draw[thick] (3.5,0) -- (3.5,2); % Vertical line (Player B division)
+    \draw[thin] (0,0) rectangle (1,2); % Box Player A 
+    \draw[thin] (0.5,0) -- (0.5,2);
+    \draw[thin] (0.5,1) -- (1,1);
+    \draw[thin] (1,2) rectangle (6,3); % Box Player B
+    \draw[thin] (1,2.5) -- (6,2.5);
+    \draw[thin] (3.5,2) -- (3.5,2.5);
+  
+    
+    % Labels for Player B, Option 1, Option 2
+    \node at (3.5,2.75) {\textcolor{petroltrr}{Player B}};
+    \node at (2.25,2.25) {\textcolor{petroltrr}{Option 1}};
+    \node at (4.75,2.25) {\textcolor{petroltrr}{Option 2}};
+    
+    % Labels for Player A and Option 1, Option 2
+    \node[rotate=90] at (0.25,1) {\textcolor{yellowtrr}{Player A}};
+    \node[rotate=90] at (0.75,0.5) {\textcolor{yellowtrr}{\tiny Option 1}};
+    \node[rotate=90] at (0.75,1.5) {\textcolor{yellowtrr}{\tiny Option 2}};
+    
+    % Payoff values
+    \node at (2.25,1.5) {\textcolor{yellowtrr}{1}, \textcolor{petroltrr}{1}};
+    \node at (4.75,1.5) {\textcolor{yellowtrr}{5}, \textcolor{petroltrr}{0}};
+    \node at (2.25,0.5) {\textcolor{yellowtrr}{0}, \textcolor{petroltrr}{5}};
+    \node at (4.75,0.5) {\textcolor{yellowtrr}{3}, \textcolor{petroltrr}{3}};
+    
+    \end{tikzpicture}
+
+  \end{column}
+  \begin{column}{0.5\textwidth}
+  
+    \begin{tikzpicture}
+    
+    % Table borders
+    \draw[thick] (1,0) rectangle (6,2);
+    \draw[thick] (1,1) -- (6,1); % Horizontal line (Player A division)
+    \draw[thick] (3.5,0) -- (3.5,2); % Vertical line (Player B division)
+    \draw[thin] (0,0) rectangle (1,2); % Box Player A 
+    \draw[thin] (0.5,0) -- (0.5,2);
+    \draw[thin] (0.5,1) -- (1,1);
+    \draw[thin] (1,2) rectangle (6,3); % Box Player B
+    \draw[thin] (1,2.5) -- (6,2.5);
+    \draw[thin] (3.5,2) -- (3.5,2.5);
+  
+    
+    % Labels for Player B, Option 1, Option 2
+    \node at (3.5,2.75) {\textcolor{petroltrr}{Your Business Partner}};
+    \node at (2.25,2.25) {\textcolor{petroltrr}{Not cooperate}};
+    \node at (4.75,2.25) {\textcolor{petroltrr}{Cooperate}};
+    
+    % Labels for Player A and Option 1, Option 2
+    \node[rotate=90] at (0.25,1) {\textcolor{yellowtrr}{You}};
+    \node[rotate=90] at (0.75,0.5) {\textcolor{yellowtrr}{\tiny N. coop.}};
+    \node[rotate=90] at (0.75,1.5) {\textcolor{yellowtrr}{\tiny Coop.}};
+    
+    % Payoff values
+    \node at (2.25,1.5) {\textcolor{yellowtrr}{1}, \textcolor{petroltrr}{1}};
+    \node at (4.75,1.5) {\textcolor{yellowtrr}{5}, \textcolor{petroltrr}{0}};
+    \node at (2.25,0.5) {\textcolor{yellowtrr}{0}, \textcolor{petroltrr}{5}};
+    \node at (4.75,0.5) {\textcolor{yellowtrr}{3}, \textcolor{petroltrr}{3}};
+    
+    \end{tikzpicture}
+  \end{column}
+\end{columns}
+  \begin{itemize}
+    \item Would it matter if we call:
+    \begin{itemize}
+      \item The game a "collaboration game"?
+      \item The players "Business partners"?
+      \item The actions "co-operate and not co-operate"?
+    \end{itemize}
+    \item Does it increase the validity of our conclusions?
+  \end{itemize}
+
+
+## Experimentation with AI
+\begin{center}
+\includegraphics[height =0.7\textheight]{"materials/charness_jabarian_list_2023_fig1.jpeg"} \\
+Charness, Jabarian, and List (2023, WP NBER)
+\end{center}
+
+
+## Meet \texttt{botex} (BOTs for EXperiments)
+A Python software package that allows researchers to use LLMs as participants in surveys or experiments programmed in \texttt{oTree}.
+
+
+## Traditional \texttt{oTree} workflow
+\begin{center}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
+
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
+\end{center}
+
+
+## \texttt{botex} Workflow
+\begin{center}
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
+    line/.style={draw, -Latex},
+    every node/.append style={
+        execute at end node={\strut},
+    }
+]
+
+% Blocks
+\node[block] (otree) {oTree};
+\node[block, right=2cm of otree] (webpages) {Webpages};
+\node[block, above=1cm of webpages] (botex) {botex};
+\node[right=2cm of webpages] (participants) {\Strichmaxerl[4]}  {};
+\node[block, right=2cm of botex] (llm) {LLM};
+\node[left=2cm of otree] (researcher){\Strichmaxerl[4]} {};
+
+% Lines
+\draw[line] ($(researcher.east)!0.5!(researcher.north east)$) -- node[above] {Design} ($(otree.west)!0.5!(otree.north west)$);
+\draw[line] ($(otree.west)!0.5!(otree.south west)$) -- node[below] {Data} ($(researcher.east)!0.5!(researcher.south east)$);
+\draw[line] ($(otree.east)!0.5!(otree.north east)$) -- node[above] {HTTP} ($(webpages.west)!0.5!(webpages.north west)$);
+\draw[line] ($(webpages.west)!0.5!(webpages.south west)$) -- node[below] {Response} ($(otree.east)!0.5!(otree.south east)$);
+\draw[line, Latex-Latex] (participants) -- (webpages);
+\draw[line] ($(webpages.north)!0.5!(webpages.north west)$) -- node[left] {Scrape} ($(botex.south)!0.5!(botex.south west)$);
+\draw[line] ($(botex.south)!0.5!(botex.south east)$) -- node[right] {Response} ($(webpages.north)!0.5!(webpages.north east)$);
+\draw[line] ($(llm.west)!0.5!(llm.north west)$) -- node[above] {Response} ($(botex.east)!0.5!(botex.north east)$);
+\draw[line] ($(botex.east)!0.5!(botex.south east)$) -- node[below] {Prompt} ($(llm.west)!0.5!(llm.south west)$);
+
+% Labels
+\node[below=0.1cm of participants] {Human Participants};
+\node[below=0.1cm of researcher] {Researcher};
+
+\end{tikzpicture}
+
+\end{center}
+
+
+## \texttt{botex} System Prompt (excerpt)
+\begin{verbatim}
+In this conversation. I want you to participate in an online survey and/or experiment, potentially involving other human or artificial participants. I will provide you with a series of web page body text excerpts that will sequentially guide you through the experiment/survey. The texts will contain instructions on how the experiment/survey will be conducted. These instructions will be followed by additional pages that might contain additional instructions, comprehension checks, repeated information from prior pages and, most importantly, present you with questions and/or tasks which I want you to answer. 
+[...] The materials might contain information on how participants are being compensated or paid for their participation. If this is the case, please act as if this compensation also applies to you [...] 
+\end{verbatim}
+
+
+## Using \texttt{botex} with OpenAI API
+- Prepare survey or experiment in \texttt{oTree}, as you would for human participants
+  - Limitation: only standard html, no non-text input, JavaScript, etc.
+- Make sure to have Google Chrome installed (used for scraping \texttt{oTree}e webpages)
+- Acquire an OpenAI API key (not a Chat GPT subscription!), add a payment method, and some credit
+  - Note: Low API usage tiers might lead to timeouts because of rate limits) 
+- See \texttt{botex} examples repo (https://github.com/trr266/botex_examples) for further guidance 
+
+
+## Testing Contextualizatio Effects: Three Games
+- Use \texttt{botex} to explore effects of contextualization in three popular behavioral economics-based accounting experiments:
+  - Honesty Game (Evans et al. 2001)
+  - Gift Exchange (Fehr et al. 1993)
+  - Trust Game (Berg et al. 1995)
+- Each game has a neutral and contextualized version.
+
+
+## Honesty Game: Rules
+- Two player game with one active player (Player A) and one passive player (Player B)
+- Player A privately observes a number out of a uniform distribution with a known minimum and maximum.
+- Player A reports the number to Player B and has full discretion in doing so.
+- Player A receives the difference between the reported number and the actual number.
+- Player B receives the difference between the maximum number and the reported number.
+- Example: 
+  - Number between 4,000 and 6,000 in increments of 50.
+  - Actual number = 4,500
+  - Player A reports 5,500
+  - Player A gets 5,500 – 4,500 = 1,000 and Player B gets 6,000 – 5,500 = 500.
+
+
+## Honesty Game: Contextualization Manipulation
+Neutral:
+
+  - Participant A and Participant B
+  - Reporting of a number
+
+Contextualized:
+
+  - Division manager and Corporate headquarters
+  - Reporting of costs for budget funding
+
+
+## Honesty Game: Descriptives
+Panel A: Participant-Period level Data
+
+```{r HonestyTabDescPartPeriod, results='asis'}
+honesty_tab_desc_part_period()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.8) %>%
+  center_table()
+```
+
+Panel B: Participant level Data
+
+```{r HonestyTabDescPart, results='asis'}
+honesty_tab_desc_part()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.8) %>%
+  center_table()
+```
+
+
+## Honesty Game: Claimed Slack by True Amounts
+
+```{r HonestyFigClSlackVsTrue, fig.width=8, fig.height=3.5, fig.align="center"}
+honesty_fig_claimed_slack_by_true_cost() + theme(legend.position = "right")
+```
+
+
+## Honesty Game: Honesty by Period
+
+```{r HonestyFigByPeriod, fig.width=8, fig.height=3.5, fig.align="center"}
+honesty_fig_by_period() + theme(legend.position = "right")
+```
+
+
+## Honesty Game: Regression Results
+
+```{r HonestyTabRegResults, results='asis'}
+honesty_tab_regression_results() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+
+## Honesty Game: Reasons
+
+```{r HonestyTabReasons, results='asis'}
+honesty_tab_reasons()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.95) %>%
+  center_table()
+```
+
+
+## Gift Exchange Game: Rules (1/2)
+Sequential two-player game
+
+- Player A starts with 100 points and Player B starts with 0 points.
+- Player A can transfer anything between 0 and 100 points to Player B
+- Player B then selects an effort multiplier from the table below and incurs the corresponding cost
+- Player A receives: (100 – Transfer to Player B) * Multiplier
+- Player B receives: Transfer from Player A – Cost of multiplier
+
+```{r GiftExCostTable, results='asis'}
+tibble(
+  effort = seq(0.1, 1,  by=0.1),
+  cost = cost(effort)
+) %>% t() %>%
+  as.data.frame() %>%
+  mutate(V0 = c("Effort", "Cost")) %>%
+  select(V0, everything()) %>%
+  gt() %>% 
+  as_latex() %>%
+  remove_column_labels()
+
+```
+
+
+## Gift Exchange Game: Contextualization Manuipulation
+Neutral: 
+
+- Participant A and Participant B
+- Transfer and Multiplier
+
+Contextualized:
+
+- Firm and Manager
+- Wage and Effort
+
+
+## Gift Exchange Game: Descriptives
+Panel A: Dyad-period Level
+
+```{r GiftexTabDescDyadPeriod, results='asis'}
+giftex_tab_desc_dyad_period()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.8) %>%
+  center_table()
+```
+
+Panel B: Dyad Level
+
+```{r GiftexTabDescDyad, results='asis'}
+giftex_tab_desc_dyad()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.8) %>%
+  center_table()
+```
+
+
+## Gift Exchange: Wage by Period
+
+```{r GiftexFigWageByPeriod, fig.width=8, fig.height=3.5, fig.align="center"}
+giftex_fig_wage_by_period() + theme(legend.position = "right")
+```
+
+
+## Gift Exchange Game: Wage Regression Results 
+
+```{r GiftexTabRegResultsWage, results='asis'}
+giftex_tab_regression_results_wage() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+
+## Gift Exchange: Effort by Period
+
+```{r GiftexFigEffortByPeriod, fig.width=8, fig.height=3.5, fig.align="center"}
+giftex_fig_effort_by_period() + theme(legend.position = "right")
+```
+
+
+## Gift Exchange Game: Effort Regression Results
+
+```{r GiftexTabRegResultsEff, results='asis'}
+giftex_tab_regression_results_effort() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+
+## Gift Exchange: Wage Effort Effect
+
+```{r GiftexFigWageEff, fig.width=8, fig.height=3.5, fig.align="center"}
+giftex_fig_wage_effort() + theme(legend.position = "right")
+```
+
+
+## Gift Exchange Game: Wage Effort Effect Regression Results 
+
+```{r GiftexTabRegResultsWageEff, results='asis'}
+giftex_tab_regression_results_wage_effort() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+
+## Gift Exchange Game: Reasons for Wage Decision
+
+```{r GiftexTabReasonsWage, results='asis'}
+giftex_tab_reasons_wage()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.95) %>%
+  center_table()
+```
+
+
+## Gift Exchange Game: Reasons for Effort Decision
+
+```{r GiftexTabReasonsEffort, results='asis'}
+giftex_tab_reasons_effort()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.95) %>%
+  center_table()
+```
+
+
+## Trust Game: Rules
+Two-player sequential game
+
+- Player A gets 100 points, Player B gets 0
+- Player A can transfer anything from 0 to 100 points to Player B
+- Keeps whatever they do not send
+- Amount sent to Player B is tripled by experimenter
+- Player B then decides how much to send back to Player A
+- Keeps whatever they do not send back
+
+
+## Trust Game: Contextualization Manuipulation
+Neutral: 
+
+- Participant A and Participant B
+- Amount sent and amount sent back
+
+Contextualized:
+
+- Investor and Manager
+- Investment and dividend
+
+
+## Trust Game: Descriptives
+Panel A: Dyad-period Level
+
+```{r TrustTabDescDyadPeriod, results='asis'}
+trust_tab_desc_dyad_period()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.75) %>%
+  center_table()
+```
+
+Panel B: Dyad Level
+
+```{r TrustTabDescDyad, results='asis'}
+trust_tab_desc_dyad()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.75) %>%
+  center_table()
+```
+
+
+## Trust Game: Investment by Period
+
+```{r TrustFigByPeriod, fig.width=8, fig.height=3.5, fig.align="center"}
+trust_fig_inv_by_period() + theme(legend.position = "right")
+```
+
+
+## Trust Game: Investment Regression Results
+
+```{r TrustTabRegResultsInv, results='asis'}
+trust_tab_regression_results_inv() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+
+## Trust Game: Dividend Share by Period
+
+```{r TrustFigReturnedByPeriod, fig.width=8, fig.height=3.5, fig.align="center"}
+trust_fig_div_share_by_period() + theme(legend.position = "right")
+```
+
+
+## Trust Game: Dividend Share Regression Results
+
+```{r TrustTabRegResultsRet, results='asis'}
+trust_tab_regression_results_pct_ret() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+
+## Trust Game: Reasons for Investment Decision
+
+```{r TrustTabReasonsSent, results='asis'}
+trust_tab_reasons_sent()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.95) %>%
+  center_table()
+```
+
+
+## Trust Game: Reasons for Dividend Decision
+
+```{r TrustTabReasonsSentBack, results='asis'}
+trust_tab_reasons_sent_back()%>%
+  as_latex() %>%
+  fit_gt_table_to_slide(0.95) %>%
+  center_table()
+```
+
+
+## Conclusions
+- Contextualization matters in non-trivial ways
+- Emphasizes the need for pre-tests and pilots
+- \texttt{botex} is a useful tool for these purposes
+
+
+## Limitations & Future Work
+- Are LLM participants representative of humans?
+- Other experiment types beyond contextualization (e.g., surveys, scenario experiments)
+- Study the "behavior" and "attitudes" of LLMs relative to and in interaction with human participants
+- Fundamental concerns about reliance on LLM participants
