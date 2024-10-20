@@ -71,13 +71,16 @@ class Player(BasePlayer):
             [3, 'It is used as a multiple for the payoff of both participants']
         ],
     )
+    # We had a bug below prior 2024-10-20.
+    # All choice values were set to one so that the response data had 
+    # no variance.
     comprehension_check_post2 = models.IntegerField(
         label="What is the effect of the cost of the multiplier?",
         blank=False,
         choices=[
             [1, 'It reduces the payoff of Participant A'],
-            [1, 'It reduces the payoff of Participant B'],
-            [1, 'It reduces the payoff of both participants']
+            [2, 'It reduces the payoff of Participant B'],
+            [3, 'It reduces the payoff of both participants']
         ]
     )
     human_check = models.IntegerField(
