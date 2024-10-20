@@ -16,6 +16,7 @@ else: DATA_VERSION = '2024-06-17'
 
 BOTEX_DB = f'data/exp_runs/honesty_botex_db_{DATA_VERSION}.sqlite3'
 OTREE_DATA = f'data/exp_runs/honesty_otree_{DATA_VERSION}.csv'
+BOTEX_VERSION = 0.1
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -130,16 +131,23 @@ def extract_rationales(participant_code):
                     end = resp_str.rfind('}', start)
                     resp_str = resp_str[start:end+1]
                     cont = json.loads(resp_str, strict = False)
-                    if 'questions' in cont:
-                        for q in cont['questions']: 
-                            if q['id'] == "id_reported_amount": 
-                                # Manual fix to address problem in botex
-                                # data of honesty experiment run on 2024-05-24
-                                # See docs/exp_protocol.md for details
-                                if participant_code != "22w71lht" or len(q) == 3:
-                                    reason.append(q['reason'])
-                                else: logging.warning("Manual fix for participant 22w71lht for ill-formatted summary applied.")
-                                check_for_error = True
+                    if BOTEX_VERSION > 0.1: 
+                        if 'answers' in cont:
+                            for k in cont['answers'].keys():
+                                if k == "id_reported_amount": 
+                                    reason.append(cont['answers'][k]['reason'])
+                                    check_for_error = True
+                    else:
+                        if 'questions' in cont:
+                            for q in cont['questions']:
+                                if q['id'] == "id_reported_amount":
+                                    # Manual fix to address problem in botex
+                                    # data of honesty experiment run on 2024-05-24
+                                    # See docs/exp_protocol.md for details
+                                    if participant_code != "22w71lht" or len(q) == 3:
+                                        reason.append(q['reason'])
+                                    else: logging.warning("Manual fix for participant 22w71lht for ill-formatted summary applied.")
+                                    check_for_error = True
                 except:
                     logging.info(
                         f"message :'{message['content']}' failed to load as json"

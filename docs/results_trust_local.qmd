@@ -1,0 +1,101 @@
+---
+title: "Trust experiment with Mistral-7B-Instruct-v0.3"
+format: pdf  
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_knit$set(root.dir = "..")
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+```
+
+```{r ImportObjects}
+source("code/utils.R")
+trust_read_exp_data("2024-10-16")
+source("code/trust_create_result_objects.R")
+```
+
+## Table 1: Trust Experiment: Descriptive Statistics
+
+### Panel A: Dyad-period Level
+
+```{r TrustTabDescDyadPeriod, results='asis'}
+trust_tab_desc_dyad_period()%>%
+  as_latex() %>%
+  center_table()
+```
+
+### Panel B: Participant Level
+
+```{r TrustTabDescDyadParticipant, results='asis'}
+trust_tab_desc_participant()%>%
+  as_latex() %>%
+  center_table()
+```
+
+### Panel C: Dyad Level
+
+```{r TrustTabDescDyad, results='asis'}
+trust_tab_desc_dyad()%>%
+  as_latex() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 2: Does Contextualization Affect the Amount Sent by the Sender?
+
+```{r TrustTabRegResultsInv, results='asis'}
+trust_tab_regression_results_inv() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 3: Does Contextualization Affect the Percentage Returned by the Receiver?
+
+```{r TrustTabRegResultsRet, results='asis'}
+trust_tab_regression_results_pct_ret() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 4: Does Contextualization Affect the Participants’ Payoffs?
+
+```{r TrustTabRegResultsPayoff, results='asis'}
+trust_tab_regression_results_payoff() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Figure 1: Amount Sent by Period and Condition
+
+```{r TrustFigByPeriod, fig.width=8, fig.height=5, fig.align="center"}
+trust_fig_inv_by_period()
+```
+
+
+## Figure 2: Share Returned by Period and Condition
+
+```{r TrustFigReturnedByPeriod, fig.width=8, fig.height=5, fig.align="center"}
+trust_fig_div_share_by_period()
+```
+
+

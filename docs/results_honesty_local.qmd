@@ -1,0 +1,73 @@
+---
+title: "Honesty experiment with Mistral-7B-Instruct-v0.3"
+format: pdf  
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_knit$set(root.dir = "..")
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+```
+
+```{r ImportObjects}
+source("code/utils.R")
+honesty_read_exp_data("2024-10-19")
+source("code/honesty_create_result_objects.R")
+```
+
+## Table 1: Honesty Experiment: Descriptive Statistics
+
+### Panel A: Participant-period Level 
+
+```{r HonestyTabDescPartPeriod, results='asis'}
+honesty_tab_desc_part_period()%>%
+  as_latex() %>%
+  center_table()
+```
+
+### Panel B: Participant Level
+
+```{r HonestyTabDescPart, results='asis'}
+honesty_tab_desc_part(
+  vars = c("sum_honesty", "truthful", "all_slack", "cc1_passed", "cc2_passed"),
+  var_labels = c("Mean % Honesty", "Always Truthful", "Always All Slack", "Recalls Information Structure", "Recalls Optimal Strategy"),
+  var_tests = c("t", "chisq", "chisq", "chisq", "chisq")
+)%>%
+  as_latex() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 2: Does Business Framing Affect the Amount of Budget Slack Claimed?
+
+```{r HonestyTabRegResults, results='asis'}
+honesty_tab_regression_results() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Figure 1: Average Slack Claimed by True Cost and Condition
+
+```{r HonestyFigClSlackVsTrue, fig.width=8, fig.height=5, fig.align="center"}
+honesty_fig_claimed_slack_by_true_cost()
+```
+
+{{< pagebreak >}}
+
+
+## Figure 2: Average % Honest by Period and Condition
+
+```{r HonestyFigByPeriod, fig.width=8, fig.height=5, fig.align="center"}
+honesty_fig_by_period()
+```

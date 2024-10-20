@@ -16,6 +16,7 @@ else: DATA_VERSION = '2024-06-18'
 
 BOTEX_DB = f'data/exp_runs/trust_botex_db_{DATA_VERSION}.sqlite3'
 OTREE_DATA = f'data/exp_runs/trust_otree_{DATA_VERSION}.csv'
+BOTEX_VERSION = 0.1
 
 conn = sqlite3.connect(BOTEX_DB)
 cursor = conn.cursor()
@@ -131,11 +132,18 @@ def extract_rationales(participant_code):
                     end = resp_str.rfind('}', start)
                     resp_str = resp_str[start:end+1]
                     cont = json.loads(resp_str, strict=False)
-                    if 'questions' in cont:
-                        for q in cont['questions']: 
-                            if q['id'] == "id_sent_amount" or q['id'] == "id_sent_back_amount": 
-                                reason.append(q['reason'])
-                                check_for_error = True
+                    if BOTEX_VERSION > 0.1: 
+                        if 'answers' in cont:
+                            for k in cont['answers'].keys():
+                                if k == "id_sent_amount" or k == "id_sent_back_amount": 
+                                    reason.append(cont['answers'][k]['reason'])
+                                    check_for_error = True
+                    else:
+                        if 'questions' in cont:
+                            for q in cont['questions']:
+                                if q['id'] == "id_sent_amount" or q['id'] == "id_sent_back_amount": 
+                                    reason.append(q['reason'])
+                                    check_for_error = True
                 except:
                     logging.info(
                         f"message :'{message['content']}' failed to load as json"
