@@ -123,7 +123,10 @@ def extract_round_data(otree_raw, exp):
 
 def extract_rationales(participant_code):
     reason = []        
-    c = pd.DataFrame(conversations)        
+    c = pd.DataFrame(conversations)
+    if not any(c[0] == participant_code):
+        logging.warning(f"participant {participant_code} not found in conversations")
+        return None               
     conv = json.loads(c.loc[c[0] == participant_code, 2].item())
     check_for_error = False
     for message in conv:
