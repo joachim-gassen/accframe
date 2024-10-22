@@ -1,0 +1,122 @@
+---
+title: "Gift Exchange Experiment with Mistral-7B-Instruct-v0.3"
+format: pdf  
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_knit$set(root.dir = "..")
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+```
+
+```{r ImportObjects}
+source("code/utils.R")
+giftex_read_exp_data("2024-10-22_long")
+source("code/giftex_create_result_objects.R")
+```
+
+## Table 1: Gift Exchange Experiment: Descriptive Statistics
+
+### Panel A: Dyad-period Level
+
+```{r GiftexTabDescDyadPeriod, results='asis'}
+giftex_tab_desc_dyad_period()%>%
+  as_latex() %>%
+  center_table()
+```
+
+### Panel B: Participant Level
+
+```{r GiftexTabDescDyadParticipant, results='asis'}
+giftex_tab_desc_participant()%>%
+  as_latex() %>%
+  center_table()
+```
+
+### Panel C: Dyad Level
+
+```{r GiftexTabDescDyad, results='asis'}
+giftex_tab_desc_dyad() %>%
+  as_latex() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 2: Does Contextualization Affect the Wage Paid?
+
+```{r GiftexTabRegResultsWage, results='asis'}
+giftex_tab_regression_results_wage() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 3: Does Contextualization Affect the Effort Returned?
+
+```{r GiftexTabRegResultsEff, results='asis'}
+giftex_tab_regression_results_effort() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 4: Does Contextualization Affect the Wage Sensitivity of Effort?
+
+```{r GiftexTabRegResultsWageEff, results='asis'}
+giftex_tab_regression_results_wage_effort() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Table 5: Does Contextualization Affect the Payoffs?
+
+```{r GiftexTabRegResultsPayoff, results='asis'}
+giftex_tab_regression_results_payoff() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+```
+
+{{< pagebreak >}}
+
+
+## Figure 1: Wage by Period and Condition
+
+```{r GiftexFigWageByPeriod, fig.width=8, fig.height=5, fig.align="center"}
+giftex_fig_wage_by_period()
+```
+
+{{< pagebreak >}}
+
+
+## Figure 2: Effort by Period and Condition
+
+```{r GiftexFigEffortByPeriod, fig.width=8, fig.height=5, fig.align="center"}
+giftex_fig_effort_by_period()
+```
+
+{{< pagebreak >}}
+
+
+## Figure 3: Wage Sensitivity of Effort by Condition
+
+```{r GiftexFigWageEff, fig.width=8, fig.height=5, fig.align="center"}
+giftex_fig_wage_effort() 
+```

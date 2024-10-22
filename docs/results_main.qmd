@@ -47,7 +47,7 @@ honesty_tab_desc_part(
 {{< pagebreak >}}
 
 
-## Table 2: Does Business Framing Affect the Amount of Budget Slack Claimed?
+## Table 2: Does Business Framing Affect Honesty?
 
 ```{r HonestyTabRegResults, results='asis'}
 honesty_tab_regression_results() %>%
@@ -79,7 +79,7 @@ honesty_fig_claimed_slack_by_true_cost()
 {{< pagebreak >}}
 
 
-## Figure 2: Average % Honest by Period and Condition
+## Figure 2: Average Honesty by Period and Condition
 
 ```{r HonestyFigByPeriod, fig.width=8, fig.height=5, fig.align="center"}
 honesty_fig_by_period()

@@ -48,8 +48,8 @@ for (exp in EXPERIMENTS) {
 
 
 ## Summary
-- Large Language Models (LLM) such as GPT-4 have the potential to revolutionize social science
-- One way LLMs benefit researchers is by improving the design of surveys and experiments
+- Large Language Models (LLMs) have the potential to revolutionize social science
+- One way LLMs can benefit researchers is by improving the design of surveys and experiments
 - We 
   - focus on an important design issue in economics-based accounting experiments: contextualization
   - introduce the software tool \texttt{botex} that enables researchers to use LLM as participants in their survey or experiment
@@ -172,15 +172,15 @@ for (exp in EXPERIMENTS) {
     \end{tikzpicture}
   \end{column}
 \end{columns}
+\begin{itemize}
+  \item Would it matter if we call:
   \begin{itemize}
-    \item Would it matter if we call:
-    \begin{itemize}
-      \item The game a "collaboration game"?
-      \item The players "Business partners"?
-      \item The actions "co-operate and not co-operate"?
-    \end{itemize}
-    \item Does it increase the validity of our conclusions?
+    \item The game a "collaboration game"?
+    \item The players "Business partners"?
+    \item The actions "co-operate and not co-operate"?
   \end{itemize}
+  \item Does it increase the validity of our conclusions?
+\end{itemize}
 
 
 ## Experimentation with AI

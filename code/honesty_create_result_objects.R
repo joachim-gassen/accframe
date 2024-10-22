@@ -69,7 +69,7 @@ honesty_fig_claimed_slack_by_true_cost <- function(dta = hrounds) {
       y = "Claimed Slack",
       color = "Treatment"
     ) +
-    theme_classic(base_size = 16) +
+    theme_classic(base_size = 12) +
     geom_segment(x = 4000, y = 2000, xend = 6000, yend = 0, color = "#E41A1C", lty = 2) + 
     coord_cartesian(clip = 'off', xlim = c(4000, 6000), ylim = c(0, 2000)) + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
@@ -99,7 +99,7 @@ honesty_fig_by_period <- function(dta = hrounds) {
     ) +
     scale_x_continuous(breaks = 1:10) +
     scale_y_continuous(labels = scales::percent) +
-    theme_classic(base_size = 16) + 
+    theme_classic(base_size = 12) + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     theme(plot.title.position =  "plot", legend.position = "bottom")
 }

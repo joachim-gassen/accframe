@@ -197,7 +197,7 @@ giftex_fig_wage_by_period <- function(dta = grounds) {
       color = "Treatment"
     ) +
     scale_x_continuous(breaks = 1:10) +
-    theme_classic(base_size = 16) + 
+    theme_classic(base_size = 12) + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     theme(plot.title.position =  "plot", legend.position = "bottom")
 }
@@ -225,7 +225,7 @@ giftex_fig_effort_by_period <- function(dta = grounds) {
       color = "Treatment"
     ) +
     scale_x_continuous(breaks = 1:10) +
-    theme_classic(base_size = 16) + 
+    theme_classic(base_size = 12) + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     theme(plot.title.position =  "plot", legend.position = "bottom")
 }
@@ -236,11 +236,11 @@ giftex_fig_wage_effort <- function(dta = grounds) {
   ggplot(
     dta, 
     aes(x = wage, y = effort, color = experiment, group = experiment)
-  ) + geom_jitter(size = 0.25) + 
+  ) + geom_jitter(size = 0.2) + 
     geom_smooth(method = "lm") + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     labs(color = "", x = "Wage Paid", y = "Effort Level") +
-    theme_classic() + 
+    theme_classic(base_size = 12) + 
     theme(
       legend.position = "bottom",
       panel.grid.minor = element_blank()

@@ -167,8 +167,7 @@ trust_fig_inv_by_period <- function(dta = trounds) {
       color = "Treatment"
     ) +
     scale_x_continuous(breaks = 1:10) +
-    #  scale_y_continuous(limits = c(0,100)) +
-    theme_classic(base_size = 16) + 
+    theme_classic(base_size = 12) + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     theme(plot.title.position =  "plot", legend.position = "bottom")
 }
@@ -197,7 +196,7 @@ trust_fig_div_share_by_period <- function(dta = trounds) {
     ) +
     scale_x_continuous(breaks = 1:10) +
     scale_y_continuous(labels = scales::percent) +
-    theme_classic(base_size = 16) + 
+    theme_classic(base_size = 12) + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     theme(plot.title.position =  "plot", legend.position = "bottom")
 }

@@ -1,5 +1,5 @@
 ---
-title: "Honesty experiment with Mistral-7B-Instruct-v0.3"
+title: "Honesty Experiment with Mistral-7B-Instruct-v0.3"
 format: pdf  
 execute: 
   warning: false
