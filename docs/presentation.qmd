@@ -52,16 +52,8 @@ for (exp in EXPERIMENTS) {
 - One way LLMs can benefit researchers is by improving the design of surveys and experiments
 - We 
   - focus on an important design issue in economics-based accounting experiments: contextualization
-  - introduce the software tool \texttt{botex} that enables researchers to use LLM as participants in their survey or experiment
+  - introduce the software tool \texttt{botex} that enables researchers to use LLMs as participants in their survey or experiment
   - show how \texttt{botex} can be helpful by identifying effects of contextualization
-
-
-## Designing Surveys and Experiments
-- "The devil is in the details."
-- Difficult to anticipate how participants will interpret questions, instructions, etc.
-- "Would it matter if we ...?"
-- Pre-tests and pilots are crucial but difficult to organize and expensive.
-- Pre-tests and pilots with LLM participants are now a viable alternative.
 
 
 ## Economics-based Accounting Experiments
@@ -100,7 +92,7 @@ for (exp in EXPERIMENTS) {
   - Activation of cognitive mechanisms and social norms.
 
 
-## Contextualization: Example
+## Contextualization: Example (Liberman et al. 2004)
 \begin{columns}
   \begin{column}{0.5\textwidth}
  
@@ -125,8 +117,8 @@ for (exp in EXPERIMENTS) {
     
     % Labels for Player A and Option 1, Option 2
     \node[rotate=90] at (0.25,1) {\textcolor{yellowtrr}{Player A}};
-    \node[rotate=90] at (0.75,0.5) {\textcolor{yellowtrr}{\tiny Option 1}};
-    \node[rotate=90] at (0.75,1.5) {\textcolor{yellowtrr}{\tiny Option 2}};
+    \node[rotate=90] at (0.75,0.5) {\textcolor{yellowtrr}{\tiny Option 2}};
+    \node[rotate=90] at (0.75,1.5) {\textcolor{yellowtrr}{\tiny Option 1}};
     
     % Payoff values
     \node at (2.25,1.5) {\textcolor{yellowtrr}{1}, \textcolor{petroltrr}{1}};
@@ -160,8 +152,8 @@ for (exp in EXPERIMENTS) {
     
     % Labels for Player A and Option 1, Option 2
     \node[rotate=90] at (0.25,1) {\textcolor{yellowtrr}{You}};
-    \node[rotate=90] at (0.75,0.5) {\textcolor{yellowtrr}{\tiny N. coop.}};
-    \node[rotate=90] at (0.75,1.5) {\textcolor{yellowtrr}{\tiny Coop.}};
+    \node[rotate=90] at (0.75,0.5) {\textcolor{yellowtrr}{\tiny Coop.}};
+    \node[rotate=90] at (0.75,1.5) {\textcolor{yellowtrr}{\tiny N. coop.}};
     
     % Payoff values
     \node at (2.25,1.5) {\textcolor{yellowtrr}{1}, \textcolor{petroltrr}{1}};
@@ -186,15 +178,21 @@ for (exp in EXPERIMENTS) {
 ## Experimentation with AI
 \begin{center}
 \includegraphics[height =0.7\textheight]{"materials/charness_jabarian_list_2023_fig1.jpeg"} \\
-Charness, Jabarian, and List (2023, WP NBER)
+Charness, Jabarian, and List (2023)
 \end{center}
 
+
+## Evidence on Using LLMs as Participants in Economic Experiments
+- LLMs have been characterized as a homo silicus, a implicit computational model of humans (Horton 2023)
+- LLM agents show trust behavior that aligns well with human participants in a trust game setup (Xie et al. 2024)
+- Framing Effects similar to humans have been documented for prisoner dilemma games (Engel et al. 2024)
+- LLMs can reflect some human-like response biases, but they are often too sensitive to prompt changes, exhibiting inconsistencies not typically seen in human behavior (Tjuatja et al. 2024)
 
 ## Meet \texttt{botex} (BOTs for EXperiments)
 A Python software package that allows researchers to use LLMs as participants in surveys or experiments programmed in \texttt{oTree}.
 
 
-## Traditional \texttt{oTree} workflow
+## Traditional \texttt{oTree} Workflow
 \begin{center}
 \begin{tikzpicture}[
     block/.style={rectangle, draw, text width=5em, text centered, minimum height=4em},
@@ -269,17 +267,22 @@ In this conversation. I want you to participate in an online survey and/or exper
 [...] The materials might contain information on how participants are being compensated or paid for their participation. If this is the case, please act as if this compensation also applies to you [...] 
 \end{verbatim}
 
+## In Case you Want to Play a Quick Round With an AI...
+
+```{r QRCode, fig.width=2.5, fig.height=2.5, fig.align="center"}
+plot(qrcode::qr_code("https://exp.trr266.de/test/mftrust/"))
+```
 
 ## Using \texttt{botex} with OpenAI API
 - Prepare survey or experiment in \texttt{oTree}, as you would for human participants
   - Limitation: only standard html, no non-text input, JavaScript, etc.
 - Make sure to have Google Chrome installed (used for scraping \texttt{oTree}e webpages)
 - Acquire an OpenAI API key (not a Chat GPT subscription!), add a payment method, and some credit
-  - Note: Low API usage tiers might lead to timeouts because of rate limits) 
+  - Note: Low API usage tiers might lead to timeouts because of rate limits
 - See \texttt{botex} examples repo (https://github.com/trr266/botex_examples) for further guidance 
 
 
-## Testing Contextualizatio Effects: Three Games
+## Testing Contextualization Effects: Three Games
 - Use \texttt{botex} to explore effects of contextualization in three popular behavioral economics-based accounting experiments:
   - Honesty Game (Evans et al. 2001)
   - Gift Exchange (Fehr et al. 1993)
@@ -366,7 +369,7 @@ honesty_tab_reasons()%>%
 ```
 
 
-## Gift Exchange Game: Rules (1/2)
+## Gift Exchange Game: Rules
 Sequential two-player game
 
 - Player A starts with 100 points and Player B starts with 0 points.
@@ -597,7 +600,9 @@ trust_tab_reasons_sent_back()%>%
 
 
 ## Limitations & Future Work
-- Are LLM participants representative of humans?
+- Are LLM participants reasonable representative of humans in our domain?
+- Modify LLM personalities to mimic certain human characteristics (think about MBA students vs. general population)
 - Other experiment types beyond contextualization (e.g., surveys, scenario experiments)
 - Study the "behavior" and "attitudes" of LLMs relative to and in interaction with human participants
-- Fundamental concerns about reliance on LLM participants
+- Use LLMs for exploration/hypotheses development?
+- Fundamental concerns about reliance on LLM participants for inferences about human behavior?
