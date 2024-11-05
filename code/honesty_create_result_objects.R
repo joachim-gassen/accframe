@@ -55,12 +55,22 @@ honesty_tab_reasons <- function(
 # --- Honesty Figures ----------------------------------------------------------
 
 honesty_fig_claimed_slack_by_true_cost <- function(dta = hrounds) {
-  names(color_scale) <- unique(levels(dta$experiment))
-  color_scale_labs <- CONDITIONS
+  evans_df <- read_csv("data/external/evans_et_al_plot.csv") %>%
+      rename(true_amount = actual_cost_draw, mn_slack = mean_lie_lira_per_unit) %>%
+      mutate(
+        true_amount = round(true_amount, 2) * 1000,
+        mn_slack = round(mn_slack, 2) * 1000,
+        experiment = "evans_et_al"
+      )
+  
   df <- dta %>%
     group_by(true_amount, experiment) %>%
-    summarise(mn_slack = mean(reported_amount - true_amount, na.rm = T))
-  
+    summarise(mn_slack = mean(reported_amount - true_amount, na.rm = T)) %>%
+    bind_rows(evans_df)
+
+  color_scale_labs <- c("Contextualized", "Evans et al.", "Neutral")
+  color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")
+
   ggplot(
     df, aes(x = true_amount, y = mn_slack, color = experiment)) +
     geom_jitter(size = 1) +
