@@ -218,7 +218,7 @@ honesty_read_exp_data <- function(dversion = "2024-06-17") {
     )
   
   hparticipants <<- read_csv(
-    glue("data/generated/honesty_{dversion}_participants.csv", ), 
+    glue("data/generated/honesty_{dversion}_participants.csv"), 
     show_col_types = FALSE
   ) %>%
     mutate(
