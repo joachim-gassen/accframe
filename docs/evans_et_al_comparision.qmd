@@ -1,0 +1,148 @@
+---
+title: "Evans et al Comparison Draft"
+format: pdf  
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_knit$set(root.dir = "..")
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+```
+
+
+```{r ImportObjects}
+source("code/utils.R")
+honesty_read_exp_data()
+```
+
+
+
+## Load the data and create the figure
+
+
+```{r}
+evans_df <- read_csv("data/external/evans_et_al_plot.csv") %>%
+    rename(true_amount = actual_cost_draw, mn_slack = mean_lie_lira_per_unit) %>%
+    mutate(
+      true_amount = round(true_amount, 2) * 1000,
+      mn_slack = round(mn_slack, 2) * 1000,
+      experiment = "evans_et_al"
+    )
+
+df <- hrounds %>%
+  group_by(true_amount, experiment) %>%
+  summarise(mn_slack = mean(reported_amount - true_amount, na.rm = T)) %>%
+  bind_rows(evans_df) |>
+  mutate(
+    honesty = ifelse(
+      true_amount == 6000,
+      NA,
+      1 - (mn_slack / (6000 - true_amount))
+    )
+  )
+```
+
+
+## Figure 1: Comparison of Evans et al. with Contextualized and Neutral Treatments
+
+```{r fig.width=8, fig.height=5, fig.align='center'}
+color_scale_labs <- c("Contextualized", "Evans et al.", "Neutral")
+color_scale <- RColorBrewer::brewer.pal(3 ,"Set1")
+
+ggplot(
+  df, aes(x = true_amount, y = mn_slack, color = experiment)) +
+  geom_jitter(size = 1) +
+  labs(
+    x = "True Cost",
+    y = "Claimed Slack",
+    color = "Treatment"
+  ) +
+  theme_classic(base_size = 12) +
+  geom_segment(x = 4000, y = 2000, xend = 6000, yend = 0, color = "#E41A1C", lty = 2) + 
+  coord_cartesian(clip = 'off', xlim = c(4000, 6000), ylim = c(0, 2000)) + 
+  scale_color_manual("", values = color_scale, labels = color_scale_labs) +
+  theme(plot.title.position = "plot", legend.position = "bottom")
+```
+
+{{< pagebreak >}}
+
+
+## Simple t-tests
+
+```{r}
+t.test(honesty ~ experiment, data = df %>% filter(experiment != "Neutral"))
+t.test(honesty ~ experiment, data = df %>% filter(experiment != "Contextualized"))
+t.test(honesty ~ experiment, data = df %>% filter(experiment != "evans_et_al"))
+```
+
+{{< pagebreak >}}
+
+## Reg Table
+
+```{r results='asis'}
+df <- df %>%
+  mutate(experiment = factor(experiment, levels = c("evans_et_al", "Neutral", "Contextualized")))
+
+
+reg_table_evans_et_al_comp <- function(mods) {
+  coef_map <- c(
+    "Intercept", levels(df$experiment)[2], levels(df$experiment)[3],
+    "true_amount", glue("{levels(df$experiment)[2]} \u00d7 true_amount"),
+    glue("{levels(df$experiment)[3]} \u00d7 true_amount")
+  )
+
+  names(coef_map) <- c(
+    "(Intercept)",
+    glue("experiment{levels(df$experiment)[2]}"),
+    glue("experiment{levels(df$experiment)[3]}"),
+    "true_amount",
+    glue("experiment{levels(df$experiment)[2]}:true_amount"),
+    glue("experiment{levels(df$experiment)[3]}:true_amount")
+  )
+
+  modelsummary(
+    output = "gt",
+    list(
+      "True Amount Fixed Effects" = mods[[1]],
+      "Interacted by True Amount" = mods[[2]]
+    ),
+    statistic = "{std.error} ({p.value})",
+    shape = term ~ model + statistic,
+    gof_map = list(
+      list(raw = "adj.r.squared", clean = "Adjusted R²", fmt = 3),
+      list(
+        raw = "nobs", clean = "Number of observations",
+        fmt = function(x) format(x, big.mark = ",")
+      )
+    ),
+    coef_map = coef_map
+  )
+}
+
+
+honesty_tab_regression_results <- function(dta = hrounds) {
+  mod_fe <- feols(
+    honesty ~ experiment | true_amount, 
+    cluster = c("true_amount"), 
+    data = df %>% filter(true_amount != 6000)
+  )
+  mod_by_rounds <- feols(
+    honesty ~ experiment*true_amount, 
+    cluster = c("true_amount"), 
+    data = df %>% filter(true_amount != 6000)
+  )
+  reg_table_evans_et_al_comp(list(mod_fe, mod_by_rounds))
+}
+
+latex_table <- honesty_tab_regression_results() %>%
+  as_latex() %>%
+  # post_process_reg_table() %>%
+  center_table()
+
+cat(latex_table)
+```
