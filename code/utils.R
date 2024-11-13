@@ -113,19 +113,21 @@ mypvalue <- function(x) {
   else return (sprintf("p = %.3f", x))
 }
 
-get_desc_row <- function(test, depvar, dta) {
+get_desc_row <- function(test, depvar, dta, conditions, flip = TRUE) {
   dv_nf <- dta %>% filter(
-    experiment == CONDITIONS[1], is.finite(.data[[depvar]])
+    experiment == conditions[1], is.finite(.data[[depvar]])
   ) %>% pull(.data[[depvar]])
   dv_bf <- dta %>% filter(
-    experiment == CONDITIONS[2], is.finite(.data[[depvar]])
+    experiment == conditions[2], is.finite(.data[[depvar]])
   ) %>% pull(.data[[depvar]])
   dv <- dta %>% pull(.data[[depvar]])
   idv <- dta$experiment
   
   if (test == "t") {
     rv <- t.test(dv ~ idv)
-    stat_str = sprintf("t = %.2f", -rv$statistic)
+    t.stat <- rv$statistic
+    if (flip) t.stat <- -t.stat
+    stat_str = sprintf("t = %.2f", t.stat)
   } else if (test == "chisq") {
     if (length(unique(dv)) > 1) {
       rv <- chisq.test(dv, idv)
@@ -144,10 +146,14 @@ get_desc_row <- function(test, depvar, dta) {
   )
 }
 
-desc_table <- function(dta, vars, var_labels, var_tests) {
+# flip: Flips the sign of the t-test
+desc_table <- function(
+    dta, vars, var_labels, var_tests, conditions = CONDITIONS, flip = TRUE
+) {
+  dta <- dta %>% filter(experiment %in% conditions)
   tab_mat <- matrix(NA_character_, nrow = length(vars), ncol = 8)
   for (r in seq_along(vars)) {
-    tab_mat[r,] <- get_desc_row(var_tests[r], vars[r], dta)
+    tab_mat[r,] <- get_desc_row(var_tests[r], vars[r], dta, conditions, flip)
   }
   tab <- as.data.frame(tab_mat) %>%
     mutate(V0 = var_labels) %>%
@@ -159,8 +165,8 @@ desc_table <- function(dta, vars, var_labels, var_tests) {
       V4 = "N", V5 = "Mean", V6 = "SD",
       V7 = "", V8 = ""
     ) %>%
-    tab_spanner(label = CONDITIONS[1], columns = 2:4) %>%
-    tab_spanner(label = CONDITIONS[2], columns = 5:7) %>%
+    tab_spanner(label = conditions[1], columns = 2:4) %>%
+    tab_spanner(label = conditions[2], columns = 5:7) %>%
     tab_spanner(label = "Tests for Differences", columns = 8:9) 
 }
 
@@ -218,7 +224,7 @@ honesty_read_exp_data <- function(dversion = "2024-06-17") {
     )
   
   hparticipants <<- read_csv(
-    glue("data/generated/honesty_{dversion}_participants.csv", ), 
+    glue("data/generated/honesty_{dversion}_participants.csv"), 
     show_col_types = FALSE
   ) %>%
     mutate(
@@ -443,4 +449,28 @@ trust_read_exp_data <- function(dversion = "2024-06-18") {
   
 }
   
-  
+
+# --- Functions reading additional data ----------------------------------------
+
+honesty_read_evans_data <- function() {
+  # relies on hrounds being read first.
+  hevans <<- hrounds %>%
+    group_by(true_amount, experiment) %>%
+    summarise(mn_slack = mean(reported_amount - true_amount, na.rm = T)) %>%
+    bind_rows(
+      read_csv("data/external/evans_et_al_plot.csv") %>%
+        rename(true_amount = actual_cost_draw, mn_slack = mean_lie_lira_per_unit) %>%
+        mutate(
+          true_amount = round(true_amount, 2) * 1000,
+          mn_slack = round(mn_slack, 2) * 1000,
+          experiment = "Evans et al."
+        )
+    ) %>% mutate(
+      mn_honesty = ifelse(
+        true_amount == 6000,
+        NA,
+        1 - (mn_slack / (6000 - true_amount))
+      ),
+      experiment = factor(experiment, levels = EVANS_COND)
+    )
+}

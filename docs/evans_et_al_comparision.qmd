@@ -1,0 +1,63 @@
+---
+title: "Comparison of Honesty Results with Evans et al. Data"
+format: pdf  
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_knit$set(root.dir = "..")
+knitr::opts_chunk$set(
+  cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE
+)
+```
+
+
+```{r ImportObjects}
+source("code/utils.R")
+source("code/honesty_create_result_objects.R")
+honesty_read_exp_data()
+honesty_read_evans_data()
+```
+
+## Table 1: Evans et al. Comaprison
+
+### Panel A: Descriptive Statistics (True Amount Average Level)
+
+```{r EvansConTabDescPartPeriod, results='asis'}
+honesty_tab_evans_desc(c("Evans et al.", "Contextualized"))%>%
+  as_latex() %>%
+  center_table()
+```
+
+```{r EvansNeutTabDescPartPeriod, results='asis'}
+honesty_tab_evans_desc(c("Evans et al.", "Neutral"))%>%
+  as_latex() %>%
+  center_table()
+```
+
+
+{{< pagebreak >}}
+
+### Panel B: Reg Table
+
+```{r results='asis'}
+latex_table <- honesty_tab_evans_regression_results() %>%
+  as_latex() %>%
+  post_process_reg_table() %>%
+  center_table()
+
+cat(latex_table)
+```
+
+
+## Figure 1: Comparison of Evans et al. with Contextualized and Neutral Treatments
+
+```{r fig.width=8, fig.height=5, fig.align='center'}
+honesty_fig_evans()
+```
+
+
+

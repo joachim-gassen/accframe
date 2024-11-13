@@ -86,48 +86,48 @@ distclean: clean
 
 # Recipes
 
-$(HONESTY_TRUE_AMOUNTS): $(VENV) code/honesty_gen_true_amounts.R
+$(HONESTY_TRUE_AMOUNTS): code/honesty_gen_true_amounts.R
 	$(RSCRIPT) code/honesty_gen_true_amounts.R
 
-$(HONESTY_PT_DATA): $(VENV) code/honesty_extract_exp_data.py \
+$(HONESTY_PT_DATA): code/honesty_extract_exp_data.py \
 	data/exp_runs/honesty_otree_$(PTVERSION_HONESTY).csv \
 	data/exp_runs/honesty_botex_db_$(PTVERSION_HONESTY).sqlite3
 	$(PYTHON) code/honesty_extract_exp_data.py $(PTVERSION_HONESTY)
 
-$(GIFTEX_PT_DATA): $(VENV) code/giftex_extract_exp_data.py \
+$(GIFTEX_PT_DATA): code/giftex_extract_exp_data.py \
 	data/exp_runs/giftex_otree_$(PTVERSION_GIFTEX).csv \
 	data/exp_runs/giftex_botex_db_$(PTVERSION_GIFTEX).sqlite3
 	$(PYTHON) code/giftex_extract_exp_data.py $(PTVERSION_GIFTEX)
 
-$(TRUST_PT_DATA): $(VENV) code/trust_extract_exp_data.py \
+$(TRUST_PT_DATA): code/trust_extract_exp_data.py \
 	data/exp_runs/trust_otree_$(PTVERSION_TRUST).csv \
 	data/exp_runs/trust_botex_db_$(PTVERSION_TRUST).sqlite3
 	$(PYTHON) code/trust_extract_exp_data.py $(PTVERSION_TRUST)
 
-$(HONESTY_EXP_DATA): $(VENV) code/honesty_extract_exp_data.py \
+$(HONESTY_EXP_DATA): code/honesty_extract_exp_data.py \
 	data/exp_runs/honesty_otree_$(DVERSION_HONESTY).csv \
 	data/exp_runs/honesty_botex_db_$(DVERSION_HONESTY).sqlite3
 	$(PYTHON) code/honesty_extract_exp_data.py
 
-$(GIFTEX_EXP_DATA): $(VENV) code/giftex_extract_exp_data.py \
+$(GIFTEX_EXP_DATA): code/giftex_extract_exp_data.py \
 	data/exp_runs/giftex_otree_$(DVERSION_GIFTEX).csv \
 	data/exp_runs/giftex_botex_db_$(DVERSION_GIFTEX).sqlite3
 	$(PYTHON) code/giftex_extract_exp_data.py
 
-$(TRUST_EXP_DATA): $(VENV) code/trust_extract_exp_data.py \
+$(TRUST_EXP_DATA): code/trust_extract_exp_data.py \
 	data/exp_runs/trust_otree_$(DVERSION_TRUST).csv \
 	data/exp_runs/trust_botex_db_$(DVERSION_TRUST).sqlite3
 	$(PYTHON) code/trust_extract_exp_data.py
 
-$(HONESTY_RATIONALES_DATA): $(VENV) code/honesty_classify_rationales.py \
+$(HONESTY_RATIONALES_DATA): code/honesty_classify_rationales.py \
 	$(HONESTY_EXP_DATA)
 	$(PYTHON) code/honesty_classify_rationales.py
 
-$(GIFTEX_RATIONALES_DATA): $(VENV) code/giftex_classify_rationales.py \
+$(GIFTEX_RATIONALES_DATA): code/giftex_classify_rationales.py \
 	$(GIFTEX_EXP_DATA)
 	$(PYTHON) code/giftex_classify_rationales.py
 
-$(TRUST_RATIONALES_DATA): $(VENV) code/trust_classify_rationales.py \
+$(TRUST_RATIONALES_DATA): code/trust_classify_rationales.py \
 	$(TRUST_EXP_DATA)
 	$(PYTHON) code/trust_classify_rationales.py
 
