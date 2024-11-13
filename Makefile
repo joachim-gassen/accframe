@@ -1,28 +1,31 @@
 # If you are new to Makefiles: https://makefiletutorial.com
 
-
 # Commands
 
 RSCRIPT := Rscript --encoding=UTF-8
 PYTHON := python
+PDFLATEX := pdflatex --interaction=batchmode 
 
-# Static Output
-
-OUTPUT := static/honesty_power_analysis.pdf \
-	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf \
-	static/results_main.pdf static/results_rationales.pdf
-
-# Main targets
+# Output targets
 
 HONESTY_POWER := output/honesty_power_analysis.pdf
 TRUST_POWER := output/trust_power_analysis.pdf
 GIFTEX_POWER := output/giftex_power_analysis.pdf
 RESULTS_MAIN := output/results_main.pdf
 RESULTS_RATIONALES := output/results_rationales.pdf
+EVANS_COMPARISON := output/evans_et_al_comparison.pdf
+FIGURES := output/figure1a_otree.pdf \
+	output/figure1b_mixed.pdf \
+	output/figure1c_botex.pdf
 
-MAIN_TARGETS := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
-	$(RESULTS_MAIN) $(RESULTS_RATIONALES)
+OUTPUT := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
+	$(RESULTS_MAIN) $(RESULTS_RATIONALES) $(EVANS_COMPARISON) $(FIGURES)
 
+# Static Output
+
+STATIC := static/honesty_power_analysis.pdf \
+	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf \
+	static/results_main.pdf static/results_rationales.pdf
 
 # Data Targets
 
@@ -64,7 +67,7 @@ DATA_TARGETS := $(GIFTEX_TRUE_AMOUNTS) \
 
 # All Targets besides experiment targets
 
-ALL_TARGETS := $(OUTPUT) $(DATA_TARGETS)
+ALL_TARGETS := $(OUTPUT) $(STATIC) 
 	
 # Phony targets
 
@@ -74,12 +77,13 @@ cleandb:
 	rm -rf data/generated/botex_db.sqlite3
 	rm -rf otree/db.sqlite3
 
-all: $(OUTPUT)
+all: $(ALL_TARGETS)
 
 clean:
-	rm -f $(MAIN_TARGETS) $(OUTPUT)
+	rm -f $(ALL_TARGETS)
 
 distclean: clean
+	rm -f $(DATA_TARGETS)
 	rm -rf output/*
 	rm -rf data/generated/*
  
@@ -162,7 +166,13 @@ $(RESULTS_RATIONALES): $(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) \
 	quarto render docs/results_rationales.qmd --quiet
 	rm -rf output/results_rationales_files
 
-$(OUTPUT): $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
+$(EVANS_COMPARISON): $(HONESTY_EXP_DATA) data/external/evans_et_al_plot.csv \
+	docs/_quarto.yml \
+	docs/evans_et_al_comparison.qmd
+	quarto render docs/evans_et_al_comparison.qmd --quiet
+	rm -rf output/evans_et_al_comparison_files
+
+$(STATIC): $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
 	$(RESULTS_MAIN) $(RESULTS_RATIONALES)
 	cp $(HONESTY_POWER) static/
 	cp $(TRUST_POWER) static/
@@ -170,4 +180,8 @@ $(OUTPUT): $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
 	cp $(RESULTS_MAIN) static/
 	cp $(RESULTS_RATIONALES) static/
 
+# Pattern rule to render figures
+output/%.pdf: docs/%.tex
+	$(PDFLATEX) -output-directory=output $<
+	rm -f output/%.aux output/%.log output/%.synctex.gz
 	

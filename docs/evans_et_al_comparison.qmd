@@ -41,7 +41,7 @@ honesty_tab_evans_desc(c("Evans et al.", "Neutral"))%>%
 
 {{< pagebreak >}}
 
-### Panel B: Reg Table
+### Panel B: Regression Analysis
 
 ```{r results='asis'}
 latex_table <- honesty_tab_evans_regression_results() %>%
