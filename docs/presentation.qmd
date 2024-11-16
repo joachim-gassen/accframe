@@ -2,7 +2,7 @@
 title: |
   | Using Large Language Models to Explore Contextualization Effects 
   | in Economics-Based Accounting Experiments
-subtitle: Universität Tübingen - Business Research Seminar # we use this for the venue
+subtitle: Draft presentation # we use this for the venue
 author: Fikir Edossa, Joachim Gassen, and Victor S. Maas
 institute: "HU Berlin and University of Amsterdam"
 date: today

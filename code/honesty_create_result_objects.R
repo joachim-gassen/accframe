@@ -148,7 +148,8 @@ honesty_fig_by_period <- function(dta = hrounds) {
     summarise(
       mn_honesty = mean(honesty),
       lb = mn_honesty - 1.96*sd(honesty)/sqrt(n()),
-      ub = mn_honesty + 1.96*sd(honesty)/sqrt(n())
+      ub = mn_honesty + 1.96*sd(honesty)/sqrt(n()),
+      .groups = "drop"
     )
   
   ggplot(df, aes(x = round, y = mn_honesty, color = experiment)) +

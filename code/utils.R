@@ -26,9 +26,9 @@ CONDITIONS <- c("Neutral", "Contextualized")
 
 # --- Installing TRR fonts -----------------------------------------------------
 
-trr266_fonts_available <- all(c("Cambria", "Calibri Light") %in% font_families())
+fonts_available <- all(c("Cambria", "Calibri Light", "Times New Roman") %in% font_families())
 
-if (!trr266_fonts_available) {
+if (!fonts_available) {
   # On Mac with MS Office installation you need to add the Office
   # Fonts to the font path. The following depends on your 
   # installation but _should_ work in most cases
@@ -42,13 +42,14 @@ if (!trr266_fonts_available) {
   rv <- tryCatch({
     font_add(family = "Cambria", regular = "Cambria.ttc")
     font_add(family = "Calibri Light", regular = "calibril.ttf")
+    font_add(family = "Times New Roman", regular = "times.ttf")
   }, error = function(e) {
-    message(sprintf("Failed to install TRR 266 fonts: %s", e))
+    message(sprintf("Failed to install Mac fonts: %s", e))
     invisible(font_families())        
   })
   
-  trr266_fonts_available <- all(c("Cambria", "Calibri Light") %in% rv)
-  if (trr266_fonts_available) message("Successfully installed TRR 266 fonts") 
+  fonts_available <- all(c("Cambria", "Calibri Light", "Times New Roman") %in% rv)
+  if (fonts_available) message("Successfully installed fonts") 
 }
 
 # --- Utility functions --------------------------------------------------------

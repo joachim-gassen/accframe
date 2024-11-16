@@ -182,7 +182,8 @@ giftex_fig_wage_by_period <- function(dta = grounds) {
     summarise(
       mn_wage = mean(wage),
       lb = mn_wage - 1.96*sd(wage)/sqrt(n()),
-      ub = mn_wage + 1.96*sd(wage)/sqrt(n())
+      ub = mn_wage + 1.96*sd(wage)/sqrt(n()),
+      .groups = "drop"
     )
   
   ggplot(df, aes(x = round, y = mn_wage, color = experiment)) +
@@ -210,7 +211,8 @@ giftex_fig_effort_by_period <- function(dta = grounds) {
     summarise(
       mn_effort = mean(effort),
       lb = mn_effort - 1.96*sd(effort)/sqrt(n()),
-      ub = mn_effort + 1.96*sd(effort)/sqrt(n())
+      ub = mn_effort + 1.96*sd(effort)/sqrt(n()),
+      .groups = "drop"
     )
   
   ggplot(df, aes(x = round, y = mn_effort, color = experiment)) +
@@ -237,7 +239,7 @@ giftex_fig_wage_effort <- function(dta = grounds) {
     dta, 
     aes(x = wage, y = effort, color = experiment, group = experiment)
   ) + geom_jitter(size = 0.2) + 
-    geom_smooth(method = "lm") + 
+    geom_smooth(method = "lm", formula = "y ~ x") + 
     scale_color_manual("", values = color_scale, labels = color_scale_labs) +
     labs(color = "", x = "Wage Paid", y = "Effort Level") +
     theme_classic(base_size = 12) + 

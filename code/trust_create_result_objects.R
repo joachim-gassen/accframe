@@ -152,7 +152,8 @@ trust_fig_inv_by_period <- function(dta = trounds) {
     summarise(
       mn_sent_amount = mean(sent_amount),
       lb = mn_sent_amount - 1.96*sd(sent_amount)/sqrt(n()),
-      ub = mn_sent_amount + 1.96*sd(sent_amount)/sqrt(n())
+      ub = mn_sent_amount + 1.96*sd(sent_amount)/sqrt(n()),
+      .groups = "drop"
     )
   
   ggplot(df, aes(x = round, y = mn_sent_amount, color = experiment)) +
@@ -180,7 +181,8 @@ trust_fig_div_share_by_period <- function(dta = trounds) {
     summarise(
       mn_pct_returned = mean(pct_returned, na.rm = TRUE),
       lb = mn_pct_returned - 1.96*sd(pct_returned, na.rm = TRUE)/sqrt(sum(!is.na(pct_returned))),
-      ub = mn_pct_returned + 1.96*sd(pct_returned, na.rm = TRUE)/sqrt(sum(!is.na(pct_returned)))
+      ub = mn_pct_returned + 1.96*sd(pct_returned, na.rm = TRUE)/sqrt(sum(!is.na(pct_returned))),
+      .groups = "drop"
     )
   
   ggplot(df, aes(x = round, y = mn_pct_returned, color = experiment)) +

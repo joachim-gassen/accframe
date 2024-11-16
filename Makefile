@@ -6,26 +6,37 @@ RSCRIPT := Rscript --encoding=UTF-8
 PYTHON := python
 PDFLATEX := pdflatex --interaction=batchmode 
 
+# Code dependencies
+
+RESULT_OBJECTS_CODE := code/utils.R \
+	code/honesty_create_result_objects.R \
+	code/giftex_create_result_objects.R \
+	code/trust_create_result_objects.R \
+	
 # Output targets
 
 HONESTY_POWER := output/honesty_power_analysis.pdf
 TRUST_POWER := output/trust_power_analysis.pdf
 GIFTEX_POWER := output/giftex_power_analysis.pdf
 RESULTS_MAIN := output/results_main.pdf
+PRESENTATION := output/presentation.pdf
 RESULTS_RATIONALES := output/results_rationales.pdf
 EVANS_COMPARISON := output/evans_et_al_comparison.pdf
-FIGURES := output/figure1a_otree.pdf \
+TEX_FIGURES := output/figure1a_otree.pdf \
 	output/figure1b_mixed.pdf \
-	output/figure1c_botex.pdf
-
+	output/figure1c_botex.pdf 
+R_FIGURES := output/figure2_honesty_pct_honest.pdf \
+	output/figure3_giftex_effort_on_wage.pdf \
+	output/figure4_trust_investment.pdf 
+FIGURES :=  $(TEX_FIGURES) $(R_FIGURES)
+	
 OUTPUT := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
-	$(RESULTS_MAIN) $(RESULTS_RATIONALES) $(EVANS_COMPARISON) $(FIGURES)
+	$(RESULTS_MAIN) $(PRESENTATION) \
+	$(RESULTS_RATIONALES) $(EVANS_COMPARISON) $(FIGURES)
 
 # Static Output
 
-STATIC := static/honesty_power_analysis.pdf \
-	static/trust_power_analysis.pdf static/giftex_power_analysis.pdf \
-	static/results_main.pdf static/results_rationales.pdf
+STATIC := static/results_main.pdf static/presentation.pdf
 
 # Data Targets
 
@@ -60,12 +71,15 @@ HONESTY_RATIONALES_DATA := data/exp_runs/honesty_$(DVERSION_HONESTY)_rounds_clas
 GIFTEX_RATIONALES_DATA := data/exp_runs/giftex_$(DVERSION_GIFTEX)_rounds_classified.csv
 TRUST_RATIONALES_DATA := data/exp_runs/trust_$(DVERSION_TRUST)_rounds_classified.csv
 
-DATA_TARGETS := $(GIFTEX_TRUE_AMOUNTS) \
-	$(HONESTY_PT_DATA) $(TRUST_PT_DATA) $(GIFTEX_PT_DATA) \
-	$(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+PERSISTENT_DATA_TARGETS :=  \
 	$(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) $(TRUST_RATIONALES_DATA)
 
-# All Targets besides experiment targets
+TEMP_DATA_TARGETS := $(GIFTEX_TRUE_AMOUNTS) \
+	$(HONESTY_PT_DATA) $(TRUST_PT_DATA) $(GIFTEX_PT_DATA) \
+	$(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) 
+
+
+# All Targets
 
 ALL_TARGETS := $(OUTPUT) $(STATIC) 
 	
@@ -83,12 +97,15 @@ clean:
 	rm -f $(ALL_TARGETS)
 
 distclean: clean
-	rm -f $(DATA_TARGETS)
+	rm -f $(TEMP_DATA_TARGETS)
 	rm -rf output/*
+	rm -rf static/*
 	rm -rf data/generated/*
- 
+	rm -rf otree/db.sqlite3
 
 # Recipes
+
+# --- Data recipes -------------------------------------------------------------
 
 $(HONESTY_TRUE_AMOUNTS): code/honesty_gen_true_amounts.R
 	$(RSCRIPT) code/honesty_gen_true_amounts.R
@@ -123,17 +140,36 @@ $(TRUST_EXP_DATA): code/trust_extract_exp_data.py \
 	data/exp_runs/trust_botex_db_$(DVERSION_TRUST).sqlite3
 	$(PYTHON) code/trust_extract_exp_data.py
 
+# The following three recipes are costly to run as they call the
+# OpenAI API to classify their data. Also, their results are not
+# fully reproducible as they use a non-zero temperature on their 
+# calls. 
+
+# Thus, their output is stored in 'exp_data' so that it is committed
+# to GitHub. Also, while they depend on .._EXP_DATA,  their recipes 
+# are written to depend on the raw experimental data and the data 
+# extratction code to avoid that they are triggered after make clean.
+
 $(HONESTY_RATIONALES_DATA): code/honesty_classify_rationales.py \
-	$(HONESTY_EXP_DATA)
+	code/honesty_extract_exp_data.py \
+	data/exp_runs/honesty_otree_$(DVERSION_HONESTY).csv \
+	data/exp_runs/honesty_botex_db_$(DVERSION_HONESTY).sqlite3
 	$(PYTHON) code/honesty_classify_rationales.py
 
 $(GIFTEX_RATIONALES_DATA): code/giftex_classify_rationales.py \
-	$(GIFTEX_EXP_DATA)
+	code/giftex_extract_exp_data.py \
+	data/exp_runs/giftex_otree_$(DVERSION_TRUST).csv \
+	data/exp_runs/giftex_botex_db_$(DVERSION_TRUST).sqlite3
 	$(PYTHON) code/giftex_classify_rationales.py
 
 $(TRUST_RATIONALES_DATA): code/trust_classify_rationales.py \
-	$(TRUST_EXP_DATA)
+	code/trust_extract_exp_data.py \
+	data/exp_runs/trust_otree_$(DVERSION_TRUST).csv \
+	data/exp_runs/trust_botex_db_$(DVERSION_TRUST).sqlite3
 	$(PYTHON) code/trust_classify_rationales.py
+
+
+# --- Output recipes -----------------------------------------------------------
 
 $(HONESTY_POWER): $(HONESTY_PT_DATA) $(HONESTY_TRUE_AMOUNTS) \
 	docs/_quarto.yml \
@@ -154,10 +190,18 @@ $(TRUST_POWER): $(TRUST_PT_DATA) \
 	rm -rf output/trust_power_analysis_files
 
 $(RESULTS_MAIN): $(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+	$(RESULT_OBJECTS_CODE) \
 	docs/_quarto.yml \
 	docs/results_main.qmd
 	quarto render docs/results_main.qmd --quiet
 	rm -rf output/results_main_files
+
+$(PRESENTATION):  $(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) \
+	$(RESULT_OBJECTS_CODE) \
+	docs/_quarto.yml \
+	docs/presentation.qmd
+	quarto render docs/presentation.qmd --quiet
+	rm -rf output/presentation_files
 
 $(RESULTS_RATIONALES): $(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) \
 	$(TRUST_RATIONALES_DATA)  \
@@ -167,21 +211,26 @@ $(RESULTS_RATIONALES): $(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) \
 	rm -rf output/results_rationales_files
 
 $(EVANS_COMPARISON): $(HONESTY_EXP_DATA) data/external/evans_et_al_plot.csv \
+	code/honesty_create_result_objects.R \
 	docs/_quarto.yml \
 	docs/evans_et_al_comparison.qmd
 	quarto render docs/evans_et_al_comparison.qmd --quiet
 	rm -rf output/evans_et_al_comparison_files
 
-$(STATIC): $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
-	$(RESULTS_MAIN) $(RESULTS_RATIONALES)
-	cp $(HONESTY_POWER) static/
-	cp $(TRUST_POWER) static/
-	cp $(GIFTEX_POWER) static/
-	cp $(RESULTS_MAIN) static/
-	cp $(RESULTS_RATIONALES) static/
+$(R_FIGURES): $(HONESTY_EXP_DATA) $(GIFTEX_EXP_DATA) $(TRUST_EXP_DATA) \
+	$(RESULT_OBJECTS_CODE) code/render_figures.R
+	$(RSCRIPT) code/render_figures.R
 
-# Pattern rule to render figures
+# Pattern rule to render tex figures
 output/%.pdf: docs/%.tex
-	$(PDFLATEX) -output-directory=output $<
-	rm -f output/%.aux output/%.log output/%.synctex.gz
+	$(PDFLATEX) -output-directory=output $< >/dev/null
+	rm -f output/$*.aux output/$*.log output/$*.synctex.gz
+
+
+# --- Export recipes -----------------------------------------------------------
+
+$(STATIC): $(RESULTS_MAIN) $(PRESENTATION)
+	cp $(RESULTS_MAIN) static/
+	cp $(PRESENTATION) static/
+
 	
