@@ -249,7 +249,7 @@ honesty_read_exp_data <- function(dversion = "2024-06-17") {
       passed_cc = as.integer(comprehension_check1 == 1 & comprehension_check2 == 1),
       classified_as_human = as.integer(human_check == 1)
     )
-  reason_file <- glue("data/exp_runs/honesty_{dversion}_rounds_classified.csv")
+  reason_file <- glue("data/static/honesty_{dversion}_rounds_classified.csv")
   if (file.exists(reason_file)) {
     hreasons <<- read_csv(reason_file, show_col_types = FALSE) %>%
       rename(participant_code = player_id) %>%
@@ -362,7 +362,7 @@ giftex_read_exp_data <- function(
         summarise(mn_payoff_manager = sum(payoff), .groups = "drop"),
       by = c("experiment", "session_code", "group_id")
     )
-  reason_file <- glue("data/exp_runs/giftex_{dversion}_rounds_classified.csv")
+  reason_file <- glue("data/static/giftex_{dversion}_rounds_classified.csv")
   if (file.exists(reason_file)) {
     greasons <<- read_csv(reason_file, show_col_types = FALSE) %>%
       mutate(
@@ -429,7 +429,7 @@ trust_read_exp_data <- function(dversion = "2024-06-18") {
       by = c("experiment", "session_code", "group_id")
     )
   
-  reason_file <- glue("data/exp_runs/trust_{dversion}_rounds_classified.csv")
+  reason_file <- glue("data/static/trust_{dversion}_rounds_classified.csv")
   if (file.exists(reason_file)) {
     treasons <<- read_csv(reason_file, show_col_types = FALSE) %>%
       mutate(
