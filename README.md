@@ -1,5 +1,9 @@
 # accframe: Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/joachim-gassen/accframe)
+[![Open in VS Code Dev Container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/joachim-gassen/accframe)
+
+
 This is the code and data repository to the paper:
 
 > Fikir Worku Edossa, Joachim Gassen, and Victor S. Maas (2024): Using Large Language Models to Explore Contextualization Effects in Economics-Based Accounting Experiments. [SSRN Working Paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891763).
@@ -15,12 +19,30 @@ This repository contains the code to run the LLM-based experiments outlined in t
 
 The oTree experiments conducted are implemented by using oTree and the raw data of the experimental runs are in `data/exp_runs`. The current output of the code is available in the `static` folder of this repo.
 
+## Reproducing the results of the paper
+
+To reproduce the results of the paper, you need to follow these steps:
+
+1. Start a GitHub Codespace by clicking on the badge at the top of this README. You can do this if you have a GitHub account. This will open a Cloud-based computing environment with all the necessary files and packages installed. If you would rather use local containerized development environment, you can click on the second badge to open the repository in a VS Code Dev Container.
+2. Open a terminal in whatever environment you chose and run the following commands:
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -v "botex==0.1.0"
+# ignore the warning of dependency missmatch
+make all
+```
+
+3. The `make all` will create the pretest power analyses and all analyses presented in the paper. The main output files will be stored in the `static` folder and additional output files can be found in the `output` folder.
 
 ## Running the Experiments
 
-To replicate our experiments, you need to follow these steps:
+To replicate our experiments, you need to follow these steps in a local development environment:
 
-1. Set up a virtual environment and install the required packages with something like 
+1. Set up a virtual environment and install the required packages with something like
+
 ```
 python3 -m venv .venv
 source .venv/bin/activate
@@ -35,6 +57,7 @@ pip install -e ../botex
 # You might run into some dependency issues as oTree has some older dependencies.
 # It seems to work regardless, though.
 ```
+
 2. Make sure that you have provided your OpenAI key in the `secrets.env` file.
 3. The code to run the experiments is in the files `run_{honesty|trust|giftex}_exp.py`. You can adjust the number of participants for each condition in these files.
 4. Prior to sourcing any of these files, make sure that you do not have a local oTree server running as the code will start a new one.

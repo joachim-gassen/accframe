@@ -80,7 +80,7 @@ if __name__ == "__main__":
         df.loc[idx, "reason_self_payoff"] = scores["self_payoff"]
         df.loc[idx, "reason_other_payoff"] = scores["other_payoff"]
         df.loc[idx, "reason_truth"] = scores["truth"]
-    df.to_csv("data/exp_runs/honesty_2024-06-17_rounds_classified.csv", index=False) 
+    df.to_csv("data/static/honesty_2024-06-17_rounds_classified.csv", index=False) 
 
 
 

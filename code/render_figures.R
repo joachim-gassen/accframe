@@ -14,7 +14,7 @@ for (exp in EXPERIMENTS) {
 } 
 
 export_figure <- function(
-    p, fname, format = "pdf", width = 6, height = 4, ...
+    p, fname, format = "svg", width = 6, height = 4, ...
 ) {
   ggsave(
     paste0("output/", fname, ".", format), 

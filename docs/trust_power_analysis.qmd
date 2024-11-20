@@ -124,8 +124,8 @@ sprintf(
 # Simulation for regression based tests
 
 ```{r}
-if (file.exists("../data/generated/trust_sim_results.csv")) {
-  trust_sim_results <- read_csv("../data/generated/trust_sim_results.csv", show_col_types = F)
+if (file.exists("../data/static/trust_sim_results.csv")) {
+  trust_sim_results <- read_csv("../data/static/trust_sim_results.csv", show_col_types = F)
 } else {
   sim_data <- function(parms, runs = 50, rounds = 10) {
     cl <- function(val, vmin = 0, vmax = 100) {
@@ -263,7 +263,7 @@ if (file.exists("../data/generated/trust_sim_results.csv")) {
   
   message(sprintf("Starting trust power simulations (%d runs): %s", nrow(plan), Sys.time()))  
   trust_sim_results <- sim_power_trust(plan)
-  write_csv(trust_sim_results, "../data/generated/trust_sim_results.csv")
+  write_csv(trust_sim_results, "../data/static/trust_sim_results.csv")
   message(sprintf("Done: %s", Sys.time()))  
 }
         

@@ -122,13 +122,13 @@ sprintf(
 # Simulation for regression based tests
 
 ```{r}
-if (file.exists("../data/generated/honesty_sim_results.csv")) {
+if (file.exists("../data/static/honesty_sim_results.csv")) {
   honesty_sim_results <- read_csv(
-    "../data/generated/honesty_sim_results.csv", show_col_types = F
+    "../data/static/honesty_sim_results.csv", show_col_types = F
     )
 } else {
   ta <- read_csv(
-    "../data/generated/honesty_true_amounts.csv", show_col_types = F
+    "../data/static/honesty_true_amounts.csv", show_col_types = F
   )
   sim_data <- function(parms, runs = 100, rounds = 10) {
     cl <- function(val, vmin = 0, vmax = 1) {
@@ -264,7 +264,7 @@ if (file.exists("../data/generated/honesty_sim_results.csv")) {
     "Starting honesty power simulations (%d runs): %s", nrow(plan), Sys.time()
   ))  
   honesty_sim_results <- sim_power_honesty(plan)
-  write_csv(honesty_sim_results, "../data/generated/honesty_sim_results.csv")
+  write_csv(honesty_sim_results, "../data/static/honesty_sim_results.csv")
   message(sprintf("Done: %s", Sys.time()))  
 }
         

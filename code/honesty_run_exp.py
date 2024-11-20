@@ -22,7 +22,7 @@ MODEL = 'gpt-4o-2024-05-13'
 
 dotenv.load_dotenv("secrets.env")
 
-f = open('data/generated/honesty_true_amounts.csv')
+f = open('data/static/honesty_true_amounts.csv')
 reader = list(csv.DictReader(f))
 ta = [row for row in reader]
 f.close()

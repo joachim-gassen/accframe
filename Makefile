@@ -5,6 +5,7 @@
 RSCRIPT := Rscript --encoding=UTF-8
 PYTHON := python
 PDFLATEX := pdflatex --interaction=batchmode 
+INKSCAPE := inkscape -n 1
 
 # Code dependencies
 
@@ -22,12 +23,12 @@ RESULTS_MAIN := output/results_main.pdf
 PRESENTATION := output/presentation.pdf
 RESULTS_RATIONALES := output/results_rationales.pdf
 EVANS_COMPARISON := output/evans_et_al_comparison.pdf
-TEX_FIGURES := output/figure1a_otree.pdf \
-	output/figure1b_mixed.pdf \
-	output/figure1c_botex.pdf 
-R_FIGURES := output/figure2_honesty_pct_honest.pdf \
-	output/figure3_giftex_effort_on_wage.pdf \
-	output/figure4_trust_investment.pdf 
+TEX_FIGURES := output/figure1a_otree.svg \
+	output/figure1b_mixed.svg \
+	output/figure1c_botex.svg 
+R_FIGURES := output/figure2_honesty_pct_honest.svg \
+	output/figure3_giftex_effort_on_wage.svg \
+	output/figure4_trust_investment.svg 
 FIGURES :=  $(TEX_FIGURES) $(R_FIGURES)
 	
 OUTPUT := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
@@ -41,7 +42,7 @@ STATIC := static/results_main.pdf static/presentation.pdf
 # Data Targets
 
 # True amounts for honesty experiment
-HONESTY_TRUE_AMOUNTS := data/generated/honesty_true_amounts.csv
+HONESTY_TRUE_AMOUNTS := data/static/honesty_true_amounts.csv
 
 # Pre-Tests for Power analysis
 PTVERSION_HONESTY = 2024-03-27
@@ -67,14 +68,15 @@ GIFTEX_EXP_DATA := data/generated/giftex_$(DVERSION_GIFTEX)_participants.csv \
 TRUST_EXP_DATA := data/generated/trust_$(DVERSION_TRUST)_participants.csv \
 	data/generated/trust_$(DVERSION_TRUST)_rounds.csv
 
-HONESTY_RATIONALES_DATA := data/exp_runs/honesty_$(DVERSION_HONESTY)_rounds_classified.csv
-GIFTEX_RATIONALES_DATA := data/exp_runs/giftex_$(DVERSION_GIFTEX)_rounds_classified.csv
-TRUST_RATIONALES_DATA := data/exp_runs/trust_$(DVERSION_TRUST)_rounds_classified.csv
+HONESTY_RATIONALES_DATA := data/static/honesty_$(DVERSION_HONESTY)_rounds_classified.csv
+GIFTEX_RATIONALES_DATA := data/static/giftex_$(DVERSION_GIFTEX)_rounds_classified.csv
+TRUST_RATIONALES_DATA := data/static/trust_$(DVERSION_TRUST)_rounds_classified.csv
 
-PERSISTENT_DATA_TARGETS :=  \
+# sim results for power analysis are created by doc code if missing
+STATIC_DATA_TARGETS :=  $(GIFTEX_TRUE_AMOUNTS) \
 	$(HONESTY_RATIONALES_DATA) $(GIFTEX_RATIONALES_DATA) $(TRUST_RATIONALES_DATA)
 
-TEMP_DATA_TARGETS := $(GIFTEX_TRUE_AMOUNTS) \
+TEMP_DATA_TARGETS := \
 	$(HONESTY_PT_DATA) $(TRUST_PT_DATA) $(GIFTEX_PT_DATA) \
 	$(HONESTY_EXP_DATA) $(TRUST_EXP_DATA) $(GIFTEX_EXP_DATA) 
 
@@ -101,6 +103,7 @@ distclean: clean
 	rm -rf output/*
 	rm -rf static/*
 	rm -rf data/generated/*
+	rm -rf data/static/*
 	rm -rf otree/db.sqlite3
 
 # Recipes
@@ -145,7 +148,7 @@ $(TRUST_EXP_DATA): code/trust_extract_exp_data.py \
 # fully reproducible as they use a non-zero temperature on their 
 # calls. 
 
-# Thus, their output is stored in 'exp_data' so that it is committed
+# Thus, their output is stored in 'static' so that it is committed
 # to GitHub. Also, while they depend on .._EXP_DATA,  their recipes 
 # are written to depend on the raw experimental data and the data 
 # extratction code to avoid that they are triggered after make clean.
@@ -221,10 +224,11 @@ $(R_FIGURES): $(HONESTY_EXP_DATA) $(GIFTEX_EXP_DATA) $(TRUST_EXP_DATA) \
 	$(RESULT_OBJECTS_CODE) code/render_figures.R
 	$(RSCRIPT) code/render_figures.R
 
-# Pattern rule to render tex figures
-output/%.pdf: docs/%.tex
+# Pattern rule to render tex figures to svg
+output/%.svg: docs/%.tex
 	$(PDFLATEX) -output-directory=output $< >/dev/null
-	rm -f output/$*.aux output/$*.log output/$*.synctex.gz
+	$(INKSCAPE) --export-type=svg output/$*.pdf
+	rm -f output/$*.pdf output/$*.aux output/$*.log output/$*.synctex.gz
 
 
 # --- Export recipes -----------------------------------------------------------

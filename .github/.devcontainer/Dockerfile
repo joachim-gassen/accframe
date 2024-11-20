@@ -34,6 +34,8 @@ RUN install2.r --error --skipinstalled languageserver
 RUN install2.r --error --skipinstalled rsconnect
 RUN install2.r --error --skipinstalled ggwordcloud
 RUN install2.r --error --skipinstalled tidytext
+RUN install2.r --error --skipinstalled fixest
+RUN install2.r --error --skipinstalled pwr
 
 RUN rm -rf /tmp/downloaded_packages
 

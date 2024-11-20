@@ -152,8 +152,8 @@ sprintf(
 # Simulation for regression based tests
 
 ```{r}
-if (file.exists("../data/generated/giftex_sim_results.csv")) {
-  giftex_sim_results <- read_csv("../data/generated/giftex_sim_results.csv", show_col_types = F)
+if (file.exists("../data/static/giftex_sim_results.csv")) {
+  giftex_sim_results <- read_csv("../data/static/giftex_sim_results.csv", show_col_types = F)
 } else {
   sim_data <- function(parms, runs = 50, rounds = 10) {
     cl <- function(val, vmin = 0, vmax = 100) {
@@ -316,7 +316,7 @@ if (file.exists("../data/generated/giftex_sim_results.csv")) {
   
   message(sprintf("Starting giftex power simulations (%d runs): %s", nrow(plan), Sys.time()))  
   giftex_sim_results <- sim_power_giftex(plan)
-  write_csv(giftex_sim_results, "../data/generated/giftex_sim_results.csv")
+  write_csv(giftex_sim_results, "../data/static/giftex_sim_results.csv")
   message(sprintf("Done: %s", Sys.time()))  
 }
         

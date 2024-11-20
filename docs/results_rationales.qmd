@@ -52,7 +52,7 @@ empty <- function(...) ""
 
 ```{r}
 hrounds <- read_csv(
-  sprintf("../data/exp_runs/honesty_%s_rounds_classified.csv", DVERSION_HONESTY), 
+  sprintf("../data/static/honesty_%s_rounds_classified.csv", DVERSION_HONESTY), 
   show_col_types = FALSE
 ) %>%
   mutate(
@@ -130,7 +130,7 @@ cost <- function(e) {
 }
 
 grounds <- read_csv(
-  sprintf("../data/exp_runs/giftex_%s_rounds_classified.csv", DVERSION_GIFTEX), 
+  sprintf("../data/static/giftex_%s_rounds_classified.csv", DVERSION_GIFTEX), 
   show_col_types = FALSE
 ) %>%
   mutate(
@@ -215,7 +215,7 @@ datasummary(
 
 ```{r}
 trounds <- read_csv(
-  sprintf("../data/exp_runs/trust_%s_rounds_classified.csv", DVERSION_TRUST), 
+  sprintf("../data/static/trust_%s_rounds_classified.csv", DVERSION_TRUST), 
   show_col_types = FALSE
 ) %>%
   mutate(

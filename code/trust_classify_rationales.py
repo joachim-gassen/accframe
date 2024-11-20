@@ -95,7 +95,7 @@ if __name__ == "__main__":
         df.loc[idx, "reason_back_fairness"] = scores["fairness"]
         df.loc[idx, "reason_back_trust"] = scores["trust"]
 
-    df.to_csv("data/exp_runs/trust_2024-06-18_rounds_classified.csv", index=False) 
+    df.to_csv("data/static/trust_2024-06-18_rounds_classified.csv", index=False) 
 
 
 

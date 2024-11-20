@@ -94,7 +94,7 @@ if __name__ == "__main__":
         df.loc[idx, "reason_effort_fairness"] = scores["fairness"]
         df.loc[idx, "reason_effort_recip"] = scores["reciprocate"]
 
-    df.to_csv("data/exp_runs/giftex_2024-06-18_rounds_classified.csv", index=False) 
+    df.to_csv("data/static/giftex_2024-06-18_rounds_classified.csv", index=False) 
 
 
 
