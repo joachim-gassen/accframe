@@ -297,7 +297,7 @@ e.g., Engel, Grossmann and Ockenfels (2024, SSRN)
 \end{center}
 
 
-## \texttt{botex} System Prompt (excerpt)
+## \texttt{botex} System Prompt (excerpt) {.fragile}
 \begin{verbatim}
 In this conversation. I want you to participate in an online survey and/or experiment, potentially involving other human or artificial participants. I will provide you with a series of web page body text excerpts that will sequentially guide you through the experiment/survey. The texts will contain instructions on how the experiment/survey will be conducted. These instructions will be followed by additional pages that might contain additional instructions, comprehension checks, repeated information from prior pages and, most importantly, present you with questions and/or tasks which I want you to answer. 
 [...] The materials might contain information on how participants are being compensated or paid for their participation. If this is the case, please act as if this compensation also applies to you [...] 

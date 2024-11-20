@@ -17,6 +17,11 @@ RUN apt-get -y install python3-venv && apt-get clean
 RUN apt-get -y install python3-wheel && apt-get clean
 RUN apt-get -y install gnupg2 && apt-get clean
 
+RUN apt-get -y install software-properties-common apt-transport-https && apt-get clean
+RUN add-apt-repository ppa:inkscape.dev/stable -y
+RUN apt update
+RUN apt-get -y install inkscape -y && apt-get clean
+
 RUN install2.r --error --skipinstalled tidyverse 
 RUN install2.r --error --skipinstalled lubridate 
 RUN install2.r --error --skipinstalled knitr
@@ -36,6 +41,7 @@ RUN install2.r --error --skipinstalled ggwordcloud
 RUN install2.r --error --skipinstalled tidytext
 RUN install2.r --error --skipinstalled fixest
 RUN install2.r --error --skipinstalled pwr
+RUN install2.r --error --skipinstalled qrcode
 
 RUN rm -rf /tmp/downloaded_packages
 
