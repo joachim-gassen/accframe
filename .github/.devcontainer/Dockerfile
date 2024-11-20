@@ -17,7 +17,9 @@ RUN apt-get -y install python3-venv && apt-get clean
 RUN apt-get -y install python3-wheel && apt-get clean
 RUN apt-get -y install gnupg2 && apt-get clean
 
-RUN apt-get -y install software-properties-common apt-transport-https && apt-get clean
+RUN apt update
+RUN apt-get -y install software-properties-common && apt-get clean
+RUN apt-get -y install apt-transport-https && apt-get clean
 RUN add-apt-repository ppa:inkscape.dev/stable -y
 RUN apt update
 RUN apt-get -y install inkscape -y && apt-get clean
