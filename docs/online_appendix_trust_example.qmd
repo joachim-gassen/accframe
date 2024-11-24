@@ -1,0 +1,273 @@
+---
+title: "Online Appendix: An Example Trust Game Run using botex"
+execute:
+  echo: false
+format: 
+  docx:
+    reference-doc: materials/word_reference_doc.docx
+---
+
+This section explains how botex leverages large language models (LLMs) as bots in oTree experiments by walking you through a non-contextualized one period trust game with two bot participants. To run an experiment involving botex bots, you need the following:
+
+1.	A working oTree instance that is accessible via the oTree API. This instance can be running on the same computer that you want to run the botex bots on, but it can also be running remotely.
+
+2.	An experiment that is hosted by this oTree instance. The current version of botex requires experimental materials to be text only and the experimental flow to rely on the standard forms provided by oTree. So, you need to verify that your experiment complies with these requirements prior to starting botex bots on it.
+
+3.	An API key to use the OpenAI API (https://openai.com/api/). While there is a free usage tier for OpenAI API, to run a botex bot on an experiment you need to be at least in usage tier 1, which requires you to provide a credit card and make a deposit of US-$ 5. 
+
+4.	A computer with Google Chrome, python >= 3.10, and virtual environments installed so that you can start botex bots on it.
+On this computer, you can set up botex by first creating and activating a fresh virtual environment and then installing botex. The process for this will vary by your operating environment but should be similar to running the following in a fresh project folder:
+
+```         
+python -m venv .venv
+source .venv/bin/activate
+pip install botex
+```
+
+After that you can run an oTree session involving two bots with this python script after adjusting the required parameters. The trust experiment that we use below is a one period variant of the non-contextualized trust game that is included in the paper’s repository. 
+
+
+```{python}
+#| eval: false
+#| echo: true
+
+import botex
+
+session = botex.init_otree_session(
+  config_name = "trust", 
+  # Name of the session config of your experiment as 
+  # provided in SESSION_CONFIGS in oTree’s settings.py
+  npart = 2, 
+  # Number of the participants in the session.
+  # If you do not provide either ‘nhumans’ or ‘is_human’
+  # then all participants will be set up to be played by bots.
+  botex_db = "botex.sqlite3", 
+  # File where botex will store its data.
+  # Will be created if it does not exist.
+  otree_server_url = "http://localhost:8000",
+  # URL of your active oTree instance
+  otree_rest_key = "" 
+  # Only required when you set a SECRET_KEY in oTree's settings.py.
+)
+
+botex.run_bots_on_session(
+  session_id = session['session_id'],
+  botex_db = "botex.sqlite3",
+  # Needs to be the same file as given above.
+  openai_api_key = "Your OpenAI API Key",
+  # Needs to be linked to a usage tier 1 account (at least).
+)
+
+```
+
+Running this code should take about a minute (you can set up logging for interim status messages by using the Python logging module). After completion, you will have the session data available in your oTree instance while the data from the two bots spawned by botex are available in the SQLite database `botex.sqlite3` in your project root. These data provide detailed information on the run of the experiment. The file contains two tables:
+
+- `participants`: A table containing information on each session participant (bot or human) for all oTree sessions that were initiated by botex (one session with two participants in our case).
+- `conversations`: A table containing all prompts and responses that were exchanged with the LLM over the course of an experimental run.
+
+To understand how botex works, the conversation data is instrumental.^[The experimental results reported in the paper are based on prompts that differ from the ones reported here as we have updated the prompting sequence since running the experiments. The basic prompting logic however has remained unchanged and the full conversation data of our experimental runs are available in the GitHub repository of the paper. We document the updated prompt structure here as this is the current version that researchers interested in using botex would be working with.]  For each bot completing an experiment run in an oTree session, there is an observation in the conversations table containing the bot’s participant ID, the parameters of the bot call and, most importantly, the conversation history as a JSON object in the variable conversation.
+
+A conversation consists of several messages. Each message has a `role` and a `content`. The role can either be [system]{custom-style="Source Code System Char"} (the system prompt which is stable throughout the conversation), [user]{custom-style="Source Code Botex Char"} (a prompt sent by botex), or [assistant]{custom-style="Source Code LLM Char"} (the response of the LLM). The first message is always the system prompt:
+
+```{python}
+
+import json
+import botex
+
+BOTEX_DB = '../data/exp_runs/trust_appendix_example.sqlite3'
+
+# See https://stackoverflow.com/questions/61380028/how-to-detect-and-indent-json-substrings-inside-longer-non-json-text/61384796#61384796
+def extract_json_objects(text, decoder=json.JSONDecoder()):
+    pos = 0
+    while True:
+        match = text.find('{', pos)
+        if match == -1:
+            yield text[pos:]  # return the remaining text
+            break
+        yield text[pos:match]  # modification for the non-JSON parts
+        try:
+            result, index = decoder.raw_decode(text[match:])
+            yield result
+            pos = match + index
+        except ValueError:
+            pos = match + 1
+
+def render_message(message):
+    message_parts = []
+    for result in extract_json_objects(message):
+        if isinstance(result, dict):  # got a JSON obj
+            message_parts.append('\n```\n')
+            message_parts.append(json.dumps(result, indent=2))
+            message_parts.append("\n```\n")
+        else:                         # got text/non-JSON-obj
+            message_parts.append(result.replace('\n', '\n\n'))
+    return ''.join(message_parts)
+
+# Reading conversation data from botex database
+conv = botex.read_conversations_from_botex_db(
+  botex_db = BOTEX_DB
+)
+# To identify the participant roles, we scan 
+# the conversation data for a question ID
+if "id_sent_amount" in conv[0]['conversation']:
+  conv_a = 0
+  conv_b = 1
+else:
+  conv_a = 1
+  conv_b = 0
+
+# Parsing the conversation history from the JSON strings   
+hist_a = json.loads(conv[conv_a]['conversation'])
+hist_b = json.loads(conv[conv_b]['conversation'])
+
+print(render_message(hist_a[0]['content']))
+```
+
+The next message is the first prompt by botex, verifying whether the LLM has understood the task laid out by the system prompt.
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_a[1]['content']))
+```
+:::
+
+The third message is the first response JSON string of the bot, indicating that it understands its assignment.
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_a[2]['content']))
+```
+:::
+
+After this initiation, the content of the first web page of the actual experiment is scraped and included in the prompt for the bot (indicated in blue below). As the first page contains no questions or assignments (other than clicking the ‘next’ button), the bot is solely tasked to summarize the content of the experiment so far.
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_a[3]['content']))
+```
+:::
+
+The next message is the response of the LLM summarizing the first page of the experiment.
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_a[4]['content']))
+```
+:::
+
+The botex package offers two different ways of prompting. For short experiments it features a conversation that is based on the full conversion history, allowing the LLM to infer its answers also from prior exchanges. As for longer experiments this approach becomes increasingly costly and complex, the prompting strategy featured here and used in the paper relies on independent API calls that use the system prompt and summaries from prior prompts to initialize the LLM’s experimental memory.
+
+Following from this, botex constructs the next prompt by combining the summary from above (highlighted below in red) and the scraped content from the next oTree page, assuming it is not a “wait page” (again in blue). The resulting API call is independent from the ones before, meaning that the LLM has only access to the system prompt and the below.
+
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_a[5]['content']))
+```
+:::
+
+Our bot here has been chosen as participant A and now has to decide on the amount that it wants to send. The prompt provides detailed guidance on how the response has to be structured. The capability of LLMs to adhere to these formatting requirements is essential for their usability for botex. Let’s see how our bot performs in this regard by looking at its response.
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_a[6]['content']))
+```
+:::
+
+The bot managed to respond in clean JSON format and provided the amount that it wishes to send to participant B, along with a reason for its choice. Next, botex sends this amount to the web form and clicks the ‘next’ button, thereby providing the necessary information for oTree to continue. We now turn to the other bot B, which has been essentially running through the same procedure as bot A, but is now receiving its first post-introduction prompt as participant B:
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_b[5]['content']))
+```
+:::
+
+The structure of the prompt is identical to the one that bot A has received but naturally the webpage content differs. What follows is the answer of bot B:
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_b[6]['content']))
+```
+:::
+
+Again, botex feeds the answer back to oTree. Essentially, this completes the one-shot trust game, and the participants proceed to a result page. As in previous messages, botex tasks the bot to summarize the current status of the experiment to proceed.
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_b[7]['content']))
+```
+:::
+
+This is the summary of bot B (the summary of bot A looks very similar and is not included here).
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_b[8]['content']))
+```
+:::
+
+What follows is the short post-experimental questionnaire.
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_b[9]['content']))
+```
+:::
+
+The prompt structure is again identical to the other prompts tasking the LLM to provide answers. Here is the response of bot B (again answers of bot A are excluded for brevity):
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_b[10]['content']))
+```
+:::
+
+The bot managed to answer the comprehension check questions correctly. The answers are again forwarded to oTree by botex. Then, the final page of the experiment is provided to the bots (again for bot B):
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_b[11]['content']))
+```
+:::
+
+As tasked, the bot provides a final summary.
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_b[12]['content']))
+```
+:::
+
+Given that the ultimate page contains no ‘next’ button, botex concludes that the experimental run is complete. It prompts the LLM for any final feedback to conclude the bot run.
+
+:::{custom-style="Source Code Botex"}
+```{python}
+#| output: asis
+print(render_message(hist_b[13]['content']))
+```
+:::
+
+The bot responds:
+
+:::{custom-style="Source Code LLM"}
+```{python}
+#| output: asis
+print(render_message(hist_b[14]['content']))
+```
+:::
+
+This concludes the bot run. The data is being stored to the botex SQLite3 database and the bot thread terminates. When all bot threads are terminated, the call of `botex.run_bots_on_session()` returns to the user.

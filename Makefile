@@ -23,6 +23,7 @@ RESULTS_MAIN := output/results_main.pdf
 PRESENTATION := output/presentation.pdf
 RESULTS_RATIONALES := output/results_rationales.pdf
 EVANS_COMPARISON := output/evans_et_al_comparison.pdf
+OA_TRUST_EXAMPLE := output/online_appendix_trust_example.docx
 TEX_FIGURES := output/figure1a_otree.svg \
 	output/figure1b_mixed.svg \
 	output/figure1c_botex.svg 
@@ -33,7 +34,7 @@ FIGURES :=  $(TEX_FIGURES) $(R_FIGURES)
 	
 OUTPUT := $(HONESTY_POWER) $(TRUST_POWER) $(GIFTEX_POWER) \
 	$(RESULTS_MAIN) $(PRESENTATION) \
-	$(RESULTS_RATIONALES) $(EVANS_COMPARISON) $(FIGURES)
+	$(RESULTS_RATIONALES) $(EVANS_COMPARISON) $(OA_TRUST_EXAMPLE) $(FIGURES)
 
 # Static Output
 
@@ -220,6 +221,13 @@ $(EVANS_COMPARISON): $(HONESTY_EXP_DATA) data/external/evans_et_al_plot.csv \
 	quarto render docs/evans_et_al_comparison.qmd --quiet
 	rm -rf output/evans_et_al_comparison_files
 
+$(OA_TRUST_EXAMPLE): data/exp_runs/trust_appendix_example.sqlite3 \
+	docs/_quarto.yml \
+	docs/materials/word_reference_doc.docx \
+	docs/online_appendix_trust_example.qmd
+	quarto render docs/online_appendix_trust_example.qmd --quiet
+	rm -rf output/online_appendix_trust_example_files
+	
 $(R_FIGURES): $(HONESTY_EXP_DATA) $(GIFTEX_EXP_DATA) $(TRUST_EXP_DATA) \
 	$(RESULT_OBJECTS_CODE) code/render_figures.R
 	$(RSCRIPT) code/render_figures.R
